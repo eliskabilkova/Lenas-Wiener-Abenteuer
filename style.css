@@ -364,6 +364,10 @@ button {
   border: 1px solid rgba(124, 108, 240, 0.35);
 }
 
+.dialogue__speaker.is-hidden {
+  display: none;
+}
+
 .dialogue__hint {
   font-size: 0.75rem;
   color: var(--text-muted);
@@ -387,15 +391,27 @@ button {
   min-height: 3.3em;
 }
 
-.dialogue__text.is-typing::after {
-  content: "▋";
-  animation: blink 0.8s step-end infinite;
-  margin-left: 2px;
-  color: var(--accent);
+.dialogue__text.internal-thought {
+  font-style: italic;
+  color: #e0e0e0;
+  font-weight: 500;
 }
 
-@keyframes blink {
-  50% { opacity: 0; }
+.text-fade-in {
+  animation: fadeInText 0.35s ease-out forwards;
+}
+
+@keyframes fadeInText {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
 }
 
 /* ── Choice buttons ───────────────────────────────────────────── */
@@ -573,7 +589,7 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.25rem;
+  gap: clamp(1.5rem, 4vw, 2.25rem);
   text-align: center;
   padding: 2.5rem;
 }
@@ -600,9 +616,11 @@ button {
 .start-menu__actions,
 .start-chapters-selection {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 0.9rem;
+  justify-content: center;
+  gap: 0.85rem 1rem;
+  width: min(90vw, 420px);
 }
 
 .start-menu__actions[hidden],
@@ -611,7 +629,7 @@ button {
 }
 
 .start-menu__btn {
-  margin-top: 0.75rem;
+  margin-top: 0;
   padding: 0.85rem 2.8rem;
   font-size: clamp(1rem, 2.5vw, 1.2rem);
   font-weight: 800;
@@ -619,10 +637,10 @@ button {
   color: #1a1030;
   background: linear-gradient(135deg, #f0d080, #e09040);
   border: none;
-  border-radius: 999px;
+  border-radius: 14px;
   cursor: pointer;
   box-shadow: 0 4px 24px rgba(196, 120, 64, 0.45);
-  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  transition: all 0.3s ease;
   letter-spacing: 0.04em;
 }
 
@@ -645,48 +663,86 @@ button {
 }
 
 #start-game-btn {
-  background-color: white;
+  flex: 0 0 100%;
+  width: min(82vw, 340px);
+  background-color: rgba(255, 255, 255, 0.92);
   background-image: none;
-  color: black;
-  padding: 14px 35px;
-  font-size: 1.2rem;
+  color: #140e24;
+  padding: 16px 42px;
+  font-size: clamp(1.15rem, 3vw, 1.35rem);
   font-weight: bold;
-  border: 2px solid white;
-  border-radius: 4px;
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
   text-transform: uppercase;
   letter-spacing: 2px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+  box-shadow:
+    0 0 20px rgba(255, 255, 255, 0.22),
+    0 10px 34px rgba(0, 0, 0, 0.28);
 }
 
 #start-game-btn:hover {
-  background-color: transparent;
+  background-color: rgba(255, 255, 255, 0.08);
   color: white;
-  box-shadow: 0 0 25px rgba(255, 255, 255, 0.6);
+  transform: translateY(-3px) scale(1.035);
+  box-shadow:
+    0 0 30px rgba(255, 255, 255, 0.42),
+    0 14px 38px rgba(0, 0, 0, 0.32);
   filter: none;
 }
 
 #start-chapters-btn {
-  background-color: transparent;
-  color: rgba(255, 255, 255, 0.7);
-  padding: 10px 25px;
-  font-size: 1rem;
-  font-weight: normal;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  border-radius: 4px;
+  flex: 0 0 100%;
+  width: min(74vw, 280px);
+  background-color: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.86);
+  padding: 12px 28px;
+  font-size: clamp(0.95rem, 2.4vw, 1.05rem);
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 12px;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 1.4px;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: 10px;
+  margin-top: 0.15rem;
   box-shadow: none;
 }
 
 #start-chapters-btn:hover {
   color: white;
-  border-color: white;
-  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(240, 208, 128, 0.55);
+  background-color: rgba(240, 208, 128, 0.13);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
+  filter: none;
+}
+
+#start-options-btn,
+#start-credits-btn {
+  flex: 0 1 130px;
+  min-width: 120px;
+  margin-top: 0.55rem;
+  padding: 9px 16px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.68);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 10px;
+  box-shadow: none;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  transition: all 0.3s ease;
+}
+
+#start-options-btn:hover,
+#start-credits-btn:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.48);
+  transform: translateY(-1px);
   box-shadow: none;
   filter: none;
 }
@@ -712,6 +768,86 @@ button {
   background: rgba(240, 208, 128, 0.18);
   border-color: rgba(240, 208, 128, 0.5);
   outline: none;
+}
+
+/* ── Options & Credits panels ─────────────────────────────────────── */
+.info-panel {
+  position: absolute;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background:
+    linear-gradient(160deg, rgba(20, 14, 40, 0.82) 0%, rgba(10, 8, 24, 0.92) 100%),
+    linear-gradient(135deg, #3a2d6e 0%, #6b4a9a 40%, #c47840 100%);
+}
+
+.info-panel[hidden] {
+  display: none !important;
+}
+
+.info-panel__content {
+  width: min(90vw, 460px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  text-align: center;
+  padding: clamp(1.75rem, 4vw, 2.5rem);
+  background: var(--dialogue-bg);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+}
+
+.info-panel__title {
+  font-size: clamp(1.6rem, 5vw, 2.4rem);
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.03em;
+  text-shadow: 0 0 30px rgba(196, 120, 64, 0.5);
+}
+
+.info-panel__text {
+  font-size: clamp(0.95rem, 2.4vw, 1.1rem);
+  line-height: 1.6;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.info-panel__credits {
+  list-style: none;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.info-panel__credits li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.info-panel__role {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.info-panel__name {
+  font-size: clamp(1.05rem, 2.6vw, 1.25rem);
+  font-weight: 800;
+  color: #f0d080;
 }
 
 /* ── Full-screen transition overlay ──────────────────────────────── */

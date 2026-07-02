@@ -9,7 +9,7 @@ const storyData = {
     id: "chapter_1_title",
     background: "black",
     speaker: "System",
-    text: "CHAPTER 1 - ANKUNFT (Day 1)",
+    text: "Chapter 1: Ankunft",
     lenaMood: "none",
     npcImage: "none",
     choices: [
@@ -269,7 +269,109 @@ const storyData = {
     lenaMood: "none",
     npcImage: "none",
     choices: [
-      { text: "Start Chapter", nextNode: "main_menu" },
+      { text: "Start Chapter", nextNode: "ch2_reception_greet" },
+    ],
+  },
+
+  // ── Chapter 2: The Reception ──────────────────────────────────────────────
+
+  ch2_reception_greet: {
+    id: "ch2_reception_greet",
+    background: "hotel_lobby.jpg",
+    speaker: "Rezeptionistin",
+    text: "Guten Tag! Herzlich willkommen im Hotel Kaiser. Haben Sie eine Reservierung?",
+    lenaMood: "normal",
+    npcImage: "receptionist_neutral.png",
+    choices: [
+      { text: "Hallo! Ich bin Lena. Ich brauche jetzt meinen Zimmerschlüssel.", nextNode: "ch2_greet_wrong_rude" },
+      { text: "Guten Tag. Ja, ich habe ein Zimmer auf den Namen Lena Wegner reserviert.", nextNode: "ch2_reception_id" },
+      { text: "Guten Tag. Ja, ich habe eine Reservierung, weil ich möchte hier schlafen.", nextNode: "ch2_greet_wrong_grammar" },
+    ],
+  },
+
+  ch2_greet_wrong_rude: {
+    id: "ch2_greet_wrong_rude",
+    background: "hotel_lobby.jpg",
+    speaker: "Rezeptionistin",
+    text: "Ah... Guten Tag. Einen Moment bitte, ich muss zuerst Ihre Reservierung im System suchen...",
+    lenaMood: "unsure",
+    npcImage: "receptionist_confused.png",
+    choices: [
+      { text: "Try again", nextNode: "ch2_reception_greet" },
+    ],
+  },
+
+  ch2_greet_wrong_grammar: {
+    id: "ch2_greet_wrong_grammar",
+    background: "hotel_lobby.jpg",
+    speaker: "Rezeptionistin",
+    text: "Bitte? Ah, Sie haben eine Reservierung. Wie je Ihr Name?",
+    lenaMood: "unsure",
+    npcImage: "receptionist_confused.png",
+    choices: [
+      { text: "Try again", nextNode: "ch2_reception_greet" },
+    ],
+  },
+
+  ch2_reception_id: {
+    id: "ch2_reception_id",
+    background: "hotel_lobby.jpg",
+    speaker: "Rezeptionistin",
+    text: "Ah, ja, Lena Wegner, ich sehe es hier im System. Perfekt. Ich brauche jetzt noch Ihren Ausweis, bitte.",
+    lenaMood: "normal",
+    npcImage: "receptionist_neutral.png",
+    choices: [
+      { text: "[Tell her my phone number]", nextNode: "ch2_id_wrong_phone" },
+      { text: "[Hand her my ID card]", nextNode: "ch2_id_correct" },
+      { text: "[Repeat my full name clearly]", nextNode: "ch2_id_wrong_name" },
+    ],
+  },
+
+  ch2_id_correct: {
+    id: "ch2_id_correct",
+    background: "hotel_lobby.jpg",
+    speaker: "Lena",
+    text: "Hier, bitte schön.",
+    lenaMood: "normal",
+    npcImage: "receptionist_neutral.png",
+    choices: [
+      { text: "Continue", nextNode: "ch2_form_placeholder" },
+    ],
+  },
+
+  ch2_id_wrong_phone: {
+    id: "ch2_id_wrong_phone",
+    background: "hotel_lobby.jpg",
+    speaker: "Rezeptionistin",
+    text: "Entschuldigung? Nein, Ihre Telefonnummer brauche ich jetzt nicht. Ich muss Ihre Identität prüfen. Haben Sie einen Ausweis?",
+    lenaMood: "unsure",
+    npcImage: "receptionist_confused.png",
+    choices: [
+      { text: "Try again", nextNode: "ch2_reception_id" },
+    ],
+  },
+
+  ch2_id_wrong_name: {
+    id: "ch2_id_wrong_name",
+    background: "hotel_lobby.jpg",
+    speaker: "Rezeptionistin",
+    text: "Ja, das weiß ich bereits, Frau Wegner. Aber ich brauche ein offizielles Dokument von Ihnen.",
+    lenaMood: "unsure",
+    npcImage: "receptionist_confused.png",
+    choices: [
+      { text: "Try again", nextNode: "ch2_reception_id" },
+    ],
+  },
+
+  ch2_form_placeholder: {
+    id: "ch2_form_placeholder",
+    background: "hotel_lobby.jpg",
+    speaker: "System",
+    text: "[Minihra s formulářem se spustí zde]",
+    lenaMood: "none",
+    npcImage: "none",
+    choices: [
+      { text: "Back to Main Menu", nextNode: "main_menu" },
     ],
   },
 };

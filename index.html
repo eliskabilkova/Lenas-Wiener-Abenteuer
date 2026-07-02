@@ -19,13 +19,36 @@
         <div id="start-main-actions" class="start-menu__actions">
           <button type="button" id="start-game-btn" class="start-menu__btn">Start Game</button>
           <button type="button" id="start-chapters-btn" class="start-menu__btn start-menu__btn--secondary">Select Chapter</button>
+          <button type="button" id="start-options-btn" class="start-menu__btn start-menu__btn--secondary">Options</button>
+          <button type="button" id="start-credits-btn" class="start-menu__btn start-menu__btn--secondary">Credits</button>
         </div>
 
         <div id="start-chapters-selection" class="start-chapters-selection" hidden>
           <button type="button" class="start-chapter-select-btn" data-chapter-node="chapter_1_title">Chapter 1: Ankunft</button>
-          <button type="button" class="start-chapter-select-btn" data-chapter-node="chapter_2_teaser">Chapter 2: Check-in</button>
+          <button type="button" class="start-chapter-select-btn" data-chapter-node="ch2_reception_greet">Chapter 2: Check-in</button>
           <button type="button" id="start-chapters-back-btn" class="start-menu__btn start-menu__btn--secondary">Back</button>
         </div>
+      </div>
+    </div>
+
+    <!-- Options panel -->
+    <div id="options-panel" class="info-panel" hidden>
+      <div class="info-panel__content">
+        <h2 class="info-panel__title">Options</h2>
+        <p class="info-panel__text">Settings are coming soon. Stay tuned for sound, text speed, and language options!</p>
+        <button type="button" id="options-back-btn" class="start-menu__btn start-menu__btn--secondary">Back</button>
+      </div>
+    </div>
+
+    <!-- Credits panel -->
+    <div id="credits-panel" class="info-panel" hidden>
+      <div class="info-panel__content">
+        <h2 class="info-panel__title">Credits</h2>
+        <ul class="info-panel__credits">
+          <li><span class="info-panel__role">Story &amp; Code</span><span class="info-panel__name">Eliška</span></li>
+          <li><span class="info-panel__role">Graphics</span><span class="info-panel__name">Midjourney AI</span></li>
+        </ul>
+        <button type="button" id="credits-back-btn" class="start-menu__btn start-menu__btn--secondary">Back</button>
       </div>
     </div>
 
@@ -70,14 +93,8 @@
         <h2>Menu</h2>
         <div class="menu-panel__main-actions" id="menu-main-actions">
           <button type="button" class="menu-panel__action" id="restart-btn">Restart Chapter</button>
-          <button type="button" class="menu-panel__action" id="chapters-menu-btn">Chapters</button>
+          <button type="button" class="menu-panel__action" id="start-menu-from-game-btn">Start Menu</button>
           <button type="button" class="menu-panel__action" id="close-menu-btn">Close</button>
-        </div>
-
-        <div class="chapters-selection-list" id="chapters-selection-list" hidden>
-          <button type="button" class="chapter-select-btn" data-chapter-node="chapter_1_title">Chapter 1: Ankunft</button>
-          <button type="button" class="chapter-select-btn" data-chapter-node="chapter_2_teaser">Chapter 2: Check-in</button>
-          <button type="button" class="menu-panel__action" id="chapters-back-btn">Back</button>
         </div>
       </div>
     </aside>

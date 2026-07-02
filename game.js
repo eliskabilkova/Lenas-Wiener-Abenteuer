@@ -12,7 +12,7 @@ let gameState = {
   "use strict";
 
   const START_NODE = "chapter_1_title";
-  const TYPE_SPEED = 28;
+  const TYPE_SPEED = 24;
 
   function resetGameState() {
     gameState.transport = null;
@@ -34,12 +34,21 @@ let gameState = {
     "old_man_neutral.png": { visible: true, character: "elder", name: "Viennese Man", mood: "neutral" },
     "old_man_confused.png": { visible: true, character: "elder", name: "Viennese Man", mood: "neutral" },
     "old_man_friendly.png": { visible: true, character: "elder", name: "Viennese Man", mood: "happy" },
+    "receptionist_neutral.png": { visible: true, character: "mira", name: "Rezeptionistin", mood: "neutral" },
+    "receptionist_confused.png": { visible: true, character: "mira", name: "Rezeptionistin", mood: "neutral" },
   };
 
   const LENA_MOOD_MAP = {
     normal: "neutral",
     unsure: "thoughtful",
     none: "neutral",
+  };
+
+  const REPLAY_CHOICES_FROM_NODE = {
+    ch2_greet_wrong_rude: "ch2_reception_greet",
+    ch2_greet_wrong_grammar: "ch2_reception_greet",
+    ch2_id_wrong_phone: "ch2_reception_id",
+    ch2_id_wrong_name: "ch2_reception_id",
   };
 
   const els = {
@@ -51,6 +60,12 @@ let gameState = {
     startChaptersSelection: document.getElementById("start-chapters-selection"),
     startChaptersBackBtn: document.getElementById("start-chapters-back-btn"),
     startChapterSelectButtons: Array.from(document.querySelectorAll(".start-chapter-select-btn")),
+    startOptionsBtn: document.getElementById("start-options-btn"),
+    startCreditsBtn: document.getElementById("start-credits-btn"),
+    optionsPanel: document.getElementById("options-panel"),
+    optionsBackBtn: document.getElementById("options-back-btn"),
+    creditsPanel: document.getElementById("credits-panel"),
+    creditsBackBtn: document.getElementById("credits-back-btn"),
     chapterLabel: document.getElementById("chapter-label"),
     npcContainer: document.getElementById("npc-container"),
     npcSprite: document.getElementById("npc-sprite"),
@@ -66,11 +81,8 @@ let gameState = {
     menuBtn: document.getElementById("menu-btn"),
     menuPanel: document.getElementById("menu-panel"),
     menuMainActions: document.getElementById("menu-main-actions"),
-    chaptersMenuBtn: document.getElementById("chapters-menu-btn"),
-    chaptersSelectionList: document.getElementById("chapters-selection-list"),
-    chaptersBackBtn: document.getElementById("chapters-back-btn"),
-    chapterSelectButtons: Array.from(document.querySelectorAll(".chapter-select-btn")),
     restartBtn: document.getElementById("restart-btn"),
+    startMenuFromGameBtn: document.getElementById("start-menu-from-game-btn"),
     closeMenuBtn: document.getElementById("close-menu-btn"),
   };
 
@@ -119,7 +131,7 @@ let gameState = {
 
     const speaker = node.speaker || "";
     const isLena = speaker.includes("Lena");
-    const isNpc = npc.visible && speaker === "Viennese Man";
+    const isNpc = npc.visible && !isLena;
 
     els.lenaContainer.classList.toggle("is-speaking", isLena);
     els.lenaContainer.classList.toggle("is-dimmed", isNpc);
@@ -155,37 +167,66 @@ let gameState = {
     });
   }
 
+  function getChoicesForCurrentNode(node) {
+    const replaySourceNodeId = REPLAY_CHOICES_FROM_NODE[node.id];
+    if (replaySourceNodeId) {
+      return storyData[replaySourceNodeId]?.choices || [];
+    }
+
+    return node.choices || [];
+  }
+
+  function applyTextFadeIn() {
+    els.dialogueText.classList.remove("text-fade-in");
+    // Force reflow so the animation restarts every time a new node renders.
+    void els.dialogueText.offsetWidth;
+    els.dialogueText.classList.add("text-fade-in");
+  }
+
   function finishTyping() {
     clearTypeTimer();
     state.typing = false;
     els.dialogueText.textContent = state.fullText;
-    els.dialogueText.classList.remove("is-typing");
 
     const node = getNode();
-    if (node.choices?.length) {
-      showChoices(node.choices);
+    const choices = getChoicesForCurrentNode(node);
+    if (choices.length) {
+      showChoices(choices);
     } else {
       els.advanceHint.classList.remove("is-hidden");
     }
   }
 
-  function typeDialogue(text) {
+  function startTypewriter(text) {
     clearTypeTimer();
-    hideChoices();
     state.fullText = text;
     state.typing = true;
     els.dialogueText.textContent = "";
-    els.dialogueText.classList.add("is-typing");
-    els.advanceHint.classList.add("is-hidden");
+    els.advanceHint.classList.remove("is-hidden");
 
     let index = 0;
     state.typeTimer = setInterval(() => {
       index += 1;
       els.dialogueText.textContent = text.slice(0, index);
+
       if (index >= text.length) {
         finishTyping();
       }
     }, TYPE_SPEED);
+  }
+
+  function renderDialogue(node) {
+    hideChoices();
+    applyTextFadeIn();
+
+    const speaker = node.speaker || "";
+    const isInternalMonologue = speaker.includes("Internal Monologue");
+
+    els.dialogueText.classList.toggle("internal-thought", isInternalMonologue);
+    els.speakerName.classList.remove("is-hidden");
+    els.speakerName.textContent = isInternalMonologue ? "Lena" : speaker || "???";
+
+    startTypewriter(node.text);
   }
 
   // ── Black-screen transition ───────────────────────────────────────────────
@@ -202,6 +243,7 @@ let gameState = {
   function showBlackScreen(node) {
     // Hide the normal game UI so nothing bleeds through.
     clearTypeTimer();
+    state.typing = false;
     hideChoices();
     els.dialogueBox.hidden = true;
     els.npcContainer.classList.add("is-hidden");
@@ -218,8 +260,14 @@ let gameState = {
     overlay.id = "black-screen-overlay";
     overlay.className = "full-black-screen";
 
+    if (isChapterTitleNode(node)) {
+      overlay.addEventListener("click", () => {
+        advanceBlackScreenChoice(node.choices?.[0]);
+      });
+    }
+
     const message = document.createElement("p");
-    message.textContent = node.text;
+    message.textContent = getBlackScreenTitleText(node);
     if (node.id === "chapter_1_title" || node.id === "chapter_2_teaser") {
       message.style.fontWeight = "800";
       message.style.fontSize = "clamp(2rem, 7vw, 4rem)";
@@ -233,10 +281,9 @@ let gameState = {
     (node.choices || []).forEach((choice) => {
       const btn = document.createElement("button");
       btn.textContent = choice.text;
-      btn.addEventListener("click", () => {
-        recordAnswer(choice.text, choice.nextNode);
-        removeBlackScreen();
-        routeToNode(choice.nextNode);
+      btn.addEventListener("click", (event) => {
+        event.stopPropagation();
+        advanceBlackScreenChoice(choice);
       });
       overlay.appendChild(btn);
     });
@@ -244,8 +291,29 @@ let gameState = {
     els.game.appendChild(overlay);
   }
 
+  function isChapterTitleNode(node) {
+    return node?.id === "chapter_1_title" || node?.id === "chapter_2_teaser";
+  }
+
+  function getBlackScreenTitleText(node) {
+    if (node.id === "chapter_2_teaser") {
+      return "Chapter 2: Check-in";
+    }
+
+    return node.text;
+  }
+
+  function advanceBlackScreenChoice(choice) {
+    if (!choice) return;
+
+    recordAnswer(choice.text, choice.nextNode);
+    removeBlackScreen();
+    routeToNode(choice.nextNode);
+  }
+
   function showEndChapterScreen() {
     clearTypeTimer();
+    state.typing = false;
     hideChoices();
     els.dialogueBox.hidden = true;
     els.npcContainer.classList.add("is-hidden");
@@ -302,8 +370,7 @@ let gameState = {
 
     setBackground(node.background);
     updateCharacters(node);
-    els.speakerName.textContent = node.speaker || "???";
-    typeDialogue(node.text);
+    renderDialogue(node);
   }
 
   function advanceBeat() {
@@ -427,29 +494,74 @@ let gameState = {
 
   function showMainMenuActions() {
     els.menuMainActions.hidden = false;
-    els.chaptersSelectionList.hidden = true;
   }
 
-  function showChaptersSelection() {
-    els.menuMainActions.hidden = true;
-    els.chaptersSelectionList.hidden = false;
+  function showStartMenuOnly() {
+    els.startMainActions.hidden = true;
+    els.startChaptersSelection.hidden = true;
+  }
+
+  function openOptionsPanel() {
+    showStartMenuOnly();
+    els.optionsPanel.hidden = false;
+  }
+
+  function closeOptionsPanel() {
+    els.optionsPanel.hidden = true;
+    showStartMainActions();
+  }
+
+  function openCreditsPanel() {
+    showStartMenuOnly();
+    els.creditsPanel.hidden = false;
+  }
+
+  function closeCreditsPanel() {
+    els.creditsPanel.hidden = true;
+    showStartMainActions();
+  }
+
+  function returnToStartMenu() {
+    clearTypeTimer();
+    state.typing = false;
+    resetGameState();
+    closeMenu();
+    removeBlackScreen();
+    hideChoices();
+    showStartMainActions();
+
+    state.nodeId = START_NODE;
+    els.chapterLabel.textContent = "Chapter 1 - Ankunft";
+    els.dialogueBox.hidden = true;
+    els.startMenu.hidden = false;
+    els.npcContainer.style.display = "none";
+    els.npcContainer.classList.add("is-hidden");
+    els.lenaContainer.classList.add("is-hidden");
+    els.dialogueText.textContent = "";
+    els.speakerName.textContent = "";
   }
 
   function jumpToChapter(nodeId) {
+    const targetNodeId = nodeId === "ch2_reception_greet" ? "chapter_2_teaser" : nodeId;
+
+    clearTypeTimer();
+    state.typing = false;
     closeMenu();
     els.startMenu.hidden = true;
     showStartMainActions();
     removeBlackScreen();
     hideChoices();
+    resetGameState();
+    els.dialogueText.textContent = "";
+    els.speakerName.textContent = "";
 
-    if (nodeId === "chapter_1_title") {
-      resetGameState();
+    if (targetNodeId === "chapter_1_title") {
       els.chapterLabel.textContent = "Chapter 1 - Ankunft";
-    } else if (nodeId === "chapter_2_teaser") {
+    } else if (targetNodeId === "chapter_2_teaser") {
       els.chapterLabel.textContent = "Chapter 2 - Check-in";
     }
 
-    goToNode(nodeId);
+    goToNode(targetNodeId);
   }
 
   function bindEvents() {
@@ -460,6 +572,14 @@ let gameState = {
 
     document.addEventListener("keydown", (event) => {
       if (event.code === "Space" || event.code === "Enter") {
+        const currentNode = getNode();
+        const blackScreenOverlay = document.getElementById("black-screen-overlay");
+        if (blackScreenOverlay && isChapterTitleNode(currentNode)) {
+          event.preventDefault();
+          advanceBlackScreenChoice(currentNode.choices?.[0]);
+          return;
+        }
+
         if (els.menuPanel.hidden) {
           event.preventDefault();
           advanceBeat();
@@ -480,15 +600,14 @@ let gameState = {
       });
     });
 
+    els.startOptionsBtn.addEventListener("click", openOptionsPanel);
+    els.optionsBackBtn.addEventListener("click", closeOptionsPanel);
+    els.startCreditsBtn.addEventListener("click", openCreditsPanel);
+    els.creditsBackBtn.addEventListener("click", closeCreditsPanel);
+
     els.menuBtn.addEventListener("click", openMenu);
     els.closeMenuBtn.addEventListener("click", closeMenu);
-    els.chaptersMenuBtn.addEventListener("click", showChaptersSelection);
-    els.chaptersBackBtn.addEventListener("click", showMainMenuActions);
-    els.chapterSelectButtons.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        jumpToChapter(btn.dataset.chapterNode);
-      });
-    });
+    els.startMenuFromGameBtn.addEventListener("click", returnToStartMenu);
 
     els.restartBtn.addEventListener("click", () => {
       closeMenu();
