@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lenas Wiener Abenteuer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="game" class="game" data-background="vienna_hauptbahnhof">
+
+    <!-- Start Menu — sits above everything until the player begins -->
+    <div id="start-menu" class="start-menu">
+      <div class="start-menu__content">
+        <h1 class="start-menu__title">Lenas Wiener<br>Abenteuer</h1>
+        <div id="start-main-actions" class="start-menu__actions">
+          <button type="button" id="start-game-btn" class="start-menu__btn">Start Game</button>
+          <button type="button" id="start-chapters-btn" class="start-menu__btn start-menu__btn--secondary">Select Chapter</button>
+        </div>
+
+        <div id="start-chapters-selection" class="start-chapters-selection" hidden>
+          <button type="button" class="start-chapter-select-btn" data-chapter-node="chapter_1_title">Chapter 1: Ankunft</button>
+          <button type="button" class="start-chapter-select-btn" data-chapter-node="chapter_2_teaser">Chapter 2: Check-in</button>
+          <button type="button" id="start-chapters-back-btn" class="start-menu__btn start-menu__btn--secondary">Back</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="game__overlay" aria-hidden="true"></div>
+
+    <header class="game__hud">
+      <p class="game__chapter" id="chapter-label">Chapter 1</p>
+      <button type="button" class="game__menu-btn" id="menu-btn" aria-label="Open menu">☰</button>
+    </header>
+
+    <main class="game__stage" aria-live="polite">
+      <figure class="character character--npc is-hidden" id="npc-container" aria-hidden="true">
+        <div class="character__sprite" id="npc-sprite" data-character="mira" data-mood="neutral"></div>
+        <figcaption class="character__label" id="npc-label">Viennese Man</figcaption>
+      </figure>
+
+      <figure class="character character--lena" id="lena-container">
+        <div class="character__sprite" id="lena-sprite" data-character="lena" data-mood="neutral"></div>
+        <figcaption class="character__label">Lena</figcaption>
+      </figure>
+    </main>
+
+    <footer class="dialogue" id="dialogue-box">
+      <div class="dialogue__inner">
+        <div class="dialogue__header">
+          <p class="dialogue__speaker" id="speaker-name">Lena</p>
+          <span class="dialogue__hint" id="advance-hint">Click or press Space to continue</span>
+        </div>
+
+        <p class="dialogue__text" id="dialogue-text"></p>
+
+        <div class="dialogue__choices" id="choices-container" hidden>
+          <button type="button" class="choice-btn" data-choice="0"></button>
+          <button type="button" class="choice-btn" data-choice="1"></button>
+          <button type="button" class="choice-btn" data-choice="2"></button>
+        </div>
+      </div>
+    </footer>
+
+    <aside class="menu-panel" id="menu-panel" hidden>
+      <div class="menu-panel__content">
+        <h2>Menu</h2>
+        <div class="menu-panel__main-actions" id="menu-main-actions">
+          <button type="button" class="menu-panel__action" id="restart-btn">Restart Chapter</button>
+          <button type="button" class="menu-panel__action" id="chapters-menu-btn">Chapters</button>
+          <button type="button" class="menu-panel__action" id="close-menu-btn">Close</button>
+        </div>
+
+        <div class="chapters-selection-list" id="chapters-selection-list" hidden>
+          <button type="button" class="chapter-select-btn" data-chapter-node="chapter_1_title">Chapter 1: Ankunft</button>
+          <button type="button" class="chapter-select-btn" data-chapter-node="chapter_2_teaser">Chapter 2: Check-in</button>
+          <button type="button" class="menu-panel__action" id="chapters-back-btn">Back</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script src="story.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
