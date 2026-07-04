@@ -88,6 +88,34 @@
       </div>
     </footer>
 
+    <!-- Meldezettel form mini-game overlay -->
+    <div id="meldezettel-overlay" class="meldezettel-overlay" hidden>
+      <div class="meldezettel">
+        <header class="meldezettel__head">
+          <h2 class="meldezettel__title">Meldezettel — Hotel Kaiser</h2>
+          <p class="meldezettel__subtitle">Anmeldeformular für Gäste</p>
+        </header>
+
+        <p class="meldezettel__message" id="meldezettel-message"></p>
+
+        <div class="meldezettel__body">
+          <section class="meldezettel__section meldezettel__section--form">
+            <h3 class="meldezettel__section-title">Formular</h3>
+            <div class="meldezettel__grid" id="meldezettel-grid"></div>
+          </section>
+
+          <section class="meldezettel__section meldezettel__section--pool">
+            <h3 class="meldezettel__section-title">Available Information</h3>
+            <div class="meldezettel__pool" id="meldezettel-pool"></div>
+          </section>
+        </div>
+
+        <footer class="meldezettel__footer">
+          <button type="button" class="meldezettel__submit" id="meldezettel-submit" disabled>Formular abgeben</button>
+        </footer>
+      </div>
+    </div>
+
     <aside class="menu-panel" id="menu-panel" hidden>
       <div class="menu-panel__content">
         <h2>Menu</h2>

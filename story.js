@@ -35,7 +35,7 @@ const storyData = {
     id: "train_intro_2",
     background: "train_interior.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "My German is still pretty basic, and honestly, I always get so nervous when I have to speak to real people. I just want to survive this week, find my hotel, and lose my fear of talking... Oh wait, the train is stopping!",
+    text: "Wegner. I only have this German last name because of my dad's family, but I never actually spoke the language growing up. I've always been too scared to even try. This trip to Vienna isn't going to magically make me fluent, but I want to finally break that fear, start using it actively, and experience Austria for real, standard textbooks aside. It's time to start.",
     lenaMood: "normal",
     npcImage: "none",
     choices: [
@@ -284,8 +284,8 @@ const storyData = {
     npcImage: "receptionist_neutral.png",
     choices: [
       { text: "Hallo! Ich bin Lena. Ich brauche jetzt meinen Zimmerschlüssel.", nextNode: "ch2_greet_wrong_rude" },
-      { text: "Guten Tag. Ja, ich habe ein Zimmer auf den Namen Lena Wegner reserviert.", nextNode: "ch2_reception_id" },
       { text: "Guten Tag. Ja, ich habe eine Reservierung, weil ich möchte hier schlafen.", nextNode: "ch2_greet_wrong_grammar" },
+      { text: "Guten Tag! Ich habe eine Reservierung auf den Namen Lena Wegner.", nextNode: "ch2_reception_id" },
     ],
   },
 
@@ -293,7 +293,7 @@ const storyData = {
     id: "ch2_greet_wrong_rude",
     background: "hotel_lobby.jpg",
     speaker: "Rezeptionistin",
-    text: "Ah... Guten Tag. Einen Moment bitte, ich muss zuerst Ihre Reservierung im System suchen...",
+    text: "Entschuldigung?! Ein bisschen Höflichkeit bitte... Wie war Ihr Name?",
     lenaMood: "unsure",
     npcImage: "receptionist_confused.png",
     choices: [
@@ -305,7 +305,7 @@ const storyData = {
     id: "ch2_greet_wrong_grammar",
     background: "hotel_lobby.jpg",
     speaker: "Rezeptionistin",
-    text: "Bitte? Ah, Sie haben eine Reservierung. Wie je Ihr Name?",
+    text: "Bitte? Ah, Sie haben eine Reservierung. Wie ist Ihr Name?",
     lenaMood: "unsure",
     npcImage: "receptionist_confused.png",
     choices: [
@@ -335,7 +335,7 @@ const storyData = {
     lenaMood: "normal",
     npcImage: "receptionist_neutral.png",
     choices: [
-      { text: "Continue", nextNode: "ch2_form_placeholder" },
+      { text: "Continue", nextNode: "ch2_meldezettel" },
     ],
   },
 
@@ -363,15 +363,27 @@ const storyData = {
     ],
   },
 
-  ch2_form_placeholder: {
-    id: "ch2_form_placeholder",
+  // ── Chapter 2: The Meldezettel form mini-game ─────────────────────────────
+
+  ch2_meldezettel: {
+    id: "ch2_meldezettel",
     background: "hotel_lobby.jpg",
-    speaker: "System",
-    text: "[Minihra s formulářem se spustí zde]",
+    speaker: "Rezeptionistin",
+    text: "Gut. Bitte füllen Sie jetzt den Meldezettel vollständig aus.",
     lenaMood: "none",
     npcImage: "none",
+    choices: [],
+  },
+
+  ch2_meldezettel_success: {
+    id: "ch2_meldezettel_success",
+    background: "hotel_lobby.jpg",
+    speaker: "Rezeptionistin",
+    text: "Danke, das ist perfekt. Hier ist Ihr Zimmerschlüssel!",
+    lenaMood: "normal",
+    npcImage: "receptionist_neutral.png",
     choices: [
-      { text: "Back to Main Menu", nextNode: "main_menu" },
+      { text: "Continue", nextNode: "end_chapter_2" },
     ],
   },
 };
