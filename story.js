@@ -35,7 +35,7 @@ const storyData = {
     id: "train_intro_2",
     background: "train_interior.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "Wegner. I only have this German last name because of my dad's family, but I never actually spoke the language growing up. I've always been too scared to even try. This trip to Vienna isn't going to magically make me fluent, but I want to finally break that fear, start using it actively, and experience Austria for real, standard textbooks aside. It's time to start.",
+    text: "I've spent years studying German in school back in Prague, but whenever I'm supposed to actually speak, I completely freeze. I'm so tired of being scared. This trip to Vienna isn't about becoming a fluent expert overnight—it's about finally breaking that barrier, stepping out of my comfort zone, and proving to myself that I can survive in a German-speaking city. It's time to start.",
     lenaMood: "normal",
     npcImage: "none",
     choices: [
@@ -49,7 +49,19 @@ const storyData = {
     id: "start",
     background: "vienna_hauptbahnhof.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "Here I am, Vienna Hauptbahnhof! It's huge... Okay, let me check the map to my hotel on my phone... Oh no! My phone is completely dead! It won't turn on... How am I going to find my hotel now? I need to ask someone for directions.",
+    text: "Here I am, Vienna Hauptbahnhof! It's huge... Okay, let me check the map to my hotel on my phone...",
+    lenaMood: "unsure",
+    npcImage: "none",
+    choices: [
+      { text: "Open Map on Phone", nextNode: "start_phone_dead" },
+    ],
+  },
+
+  start_phone_dead: {
+    id: "start_phone_dead",
+    background: "vienna_hauptbahnhof.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Oh no! My phone is completely dead! It won't turn on... How am I going to find my hotel now? I need to ask someone for directions.",
     lenaMood: "unsure",
     npcImage: "none",
     choices: [
@@ -78,9 +90,7 @@ const storyData = {
     text: "Na bumm... Ein bisschen höflicher bitte, junge Dame! Wie kann ich helfen?",
     lenaMood: "unsure",
     npcImage: "old_man_confused.png",
-    choices: [
-      { text: "Try again", nextNode: "start_see_man" },
-    ],
+    choices: [],
   },
 
   wrong_grammar: {
@@ -90,9 +100,7 @@ const storyData = {
     text: "Wie bitte? Ich habe dich nicht ganz verstanden. Was suchst du?",
     lenaMood: "unsure",
     npcImage: "old_man_confused.png",
-    choices: [
-      { text: "Try again", nextNode: "start_see_man" },
-    ],
+    choices: [],
   },
 
   correct_ask: {
@@ -285,7 +293,7 @@ const storyData = {
     choices: [
       { text: "Hallo! Ich bin Lena. Ich brauche jetzt meinen Zimmerschlüssel.", nextNode: "ch2_greet_wrong_rude" },
       { text: "Guten Tag. Ja, ich habe eine Reservierung, weil ich möchte hier schlafen.", nextNode: "ch2_greet_wrong_grammar" },
-      { text: "Guten Tag! Ich habe eine Reservierung auf den Namen Lena Wegner.", nextNode: "ch2_reception_id" },
+      { text: "Guten Tag! Ich habe eine Reservierung auf den Namen Lena Majerová.", nextNode: "ch2_reception_id" },
     ],
   },
 
@@ -317,7 +325,7 @@ const storyData = {
     id: "ch2_reception_id",
     background: "hotel_lobby.jpg",
     speaker: "Rezeptionistin",
-    text: "Ah, ja, Lena Wegner, ich sehe es hier im System. Perfekt. Ich brauche jetzt noch Ihren Ausweis, bitte.",
+    text: "Ah, ja, Lena Majerová, ich sehe es hier im System. Perfekt. Ich brauche jetzt noch Ihren Ausweis, bitte.",
     lenaMood: "normal",
     npcImage: "receptionist_neutral.png",
     choices: [
@@ -330,8 +338,8 @@ const storyData = {
   ch2_id_correct: {
     id: "ch2_id_correct",
     background: "hotel_lobby.jpg",
-    speaker: "Lena",
-    text: "Hier, bitte schön.",
+    speaker: "Rezeptionistin",
+    text: "Perfekt, danke! Ah, Frau Majerová – oder einfach Frau Majer, wie man hier in Wien sagen würde. Herzlich willkommen! Wenn Sie mir dann kurz diesen Meldezettel ausfüllen?",
     lenaMood: "normal",
     npcImage: "receptionist_neutral.png",
     choices: [
@@ -355,7 +363,7 @@ const storyData = {
     id: "ch2_id_wrong_name",
     background: "hotel_lobby.jpg",
     speaker: "Rezeptionistin",
-    text: "Ja, das weiß ich bereits, Frau Wegner. Aber ich brauche ein offizielles Dokument von Ihnen.",
+    text: "Ja, das weiß ich bereits, Frau Majerová. Aber ich brauche ein offizielles Dokument von Ihnen.",
     lenaMood: "unsure",
     npcImage: "receptionist_confused.png",
     choices: [

@@ -1,7 +1,11 @@
 let gameState = {
   transport: null, // will store 'correct' or 'wrong'
   stop: null,      // will store 'correct' or 'wrong'
-  house: null      // will store 'correct' or 'wrong'
+  house: null,     // will store 'correct' or 'wrong'
+  stationMistake: false,
+  arrivedLate: false,
+  receptionistMistake: false,
+  meldezettelMistakes: 0
 };
 
 /**
@@ -13,11 +17,17 @@ let gameState = {
 
   const START_NODE = "chapter_1_title";
   const TYPE_SPEED = 24;
+  const TOTAL_CHAPTERS = 2;
+  const PROGRESS_STORAGE_KEY = "lenasWienerAbenteuer.progress";
 
   function resetGameState() {
     gameState.transport = null;
     gameState.stop = null;
     gameState.house = null;
+    gameState.stationMistake = false;
+    gameState.arrivedLate = false;
+    gameState.receptionistMistake = false;
+    gameState.meldezettelMistakes = 0;
   }
 
   const BACKGROUND_MAP = {
@@ -45,6 +55,8 @@ let gameState = {
   };
 
   const REPLAY_CHOICES_FROM_NODE = {
+    wrong_rude: "start_see_man",
+    wrong_grammar: "start_see_man",
     ch2_greet_wrong_rude: "ch2_reception_greet",
     ch2_greet_wrong_grammar: "ch2_reception_greet",
     ch2_id_wrong_phone: "ch2_reception_id",
@@ -56,9 +68,10 @@ let gameState = {
 
   const MELDEZETTEL_FIELDS = [
     { id: "vorname", label: "Vorname", answer: "Lena" },
-    { id: "nachname", label: "Nachname", answer: "Wegner" },
+    { id: "nachname", label: "Nachname", answer: "Majerová" },
     { id: "geburtsdatum", label: "Geburtsdatum", answer: "12. 04. 2008" },
-    { id: "adresse", label: "Wohnort / Adresse", answer: "Vodičkova 30, Praha 1" },
+    { id: "strasse", label: "Strasse/Hnr", answer: "Na Cikorce 2166/2b" },
+    { id: "plz_ort", label: "PLZ / Ort", answer: "143 00 Praha 12" },
     { id: "staatsangehoerigkeit", label: "Staatsangehörigkeit", answer: "tschechisch" },
     { id: "ausweisnummer", label: "Ausweisnummer", answer: "L03X9921B" },
     { id: "ankunftsdatum", label: "Ankunftsdatum", answer: "15. 07. 2027" },
@@ -79,6 +92,16 @@ let gameState = {
   };
 
   const FOLLOW_UP_BEFORE_REPLAY = {
+    wrong_rude: {
+      speaker: "Lena (Internal Monologue)",
+      text: "Oh, I should be more polite. Let me try that again...",
+      replayChoicesFrom: "start_see_man",
+    },
+    wrong_grammar: {
+      speaker: "Lena (Internal Monologue)",
+      text: "That did not sound right. I need to make the sentence clearer and try again...",
+      replayChoicesFrom: "start_see_man",
+    },
     ch2_greet_wrong_rude: {
       speaker: "Lena",
       text: "Entschuldigung, ich war unhöflich. Ich versuche es noch einmal...",
@@ -129,6 +152,8 @@ let gameState = {
     meldezettelGrid: document.getElementById("meldezettel-grid"),
     meldezettelPool: document.getElementById("meldezettel-pool"),
     meldezettelSubmitBtn: document.getElementById("meldezettel-submit"),
+    meldezettelDevSuccessBtn: document.getElementById("meldezettel-dev-success"),
+    meldezettelDevFailBtn: document.getElementById("meldezettel-dev-fail"),
   };
 
   const state = {
@@ -270,9 +295,12 @@ let gameState = {
     hideChoices();
     applyTextFadeIn();
 
-    els.dialogueText.classList.remove("internal-thought");
+    const speaker = followUp.speaker || "Lena";
+    const isInternalMonologue = speaker.includes("Internal Monologue");
+
+    els.dialogueText.classList.toggle("internal-thought", isInternalMonologue);
     els.speakerName.classList.remove("is-hidden");
-    els.speakerName.textContent = followUp.speaker || "Lena";
+    els.speakerName.textContent = isInternalMonologue ? "Lena" : speaker;
 
     startTypewriter(followUp.text);
   }
@@ -391,46 +419,144 @@ let gameState = {
     routeToNode(choice.nextNode);
   }
 
-  function showEndChapterScreen(chapterLabel) {
+  const TAGEBUCH_CONTENT = {
+    1: {
+      success: {
+        photo: "photo-c1-a.png",
+        alt: "Lena smiling at Vienna Hauptbahnhof",
+        text: "I made it to Vienna! The train ride was smooth, and speaking German with the local guy at the station went surprisingly well. I easily found my way to the hotel on time without getting lost. A perfect start!",
+      },
+      challenge: {
+        photo: "photo-c1-b.png",
+        alt: "Lena looking lost near the station",
+        text: "Phew, Chapter 1 in Vienna was pretty stressful. My conversation at the station was clumsy, and then I got completely lost looking for the hotel because my phone died. Arriving late wasn't great, but I'm here now and won't give up.",
+      },
+    },
+    2: {
+      success: {
+        photo: "photo-c2-a.png",
+        alt: "Lena smiling at the hotel reception",
+        text: "Checking into the hotel was a breeze! I understood the receptionist perfectly, and filling out the Meldezettel form felt natural. I'm really starting to feel more confident speaking German here.",
+      },
+      challenge: {
+        photo: "photo-c2-b.png",
+        alt: "Lena looking overwhelmed at the hotel reception",
+        text: "The hotel check-in felt like a linguistic obstacle course. I panicked during the conversation and made quite a few silly mistakes while filling out the official registration form. Tomorrow is a new chance to improve.",
+      },
+    },
+  };
+
+  function removeTagebuchScreen() {
+    const existing = document.getElementById("tagebuch-screen");
+    if (existing) existing.remove();
+  }
+
+  function getChapterStrikeCount(chapterNumber) {
+    if (chapterNumber === 2) {
+      return [gameState.receptionistMistake, gameState.meldezettelMistakes >= 3].filter(Boolean).length;
+    }
+
+    return [gameState.stationMistake, gameState.arrivedLate].filter(Boolean).length;
+  }
+
+  function getTagebuchVariant(chapterNumber, strikes) {
+    const content = TAGEBUCH_CONTENT[chapterNumber] || TAGEBUCH_CONTENT[1];
+    const isChallenging = strikes > 0;
+
+    return {
+      ...(isChallenging ? content.challenge : content.success),
+      label: isChallenging ? "Challenging Day" : "Successful Day",
+    };
+  }
+
+  function saveChapterProgress(chapterNumber, strikes) {
+    try {
+      const raw = localStorage.getItem(PROGRESS_STORAGE_KEY);
+      const progress = raw ? JSON.parse(raw) : {};
+      progress[`chapter${chapterNumber}`] = {
+        strikes,
+        completedAt: new Date().toISOString(),
+      };
+      progress.lastCompletedChapter = chapterNumber;
+      localStorage.setItem(PROGRESS_STORAGE_KEY, JSON.stringify(progress));
+    } catch (error) {
+      console.warn("Unable to save Tagebuch progress:", error);
+    }
+  }
+
+  function goToNextChapterOrMenu(completedChapter) {
+    removeTagebuchScreen();
+    resetGameState();
+
+    if (completedChapter < TOTAL_CHAPTERS) {
+      els.chapterLabel.textContent = "Chapter 2 - Check-in";
+      goToNode("chapter_2_teaser");
+      return;
+    }
+
+    showStartMainActions();
+    els.startMenu.hidden = false;
+    els.dialogueBox.hidden = true;
+    els.npcContainer.style.display = "none";
+    els.npcContainer.classList.add("is-hidden");
+    els.lenaContainer.classList.add("is-hidden");
+  }
+
+  function showTagebuchScreen(chapterNumber) {
     clearTypeTimer();
     state.typing = false;
     hideChoices();
+    removeBlackScreen();
+    closeMeldezettelGame();
+    removeTagebuchScreen();
+
     els.dialogueBox.hidden = true;
+    els.npcContainer.style.display = "none";
     els.npcContainer.classList.add("is-hidden");
     els.lenaContainer.classList.add("is-hidden");
 
-    removeBlackScreen();
-    els.dialogueBox.hidden = true;
+    const strikes = getChapterStrikeCount(chapterNumber);
+    const variant = getTagebuchVariant(chapterNumber, strikes);
 
     const overlay = document.createElement("div");
-    overlay.id = "black-screen-overlay";
-    overlay.className = "full-black-screen";
+    overlay.id = "tagebuch-screen";
+    overlay.className = "tagebuch-screen";
+
+    const card = document.createElement("article");
+    card.className = "tagebuch-card";
 
     const title = document.createElement("p");
-    title.textContent = "Thanks for playing!";
-    title.style.fontWeight = "800";
-    title.style.fontSize = "clamp(2rem, 7vw, 4rem)";
-    title.style.textAlign = "center";
-    overlay.appendChild(title);
+    title.className = "tagebuch-card__eyebrow";
+    title.textContent = `Tagebuch — Chapter ${chapterNumber}`;
+    card.appendChild(title);
 
-    const subtitle = document.createElement("p");
-    subtitle.textContent = `${chapterLabel || "Chapter"} complete.`;
-    subtitle.style.fontSize = "clamp(1rem, 3vw, 1.5rem)";
-    subtitle.style.marginTop = "0.75rem";
-    subtitle.style.opacity = "0.8";
-    overlay.appendChild(subtitle);
+    const heading = document.createElement("h2");
+    heading.className = "tagebuch-card__title";
+    heading.textContent = variant.label;
+    card.appendChild(heading);
+
+    const photo = document.createElement("img");
+    photo.className = "tagebuch-card__photo";
+    photo.src = variant.photo;
+    photo.alt = variant.alt;
+    card.appendChild(photo);
+
+    const text = document.createElement("p");
+    text.className = "tagebuch-card__text";
+    text.textContent = variant.text;
+    card.appendChild(text);
 
     const btn = document.createElement("button");
-    btn.textContent = "Return to Main Menu";
+    btn.type = "button";
+    btn.className = "tagebuch-card__button";
+    btn.textContent = chapterNumber < TOTAL_CHAPTERS ? "Next" : "Finish";
     btn.addEventListener("click", () => {
-      removeBlackScreen();
-      els.startMenu.hidden = false;
-      els.dialogueBox.hidden = true;
-      els.npcContainer.style.display = "none";
-      els.npcContainer.classList.add("is-hidden");
+      saveChapterProgress(chapterNumber, strikes);
+      goToNextChapterOrMenu(chapterNumber);
     });
-    overlay.appendChild(btn);
+    card.appendChild(btn);
 
+    overlay.appendChild(card);
     els.game.appendChild(overlay);
   }
 
@@ -621,6 +747,8 @@ let gameState = {
     });
 
     els.meldezettelSubmitBtn.addEventListener("click", handleMeldezettelSubmit);
+    els.meldezettelDevSuccessBtn?.addEventListener("click", () => skipMeldezettelForDev(0));
+    els.meldezettelDevFailBtn?.addEventListener("click", () => skipMeldezettelForDev(3));
   }
 
   function handleMeldezettelSubmit() {
@@ -628,6 +756,7 @@ let gameState = {
     if (!areAllFieldsFilled()) return;
 
     let allCorrect = true;
+    let incorrectCount = 0;
 
     MELDEZETTEL_FIELDS.forEach((field) => {
       const card = getCardInField(field.id);
@@ -639,6 +768,7 @@ let gameState = {
       } else {
         meldezettel.fieldStatus[field.id] = "incorrect";
         allCorrect = false;
+        incorrectCount += 1;
         if (card) {
           card.locked = false;
           card.location = "pool";
@@ -658,11 +788,23 @@ let gameState = {
         goToNode(nextNodeId);
       }, 1500);
     } else {
+      gameState.meldezettelMistakes += incorrectCount;
       meldezettel.cards = shuffleArray(meldezettel.cards);
       meldezettel.message = "Entschuldigung, aber ich glaube, da ist ein Fehler im Formular. Bitte prüfen Sie das noch einmal.";
       meldezettel.messageType = "error";
       renderMeldezettel();
     }
+  }
+
+  function skipMeldezettelForDev(mistakeCount) {
+    if (!meldezettel.active) return;
+
+    gameState.meldezettelMistakes = mistakeCount;
+    meldezettel.tutorialOpen = false;
+
+    const nextNodeId = meldezettel.onSuccessNodeId || MELDEZETTEL_SUCCESS_NODE;
+    closeMeldezettelGame();
+    goToNode(nextNodeId);
   }
 
   function openMeldezettelGame(onSuccessNodeId) {
@@ -826,6 +968,7 @@ let gameState = {
       gameState.stop === "correct" &&
       gameState.house === "correct";
 
+    gameState.arrivedLate = !allCorrect;
     return allCorrect ? "arrival_success" : "arrival_failure";
   }
 
@@ -836,18 +979,19 @@ let gameState = {
     }
 
     if (nodeId === "end_chapter_1") {
-      showEndChapterScreen("Chapter 1");
+      showTagebuchScreen(1);
       return;
     }
 
     if (nodeId === "end_chapter_2") {
-      showEndChapterScreen("Chapter 2");
+      showTagebuchScreen(2);
       return;
     }
 
     if (nodeId === "main_menu") {
       removeBlackScreen();
       closeMeldezettelGame();
+      removeTagebuchScreen();
       resetGameState();
       showStartMainActions();
       els.startMenu.hidden = false;
@@ -879,7 +1023,14 @@ let gameState = {
   function recordAnswer(choiceText, nextNodeId) {
     const currentNode = state.nodeId;
 
-    if (currentNode === "start_quiz_transport") {
+    if (currentNode === "start_see_man" && (nextNodeId === "wrong_rude" || nextNodeId === "wrong_grammar")) {
+      gameState.stationMistake = true;
+    } else if (
+      (currentNode === "ch2_reception_greet" && nextNodeId !== "ch2_reception_id") ||
+      (currentNode === "ch2_reception_id" && nextNodeId !== "ch2_id_correct")
+    ) {
+      gameState.receptionistMistake = true;
+    } else if (currentNode === "start_quiz_transport") {
       gameState.transport = choiceText === "Mit der U-Bahn U3" ? "correct" : "wrong";
     } else if (
       currentNode === "quiz_stop_correct_transport" ||
@@ -918,6 +1069,7 @@ let gameState = {
   function startGame() {
     hideStartMenu();
     removeBlackScreen();
+    removeTagebuchScreen();
     closeMeldezettelGame();
     resetGameState();
     state.nodeId = START_NODE;
@@ -971,6 +1123,7 @@ let gameState = {
     resetGameState();
     closeMenu();
     removeBlackScreen();
+    removeTagebuchScreen();
     closeMeldezettelGame();
     hideChoices();
     showStartMainActions();
@@ -995,6 +1148,7 @@ let gameState = {
     els.startMenu.hidden = true;
     showStartMainActions();
     removeBlackScreen();
+    removeTagebuchScreen();
     closeMeldezettelGame();
     hideChoices();
     resetGameState();

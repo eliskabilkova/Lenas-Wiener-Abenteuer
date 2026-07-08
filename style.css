@@ -1122,6 +1122,9 @@ button {
 
 .meldezettel__footer {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
   justify-content: center;
   padding-top: 0.9rem;
   border-top: 1px solid rgba(255, 255, 255, 0.14);
@@ -1150,6 +1153,32 @@ button {
 .meldezettel__submit:not(:disabled):hover {
   transform: translateY(-2px);
   box-shadow: 0 14px 32px rgba(124, 108, 240, 0.5);
+}
+
+.meldezettel__dev-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+.meldezettel__dev-controls button {
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(248, 244, 255, 0.48);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.meldezettel__dev-controls button:hover {
+  color: rgba(248, 244, 255, 0.82);
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.18);
 }
 
 .meldezettel-tutorial {
@@ -1233,6 +1262,95 @@ button {
 
 .meldezettel-tutorial__list li + li {
   margin-top: 0.55rem;
+}
+
+/* ── Tagebuch ending screen ──────────────────────────────────────── */
+.tagebuch-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--stage-padding);
+  background:
+    linear-gradient(160deg, rgba(20, 14, 40, 0.88) 0%, rgba(10, 8, 24, 0.94) 100%),
+    linear-gradient(135deg, #3a2d6e 0%, #6b4a9a 40%, #c47840 100%);
+}
+
+.tagebuch-card {
+  width: min(92vw, 660px);
+  max-height: 92vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  color: var(--text);
+  text-align: center;
+  border-radius: var(--radius);
+  background: rgba(24, 18, 46, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.tagebuch-card__eyebrow {
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #f0d080;
+}
+
+.tagebuch-card__title {
+  font-size: clamp(1.8rem, 6vw, 3rem);
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 0 28px rgba(196, 120, 64, 0.45);
+}
+
+.tagebuch-card__photo {
+  width: min(78vw, 360px);
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background:
+    radial-gradient(circle at 50% 35%, rgba(255, 255, 255, 0.24), transparent 32%),
+    linear-gradient(135deg, rgba(124, 108, 240, 0.34), rgba(196, 120, 64, 0.28));
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.34);
+}
+
+.tagebuch-card__text {
+  max-width: 54ch;
+  color: var(--text-muted);
+  font-size: clamp(1rem, 2.5vw, 1.12rem);
+  line-height: 1.7;
+}
+
+.tagebuch-card__button {
+  margin-top: 0.25rem;
+  padding: 0.8rem 2.4rem;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 0.92rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #7c6cf0, #5a49c9);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 10px 26px rgba(124, 108, 240, 0.38);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tagebuch-card__button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(124, 108, 240, 0.5);
 }
 
 @media (max-width: 640px) {
