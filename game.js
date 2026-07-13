@@ -2,8 +2,8 @@ let gameState = {
   transport: null, // will store 'correct' or 'wrong'
   stop: null,      // will store 'correct' or 'wrong'
   house: null,     // will store 'correct' or 'wrong'
-  stationMistake: false,
-  arrivedLate: false,
+  ch1StationFailed: false,
+  ch1LateArrival: false,
   receptionistMistake: false,
   meldezettelMistakes: 0
 };
@@ -24,8 +24,8 @@ let gameState = {
     gameState.transport = null;
     gameState.stop = null;
     gameState.house = null;
-    gameState.stationMistake = false;
-    gameState.arrivedLate = false;
+    gameState.ch1StationFailed = false;
+    gameState.ch1LateArrival = false;
     gameState.receptionistMistake = false;
     gameState.meldezettelMistakes = 0;
   }
@@ -429,7 +429,7 @@ let gameState = {
       challenge: {
         photo: "photo-c1-b.png",
         alt: "Lena looking lost near the station",
-        text: "Phew, Chapter 1 in Vienna was pretty stressful. My conversation at the station was clumsy, and then I got completely lost looking for the hotel because my phone died. Arriving late wasn't great, but I'm here now and won't give up.",
+        text: "Phew, my first hours in Vienna were pretty stressful. My conversation at the station was clumsy, and then I got completely lost looking for the hotel because my phone died. Arriving late wasn't great, but I'm here now and won't give up.",
       },
     },
     2: {
@@ -456,12 +456,12 @@ let gameState = {
       return [gameState.receptionistMistake, gameState.meldezettelMistakes >= 3].filter(Boolean).length;
     }
 
-    return [gameState.stationMistake, gameState.arrivedLate].filter(Boolean).length;
+    return [gameState.ch1StationFailed, gameState.ch1LateArrival].filter(Boolean).length;
   }
 
   function getTagebuchVariant(chapterNumber, strikes) {
     const content = TAGEBUCH_CONTENT[chapterNumber] || TAGEBUCH_CONTENT[1];
-    const isChallenging = strikes > 0;
+    const isChallenging = strikes === 2;
 
     return {
       ...(isChallenging ? content.challenge : content.success),
@@ -532,7 +532,7 @@ let gameState = {
 
     const heading = document.createElement("h2");
     heading.className = "tagebuch-card__title";
-    heading.textContent = variant.label;
+    heading.textContent = chapterNumber === 2 ? "Check-in" : "Ankunft";
     card.appendChild(heading);
 
     const photo = document.createElement("img");
@@ -968,7 +968,7 @@ let gameState = {
       gameState.stop === "correct" &&
       gameState.house === "correct";
 
-    gameState.arrivedLate = !allCorrect;
+    gameState.ch1LateArrival = !allCorrect;
     return allCorrect ? "arrival_success" : "arrival_failure";
   }
 
@@ -1024,7 +1024,7 @@ let gameState = {
     const currentNode = state.nodeId;
 
     if (currentNode === "start_see_man" && (nextNodeId === "wrong_rude" || nextNodeId === "wrong_grammar")) {
-      gameState.stationMistake = true;
+      gameState.ch1StationFailed = true;
     } else if (
       (currentNode === "ch2_reception_greet" && nextNodeId !== "ch2_reception_id") ||
       (currentNode === "ch2_reception_id" && nextNodeId !== "ch2_id_correct")

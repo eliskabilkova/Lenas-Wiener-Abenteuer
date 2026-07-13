@@ -241,7 +241,7 @@ const storyData = {
     lenaMood: "normal",
     npcImage: "none",
     choices: [
-      { text: "Enter the hotel", nextNode: "chapter_2_teaser" },
+      { text: "Enter the hotel", nextNode: "end_chapter_1" },
     ],
   },
 
@@ -253,7 +253,7 @@ const storyData = {
     lenaMood: "unsure",
     npcImage: "none",
     choices: [
-      { text: "Enter the hotel", nextNode: "chapter_2_teaser" },
+      { text: "Enter the hotel", nextNode: "end_chapter_1" },
     ],
   },
 
@@ -261,11 +261,11 @@ const storyData = {
     id: "hotel_lobby_arrival",
     background: "hotel_lobby.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "The lobby looks beautiful and warm. There is the reception desk over there. Okay, time for the next challenge... I just need to check in. To be continued in Chapter 2!",
+    text: "The lobby looks beautiful and warm. There is the reception desk over there. Okay, time for the next challenge... I just need to check in.",
     lenaMood: "normal",
     npcImage: "none",
     choices: [
-      { text: "End of Chapter 1", nextNode: "end_chapter_1" },
+      { text: "Approach the reception desk", nextNode: "ch2_reception_greet" },
     ],
   },
 
@@ -277,7 +277,7 @@ const storyData = {
     lenaMood: "none",
     npcImage: "none",
     choices: [
-      { text: "Start Chapter", nextNode: "ch2_reception_greet" },
+      { text: "Start Chapter", nextNode: "hotel_lobby_arrival" },
     ],
   },
 
