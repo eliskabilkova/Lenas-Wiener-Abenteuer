@@ -394,4 +394,175 @@ const storyData = {
       { text: "Continue", nextNode: "end_chapter_2" },
     ],
   },
+
+  // ── Chapter 3: Unterwegs ────────────────────────────────────────────────
+
+  chapter_3_title: {
+    id: "chapter_3_title",
+    background: "black",
+    speaker: "System",
+    text: "Chapter 3: Unterwegs",
+    lenaMood: "none",
+    npcImage: "none",
+    choices: [
+      { text: "Start Chapter", nextNode: "ch3_morning_intro" },
+    ],
+  },
+
+  ch3_morning_intro: {
+    id: "ch3_morning_intro",
+    background: "hotel_room.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Good morning, Vienna! I slept so well. Today is the big day – I am finally going to the city center to explore Stephansplatz and see the famous Stephansdom!",
+    lenaMood: "happy",
+    npcImage: "none",
+    choices: [
+      { text: "Continue", nextNode: "ch3_morning_intro_architecture" },
+    ],
+  },
+
+  ch3_morning_intro_architecture: {
+    id: "ch3_morning_intro_architecture",
+    background: "hotel_room.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "I can't wait to see the giant architecture and soak in the atmosphere.",
+    lenaMood: "happy",
+    npcImage: "none",
+    choices: [
+      { text: "Continue", nextNode: "ch3_morning_intro_transport" },
+    ],
+  },
+
+  ch3_morning_intro_transport: {
+    id: "ch3_morning_intro_transport",
+    background: "hotel_room.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "But first, I need to get to the U-Bahn station and figure out how the local transport works. Let's do this!",
+    lenaMood: "happy",
+    npcImage: "none",
+    choices: [
+      { text: "Head to the U-Bahn station", nextNode: "ch3_ticket_machine_intro" },
+    ],
+  },
+
+  ch3_ticket_machine_intro: {
+    id: "ch3_ticket_machine_intro",
+    background: "u_bahn_station.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Okay, here's a Wiener Linien ticket machine. Let's see if I can figure out the right ticket in German...",
+    lenaMood: "unsure",
+    npcImage: "none",
+    choices: [
+      { text: "Use the ticket machine", nextNode: "ch3_ticket_machine" },
+    ],
+  },
+
+  // Special node: intercepted by game.js to launch the Ticketautomat mini-game.
+  ch3_ticket_machine: {
+    id: "ch3_ticket_machine",
+    background: "u_bahn_station.jpg",
+    speaker: "System",
+    text: "Ticketautomat",
+    lenaMood: "none",
+    npcImage: "none",
+    choices: [],
+  },
+
+  ch3_ubahn_entry: {
+    id: "ch3_ubahn_entry",
+    background: "u_bahn_station.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "The station is busy. I step onto the escalator and look at the map on my phone, without noticing that I am blocking the left side.",
+    lenaMood: "unsure",
+    npcImage: "none",
+    choices: [
+      { text: "Continue", nextNode: "ch3_ubahn_dialogue" },
+    ],
+  },
+
+  ch3_ubahn_dialogue: {
+    id: "ch3_ubahn_dialogue",
+    background: "u_bahn_station.jpg",
+    speaker: "Wiener Mann",
+    text: "Heast, rechts stehen, links gehen!",
+    lenaMood: "unsure",
+    npcImage: "commuter_man_annoyed.png",
+    choices: [
+      { text: "Continue", nextNode: "ch3_ubahn_thought" },
+    ],
+  },
+
+  ch3_ubahn_thought: {
+    id: "ch3_ubahn_thought",
+    background: "u_bahn_station.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Oh no, I blocked the way because I was looking at my map! What should I say to apologize politely?",
+    lenaMood: "unsure",
+    npcImage: "commuter_man_annoyed.png",
+    choices: [
+      { text: "Ach, Entschuldigung! Ich habe auf die Karte geschaut und nicht aufgepasst. (Oh, sorry! I was looking at the map and wasn't paying attention.)", nextNode: "ch3_ubahn_polite" },
+      { text: "Es tut mir leid, aber Sie können doch warten, oder? (I'm sorry, but you can wait, right?)", nextNode: "ch3_ubahn_rude" },
+      { text: "Ja, links ist gut, danke! (Yes, left is good, thank you!)", nextNode: "ch3_ubahn_confused" },
+    ],
+  },
+
+  ch3_ubahn_polite: {
+    id: "ch3_ubahn_polite",
+    background: "u_bahn_station.jpg",
+    speaker: "Narrator",
+    text: "The man grumbles but passes by.",
+    lenaMood: "normal",
+    npcImage: "none",
+    choices: [
+      { text: "Continue", nextNode: "ch3_phase1_end" },
+    ],
+  },
+
+  ch3_ubahn_rude: {
+    id: "ch3_ubahn_rude",
+    background: "u_bahn_station.jpg",
+    speaker: "Narrator",
+    text: "The man gets angry and rants about rude tourists before moving on.",
+    lenaMood: "unsure",
+    npcImage: "none",
+    choices: [
+      { text: "Continue", nextNode: "ch3_phase1_end" },
+    ],
+  },
+
+  ch3_ubahn_confused: {
+    id: "ch3_ubahn_confused",
+    background: "u_bahn_station.jpg",
+    speaker: "Narrator",
+    text: "The man shakes his head in annoyance and pushes past.",
+    lenaMood: "unsure",
+    npcImage: "none",
+    choices: [
+      { text: "Continue", nextNode: "ch3_phase1_end" },
+    ],
+  },
+
+  ch3_phase1_end: {
+    id: "ch3_phase1_end",
+    background: "black",
+    speaker: "Narrator",
+    text: "Next station: Stephansplatz. The doors open...",
+    lenaMood: "none",
+    npcImage: "none",
+    choices: [
+      { text: "Continue", nextNode: "ch3_placeholder_end" },
+    ],
+  },
+
+  ch3_placeholder_end: {
+    id: "ch3_placeholder_end",
+    background: "cathedral.jpg",
+    speaker: "System",
+    text: "[The cathedral scene begins here.]",
+    lenaMood: "none",
+    npcImage: "none",
+    choices: [
+      { text: "Back to Main Menu", nextNode: "main_menu" },
+    ],
+  },
 };

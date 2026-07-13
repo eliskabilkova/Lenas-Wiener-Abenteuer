@@ -26,6 +26,7 @@
         <div id="start-chapters-selection" class="start-chapters-selection" hidden>
           <button type="button" class="start-chapter-select-btn" data-chapter-node="chapter_1_title">Chapter 1: Ankunft</button>
           <button type="button" class="start-chapter-select-btn" data-chapter-node="ch2_reception_greet">Chapter 2: Check-in</button>
+          <button type="button" class="start-chapter-select-btn" data-chapter-node="chapter_3_title">Chapter 3: Unterwegs</button>
           <button type="button" id="start-chapters-back-btn" class="start-menu__btn start-menu__btn--secondary">Back</button>
         </div>
       </div>
@@ -117,6 +118,47 @@
             <button type="button" id="meldezettel-dev-fail">DEV: Skip (Fail)</button>
           </div>
         </footer>
+      </div>
+    </div>
+
+    <!-- Ticketautomat mini-game overlay -->
+    <div id="ticket-machine-overlay" class="ticket-machine-overlay" hidden>
+      <div class="ticket-machine">
+        <header class="ticket-machine__head">
+          <h2 class="ticket-machine__title">Wiener Linien — Ticket Machine</h2>
+          <p class="ticket-machine__subtitle">U-Bahn Station</p>
+        </header>
+
+        <p class="ticket-machine__message" id="ticket-machine-message"></p>
+
+        <div class="ticket-machine__step" id="ticket-machine-step-type">
+          <p class="ticket-machine__goal">GOAL: Buy a standard Single Ride ticket at full price (Einzelfahrt - Vollpreis).</p>
+
+          <section class="ticket-machine__group">
+            <h3 class="ticket-machine__group-title">Choose a ticket</h3>
+            <div class="ticket-machine__options" id="ticket-machine-types"></div>
+          </section>
+        </div>
+
+        <div class="ticket-machine__step" id="ticket-machine-step-category" hidden>
+          <section class="ticket-machine__group">
+            <h3 class="ticket-machine__group-title">Choose a fare category</h3>
+            <div class="ticket-machine__options" id="ticket-machine-categories"></div>
+          </section>
+        </div>
+
+        <div class="ticket-machine__step" id="ticket-machine-step-payment" hidden>
+          <p class="ticket-machine__thought">Everything looks right. Time to pay for the ticket.</p>
+          <button type="button" class="ticket-machine__buy" id="ticket-machine-buy">Jetzt bezahlen (2.50 €)</button>
+        </div>
+
+        <div class="ticket-machine__step" id="ticket-machine-step-validate" hidden>
+          <p class="ticket-machine__thought">Wait, in Vienna you have to validate the ticket before entering the platform! Let me click the blue validator machine (Entwerter).</p>
+
+          <div class="ticket-machine__entwerter-row">
+            <button type="button" class="ticket-machine__entwerter" id="ticket-machine-entwerter" aria-label="Validate ticket with Entwerter">Entwerter</button>
+          </div>
+        </div>
       </div>
     </div>
 

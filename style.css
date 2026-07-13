@@ -114,6 +114,27 @@ button {
   background-color: #000;
 }
 
+.game[data-background="hotel_room"] {
+  background-image:
+    linear-gradient(180deg, rgba(25, 18, 14, 0.15) 0%, rgba(25, 18, 14, 0.55) 100%),
+    radial-gradient(ellipse at 50% 15%, rgba(255, 200, 140, 0.25) 0%, transparent 55%),
+    linear-gradient(160deg, #8a6a50 0%, #b89878 40%, #d8c0a0 100%);
+}
+
+.game[data-background="u_bahn_station"] {
+  background-image:
+    linear-gradient(180deg, rgba(10, 12, 20, 0.25) 0%, rgba(10, 12, 20, 0.65) 100%),
+    radial-gradient(ellipse at 60% 20%, rgba(226, 33, 63, 0.18) 0%, transparent 45%),
+    linear-gradient(165deg, #3a3f4a 0%, #545a66 45%, #2a2d34 100%);
+}
+
+.game[data-background="cathedral"] {
+  background-image:
+    linear-gradient(180deg, rgba(20, 15, 24, 0.12) 0%, rgba(20, 15, 24, 0.55) 100%),
+    radial-gradient(ellipse at 50% 18%, rgba(255, 224, 170, 0.34) 0%, transparent 48%),
+    linear-gradient(165deg, #5a6074 0%, #a7a1a3 46%, #806d64 100%);
+}
+
 .game__overlay {
   position: absolute;
   inset: 0;
@@ -1262,6 +1283,238 @@ button {
 
 .meldezettel-tutorial__list li + li {
   margin-top: 0.55rem;
+}
+
+/* ── Ticketautomat mini-game ──────────────────────────────────────── */
+.ticket-machine-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--stage-padding);
+  background:
+    linear-gradient(160deg, rgba(20, 14, 40, 0.88) 0%, rgba(10, 8, 24, 0.94) 100%),
+    linear-gradient(135deg, #3a2d6e 0%, #6b4a9a 40%, #c47840 100%);
+}
+
+.ticket-machine-overlay[hidden] {
+  display: none !important;
+}
+
+.ticket-machine {
+  width: min(96vw, 620px);
+  max-height: 92vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  padding: clamp(1.25rem, 3vw, 2.25rem);
+  color: var(--text);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, #2b2f38 0%, #1a1d24 100%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.ticket-machine__head {
+  text-align: center;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.ticket-machine__title {
+  font-size: clamp(1.15rem, 3.2vw, 1.5rem);
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  color: #fff;
+}
+
+.ticket-machine__subtitle {
+  margin-top: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+}
+
+.ticket-machine__message {
+  min-height: 0;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  border-radius: 12px;
+  transition: all 0.25s ease;
+}
+
+.ticket-machine__message:not(:empty) {
+  padding: 0.6rem 0.9rem;
+}
+
+.ticket-machine__message.is-error {
+  background: rgba(224, 122, 122, 0.14);
+  color: #ffb4b4;
+  border: 1px solid rgba(224, 122, 122, 0.4);
+  box-shadow: 0 0 22px rgba(224, 122, 122, 0.18);
+}
+
+.ticket-machine__message.is-success {
+  background: rgba(120, 214, 160, 0.14);
+  color: #b6f2cd;
+  border: 1px solid rgba(120, 214, 160, 0.4);
+  box-shadow: 0 0 22px rgba(120, 214, 160, 0.18);
+}
+
+.ticket-machine__step {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ticket-machine__step[hidden] {
+  display: none !important;
+}
+
+.ticket-machine__goal {
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: #ffd479;
+  background: rgba(255, 212, 121, 0.1);
+  border: 1px solid rgba(255, 212, 121, 0.3);
+  border-radius: 12px;
+  padding: 0.6rem 0.9rem;
+}
+
+.ticket-machine__group-title {
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.ticket-machine__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.ticket-machine__option {
+  padding: 0.55rem 0.95rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.ticket-machine__option:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.ticket-machine__option.is-selected {
+  background: linear-gradient(135deg, #e2213f, #a8142b);
+  border-color: rgba(255, 255, 255, 0.5);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(226, 33, 63, 0.45);
+  transform: translateY(-1px);
+}
+
+.ticket-machine__buy {
+  align-self: center;
+  margin-top: 0.4rem;
+  padding: 0.8rem 2.6rem;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 0.92rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #e2213f, #a8142b);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 10px 26px rgba(226, 33, 63, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.ticket-machine__buy:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.ticket-machine__buy:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(226, 33, 63, 0.55);
+}
+
+.ticket-machine__thought {
+  text-align: center;
+  font-style: italic;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.ticket-machine__entwerter-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.ticket-machine__entwerter,
+.ticket-machine__continue {
+  padding: 0.75rem 1.6rem;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 0.88rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.ticket-machine__entwerter {
+  min-width: 10rem;
+  min-height: 6.5rem;
+  background: linear-gradient(135deg, #2689d9, #13529d);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 20px rgba(38, 137, 217, 0.45);
+}
+
+.ticket-machine__entwerter:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(38, 137, 217, 0.58);
+}
+
+.ticket-machine__entwerter.is-done {
+  background: linear-gradient(135deg, rgba(120, 214, 160, 0.35), rgba(120, 214, 160, 0.2));
+  color: #d6ffe6;
+  border-color: rgba(120, 214, 160, 0.5);
+  box-shadow: none;
+  cursor: default;
+  transform: none;
+}
+
+.ticket-machine__continue {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.ticket-machine__continue:hover {
+  background: rgba(255, 255, 255, 0.16);
+  transform: translateY(-2px);
 }
 
 /* ── Tagebuch ending screen ──────────────────────────────────────── */
