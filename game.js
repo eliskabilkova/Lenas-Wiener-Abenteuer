@@ -6,7 +6,8 @@ let gameState = {
   ch1LateArrival: false,
   receptionistMistake: false,
   meldezettelMistakes: 0,
-  ch3Strikes: 0
+  ch3Strikes: 0,
+  ch4Strikes: 0
 };
 
 /**
@@ -18,7 +19,7 @@ let gameState = {
 
   const START_NODE = "chapter_1_title";
   const TYPE_SPEED = 24;
-  const TOTAL_CHAPTERS = 3;
+  const TOTAL_CHAPTERS = 4;
   const PROGRESS_STORAGE_KEY = "lenasWienerAbenteuer.progress";
 
   function resetGameState() {
@@ -30,6 +31,7 @@ let gameState = {
     gameState.receptionistMistake = false;
     gameState.meldezettelMistakes = 0;
     gameState.ch3Strikes = 0;
+    gameState.ch4Strikes = 0;
   }
 
   const BACKGROUND_MAP = {
@@ -53,14 +55,20 @@ let gameState = {
     "receptionist_confused.png": { visible: true, character: "mira", name: "Rezeptionistin", mood: "neutral" },
     "commuter_man_neutral.png": { visible: true, character: "elder", name: "Wiener Mann", mood: "neutral" },
     "commuter_man_annoyed.png": { visible: true, character: "elder", name: "Wiener Mann", mood: "neutral" },
+    "mozart_seller_neutral.png": { visible: true, character: "mozart_seller", name: "Straßenverkäufer", mood: "neutral" },
+    "mozart_seller_pushy.png": { visible: true, character: "mozart_seller", name: "Straßenverkäufer", mood: "pushy" },
   };
 
   const LENA_MOOD_MAP = {
     normal: "neutral",
     happy: "happy",
     unsure: "thoughtful",
+    surprised: "surprised",
+    thoughtful: "thoughtful",
     none: "neutral",
   };
+
+  const JUMP_SCARE_NODE_IDS = new Set(["ch4_mozart_surprise"]);
 
   const REPLAY_CHOICES_FROM_NODE = {
     wrong_rude: "start_see_man",
@@ -75,12 +83,26 @@ let gameState = {
   const MELDEZETTEL_SUCCESS_NODE = "ch2_meldezettel_success";
 
   const TICKET_MACHINE_TRIGGER_NODE = "ch3_ticket_machine";
-  const TICKET_MACHINE_NEXT_NODE = "ch3_ubahn_entry";
+  const TICKET_MACHINE_NEXT_NODE = "ch3_boarding";
+  const TICKET_MACHINE_SUCCESS_NODE = "ch3_ticket_success";
+  const TICKET_MACHINE_FAIL_NODE = "ch3_ticket_fail";
   const TICKET_MACHINE_MISTAKE_THRESHOLD = 3;
 
-  const TICKET_TYPES = ["Einzelfahrt", "24-Stunden-Karte", "72-Stunden-Karte", "Jahreskarte"];
-  const TICKET_CATEGORIES = ["Vollpreis", "Ermäßigt (Kinder/Senioren)", "Studierende"];
-  const TICKET_GOAL = { type: "Einzelfahrt", category: "Vollpreis" };
+  const TICKET_TYPES = [
+    "Einzelfahrt (€ 2,40)",
+    "24-Stunden-Karte (€ 8,00)",
+    "72-Stunden-Karte (€ 17,10)",
+    "Monatskarte (€ 51,00)",
+  ];
+  const TICKET_CATEGORIES = [
+    "Vollpreis",
+    "Ermäßigt (Kinder/Senioren)",
+    "Ermäßigt (Schüler/Studenten mit AT-Ausweis)",
+  ];
+  const TICKET_QUANTITIES = ["1 Ticket", "3 Tickets", "5 Tickets"];
+  const TICKET_GOAL = { type: "Einzelfahrt (€ 2,40)", category: "Vollpreis" };
+  const TICKET_MACHINE_HELP_TEXT =
+    "I need to go to Stephansdom now, then to a museum, and later back to the hotel. That's at least 3 metro trips today. A single ticket (Einzelfahrt) costs €2.40. Let me check the ticket machine. I should buy whatever is cheaper for today: either individual tickets or a 24-hour pass. Also, since I'm a tourist and don't have an Austrian school ID, I must buy a standard adult fare.";
 
   const MELDEZETTEL_FIELDS = [
     { id: "vorname", label: "Vorname", answer: "Lena" },
@@ -109,11 +131,14 @@ let gameState = {
 
   const ticketMachine = {
     active: false,
-    step: "type", // "type" | "category" | "payment" | "validate"
+    step: "type", // "type" | "category" | "quantity" | "payment" | "validate" | "feedback"
+    quantity: 1,
     mistakes: 0,
     message: "",
     messageType: "info",
     onCompleteNodeId: null,
+    helpOpen: false,
+    errorOpen: false,
   };
 
   const FOLLOW_UP_BEFORE_REPLAY = {
@@ -183,12 +208,23 @@ let gameState = {
     ticketMachineMessage: document.getElementById("ticket-machine-message"),
     ticketMachineStepType: document.getElementById("ticket-machine-step-type"),
     ticketMachineStepCategory: document.getElementById("ticket-machine-step-category"),
+    ticketMachineStepQuantity: document.getElementById("ticket-machine-step-quantity"),
     ticketMachineStepPayment: document.getElementById("ticket-machine-step-payment"),
     ticketMachineStepValidate: document.getElementById("ticket-machine-step-validate"),
     ticketMachineTypes: document.getElementById("ticket-machine-types"),
     ticketMachineCategories: document.getElementById("ticket-machine-categories"),
+    ticketMachineQuantities: document.getElementById("ticket-machine-quantities"),
     ticketMachineBuyBtn: document.getElementById("ticket-machine-buy"),
     ticketMachineEntwerterBtn: document.getElementById("ticket-machine-entwerter"),
+    ticketMachineHintBtn: document.getElementById("ticket-machine-hint"),
+    ticketMachineHintOverlay: document.getElementById("ticket-machine-hint-overlay"),
+    ticketMachineHintText: document.getElementById("ticket-machine-hint-text"),
+    ticketMachineHintCloseBtn: document.getElementById("ticket-machine-hint-close"),
+    ticketMachineErrorOverlay: document.getElementById("ticket-machine-error-overlay"),
+    ticketMachineErrorText: document.getElementById("ticket-machine-error-text"),
+    ticketMachineErrorContinueBtn: document.getElementById("ticket-machine-error-continue"),
+    ticketMachineDevSuccessBtn: document.getElementById("ticket-machine-dev-success"),
+    ticketMachineDevFailBtn: document.getElementById("ticket-machine-dev-fail"),
   };
 
   const state = {
@@ -334,6 +370,7 @@ let gameState = {
     const isInternalMonologue = speaker.includes("Internal Monologue");
 
     els.dialogueText.classList.toggle("internal-thought", isInternalMonologue);
+    els.dialogueText.classList.remove("sensory-text", "announcement-text");
     els.speakerName.classList.remove("is-hidden");
     els.speakerName.textContent = isInternalMonologue ? "Lena" : speaker;
 
@@ -358,18 +395,82 @@ let gameState = {
     }, TYPE_SPEED);
   }
 
-  function renderDialogue(node) {
-    hideChoices();
-    applyTextFadeIn();
-
+  function applyDialogueStyle(node) {
     const speaker = node.speaker || "";
     const isInternalMonologue = speaker.includes("Internal Monologue");
 
     els.dialogueText.classList.toggle("internal-thought", isInternalMonologue);
+    els.dialogueText.classList.toggle("sensory-text", node.dialogueStyle === "sensory");
+    els.dialogueText.classList.toggle("announcement-text", node.dialogueStyle === "announcement");
+  }
+
+  function renderDialogue(node) {
+    hideChoices();
+    applyTextFadeIn();
+    applyDialogueStyle(node);
+
+    const speaker = node.speaker || "";
+    const isInternalMonologue = speaker.includes("Internal Monologue");
+
     els.speakerName.classList.remove("is-hidden");
     els.speakerName.textContent = isInternalMonologue ? "Lena" : speaker || "???";
 
     startTypewriter(node.text);
+  }
+
+  function removeJumpScareFlash() {
+    document.getElementById("jump-scare-flash")?.remove();
+  }
+
+  function playJumpScare() {
+    removeJumpScareFlash();
+    els.npcContainer.classList.remove("is-jumpscare-pop");
+    els.npcContainer.style.display = "none";
+    els.npcContainer.classList.add("is-hidden");
+
+    const flash = document.createElement("div");
+    flash.id = "jump-scare-flash";
+    flash.className = "jump-scare-flash";
+    flash.setAttribute("aria-hidden", "true");
+    els.game.appendChild(flash);
+
+    window.setTimeout(() => {
+      const node = getNode();
+      const npc = NPC_MAP[node.npcImage] || NPC_MAP.none;
+      if (npc.visible) {
+        els.npcContainer.style.display = "";
+        els.npcContainer.classList.remove("is-hidden");
+        els.npcSprite.dataset.character = npc.character;
+        els.npcSprite.dataset.mood = npc.mood;
+        els.npcLabel.textContent = npc.name;
+        void els.npcContainer.offsetWidth;
+        els.npcContainer.classList.add("is-jumpscare-pop");
+        els.npcContainer.classList.add("is-speaking");
+        els.lenaContainer.classList.add("is-dimmed");
+      }
+    }, 140);
+
+    window.setTimeout(removeJumpScareFlash, 520);
+  }
+
+  function renderJumpScareNode(node) {
+    removeBlackScreen();
+    closeMeldezettelGame();
+    closeTicketMachine();
+    removeJumpScareFlash();
+
+    setBackground(node.background);
+    els.lenaContainer.classList.remove("is-hidden", "is-dimmed", "is-speaking");
+    els.lenaSprite.dataset.character = "lena";
+    els.lenaSprite.dataset.mood = LENA_MOOD_MAP[node.lenaMood] || "surprised";
+
+    els.npcContainer.classList.remove("is-jumpscare-pop", "is-speaking", "is-dimmed");
+    els.npcContainer.style.display = "none";
+    els.npcContainer.classList.add("is-hidden");
+
+    els.dialogueBox.hidden = false;
+    playJumpScare();
+    renderDialogue(node);
   }
 
   // ── Black-screen transition ───────────────────────────────────────────────
@@ -411,7 +512,7 @@ let gameState = {
 
     const message = document.createElement("p");
     message.textContent = getBlackScreenTitleText(node);
-    if (node.id === "chapter_1_title" || node.id === "chapter_2_teaser" || node.id === "chapter_3_title") {
+    if (node.id === "chapter_1_title" || node.id === "chapter_2_teaser" || node.id === "chapter_3_title" || node.id === "chapter_4_title") {
       message.style.fontWeight = "800";
       message.style.fontSize = "clamp(2rem, 7vw, 4rem)";
       message.style.letterSpacing = "0.04em";
@@ -435,7 +536,7 @@ let gameState = {
   }
 
   function isChapterTitleNode(node) {
-    return node?.id === "chapter_1_title" || node?.id === "chapter_2_teaser" || node?.id === "chapter_3_title";
+    return node?.id === "chapter_1_title" || node?.id === "chapter_2_teaser" || node?.id === "chapter_3_title" || node?.id === "chapter_4_title";
   }
 
   const BLACK_SCREEN_NODE_IDS = new Set([
@@ -443,7 +544,7 @@ let gameState = {
     "black_screen",
     "chapter_2_teaser",
     "chapter_3_title",
-    "ch3_phase1_end",
+    "chapter_4_title",
   ]);
 
   function getBlackScreenTitleText(node) {
@@ -487,6 +588,24 @@ let gameState = {
         text: "The hotel check-in felt like a linguistic obstacle course. I panicked during the conversation and made quite a few silly mistakes while filling out the official registration form. Tomorrow is a new chance to improve.",
       },
     },
+    3: {
+      success: {
+        photo: "photo-c3-a.png",
+        alt: "Lena smiling on the U-Bahn in Vienna",
+        german:
+          "Heute war ein interessanter Tag. Ich habe mein Ticket gekauft und bin mit der U-Bahn gefahren. Ein Mann war ein bisschen böse, aber ich kenne jetzt die Regel: Rechts stehen, links gehen! Jetzt bin ich am Stephansplatz.",
+        english:
+          "Today was an interesting day. I bought my ticket and rode the U-Bahn. A man was a little angry, but I now know the rule: stand on the right, walk on the left! Now I am at Stephansplatz.",
+      },
+      challenge: {
+        photo: "photo-c3-b.png",
+        alt: "Lena looking stressed on the U-Bahn in Vienna",
+        german:
+          "Heute war ein stressiger Tag. Am Ticketautomaten habe ich viele Fehler gemacht und in der U-Bahn war alles kompliziert. Ein Mann war sehr wütend wegen der Rolltreppe. Ich bin müde, aber ich bin endlich am Stephansplatz.",
+        english:
+          "Today was a stressful day. I made many mistakes at the ticket machine and everything on the U-Bahn was complicated. A man was very angry because of the escalator. I am tired, but I am finally at Stephansplatz.",
+      },
+    },
   };
 
   function removeTagebuchScreen() {
@@ -508,10 +627,12 @@ let gameState = {
 
   function getTagebuchVariant(chapterNumber, strikes) {
     const content = TAGEBUCH_CONTENT[chapterNumber] || TAGEBUCH_CONTENT[1];
-    const isChallenging = strikes === 2;
+    const isChallenging = chapterNumber === 3 ? strikes >= 2 : strikes === 2;
+    const variant = isChallenging ? content.challenge : content.success;
 
     return {
-      ...(isChallenging ? content.challenge : content.success),
+      ...variant,
+      text: variant.text || variant.english || variant.german || "",
       label: isChallenging ? "Challenging Day" : "Successful Day",
     };
   }
@@ -534,6 +655,7 @@ let gameState = {
   const NEXT_CHAPTER_MAP = {
     1: { label: "Chapter 2 - Check-in", nodeId: "chapter_2_teaser" },
     2: { label: "Chapter 3 - Unterwegs", nodeId: "chapter_3_title" },
+    3: { label: "Chapter 4 - Das Herz von Wien", nodeId: "chapter_4_title" },
   };
 
   function goToNextChapterOrMenu(completedChapter) {
@@ -586,7 +708,8 @@ let gameState = {
 
     const heading = document.createElement("h2");
     heading.className = "tagebuch-card__title";
-    heading.textContent = chapterNumber === 2 ? "Check-in" : "Ankunft";
+    heading.textContent =
+      chapterNumber === 2 ? "Check-in" : chapterNumber === 3 ? "Unterwegs" : "Ankunft";
     card.appendChild(heading);
 
     const photo = document.createElement("img");
@@ -595,10 +718,32 @@ let gameState = {
     photo.alt = variant.alt;
     card.appendChild(photo);
 
-    const text = document.createElement("p");
-    text.className = "tagebuch-card__text";
-    text.textContent = variant.text;
-    card.appendChild(text);
+    if (chapterNumber === 3 && variant.german && variant.english) {
+      const germanLabel = document.createElement("p");
+      germanLabel.className = "tagebuch-card__lang-label";
+      germanLabel.textContent = "German (A2)";
+      card.appendChild(germanLabel);
+
+      const germanText = document.createElement("p");
+      germanText.className = "tagebuch-card__text tagebuch-card__text--german";
+      germanText.textContent = variant.german;
+      card.appendChild(germanText);
+
+      const englishLabel = document.createElement("p");
+      englishLabel.className = "tagebuch-card__lang-label";
+      englishLabel.textContent = "English";
+      card.appendChild(englishLabel);
+
+      const englishText = document.createElement("p");
+      englishText.className = "tagebuch-card__text tagebuch-card__text--english";
+      englishText.textContent = variant.english;
+      card.appendChild(englishText);
+    } else {
+      const text = document.createElement("p");
+      text.className = "tagebuch-card__text";
+      text.textContent = variant.text;
+      card.appendChild(text);
+    }
 
     const btn = document.createElement("button");
     btn.type = "button";
@@ -963,8 +1108,54 @@ let gameState = {
 
   // ── Ticketautomat mini-game ───────────────────────────────────────────────
 
+  function ticketMachineControlsEnabled() {
+    return ticketMachine.active && !ticketMachine.helpOpen && !ticketMachine.errorOpen;
+  }
+
+  function showTicketMachineHint() {
+    if (!ticketMachine.active || !els.ticketMachineHintOverlay) return;
+    ticketMachine.helpOpen = true;
+    if (els.ticketMachineHintText) {
+      els.ticketMachineHintText.textContent = TICKET_MACHINE_HELP_TEXT;
+    }
+    els.ticketMachineHintOverlay.hidden = false;
+  }
+
+  function closeTicketMachineHint() {
+    if (!els.ticketMachineHintOverlay) return;
+    ticketMachine.helpOpen = false;
+    els.ticketMachineHintOverlay.hidden = true;
+  }
+
+  function showTicketMachineError(message) {
+    ticketMachine.mistakes += 1;
+    ticketMachine.errorOpen = true;
+    ticketMachine.step = "feedback";
+    ticketMachine.message = message;
+    ticketMachine.messageType = "error";
+    if (els.ticketMachineErrorText) {
+      els.ticketMachineErrorText.textContent = message;
+    }
+    if (els.ticketMachineErrorOverlay) {
+      els.ticketMachineErrorOverlay.hidden = false;
+    }
+    renderTicketMachine();
+  }
+
+  function dismissTicketMachineError() {
+    if (!ticketMachine.errorOpen) return;
+    ticketMachine.errorOpen = false;
+    ticketMachine.step = "type";
+    ticketMachine.message = "";
+    ticketMachine.messageType = "info";
+    if (els.ticketMachineErrorOverlay) {
+      els.ticketMachineErrorOverlay.hidden = true;
+    }
+    renderTicketMachine();
+  }
+
   function renderTicketMachine() {
-    if (!els.ticketMachineTypes || !els.ticketMachineCategories) return;
+    if (!els.ticketMachineTypes || !els.ticketMachineCategories || !els.ticketMachineQuantities) return;
 
     els.ticketMachineTypes.innerHTML = "";
     TICKET_TYPES.forEach((type) => {
@@ -986,28 +1177,42 @@ let gameState = {
       els.ticketMachineCategories.appendChild(btn);
     });
 
+    els.ticketMachineQuantities.innerHTML = "";
+    TICKET_QUANTITIES.forEach((quantity) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "ticket-machine__option";
+      btn.textContent = quantity;
+      btn.addEventListener("click", () => handleTicketQuantity(quantity));
+      els.ticketMachineQuantities.appendChild(btn);
+    });
+
     els.ticketMachineMessage.textContent = ticketMachine.message || "";
     els.ticketMachineMessage.classList.remove("is-error", "is-success");
-    if (ticketMachine.messageType === "error") els.ticketMachineMessage.classList.add("is-error");
     if (ticketMachine.messageType === "success") els.ticketMachineMessage.classList.add("is-success");
 
-    els.ticketMachineStepType.hidden = ticketMachine.step !== "type";
-    els.ticketMachineStepCategory.hidden = ticketMachine.step !== "category";
-    els.ticketMachineStepPayment.hidden = ticketMachine.step !== "payment";
-    els.ticketMachineStepValidate.hidden = ticketMachine.step !== "validate";
+    const showSteps = !ticketMachine.errorOpen;
+    els.ticketMachineStepType.hidden = !showSteps || ticketMachine.step !== "type";
+    els.ticketMachineStepCategory.hidden = !showSteps || ticketMachine.step !== "category";
+    els.ticketMachineStepQuantity.hidden = !showSteps || ticketMachine.step !== "quantity";
+    els.ticketMachineStepPayment.hidden = !showSteps || ticketMachine.step !== "payment";
+    els.ticketMachineStepValidate.hidden = !showSteps || ticketMachine.step !== "validate";
+    els.ticketMachineBuyBtn.textContent =
+      ticketMachine.quantity === 3 ? "Jetzt bezahlen (€ 7,20)" : "Jetzt bezahlen (€ 2,40)";
   }
 
   function resetTicketMachineToType(errorMessage) {
-    ticketMachine.mistakes += 1;
-    ticketMachine.step = "type";
-    ticketMachine.message = errorMessage;
-    ticketMachine.messageType = "error";
-    renderTicketMachine();
+    showTicketMachineError(errorMessage);
   }
 
   function handleTicketType(type) {
+    if (!ticketMachineControlsEnabled()) return;
     if (type !== TICKET_GOAL.type) {
-      resetTicketMachineToType("That's not a single ride ticket! Try again.");
+      const message =
+        type === "24-Stunden-Karte (€ 8,00)"
+          ? "Wait, €8.00 is more expensive than buying single tickets for just 3 rides! Let me recalculate."
+          : "I only need three trips today. This ticket would cost much more than individual single tickets.";
+      resetTicketMachineToType(message);
       return;
     }
 
@@ -1018,11 +1223,30 @@ let gameState = {
   }
 
   function handleTicketCategory(category) {
+    if (!ticketMachineControlsEnabled()) return;
     if (category !== TICKET_GOAL.category) {
-      resetTicketMachineToType("That's a discounted ticket, Lena needs a standard full-price ticket!");
+      const message =
+        category === "Ermäßigt (Schüler/Studenten mit AT-Ausweis)"
+          ? "I don't have an Austrian student ID, the ticket inspector would fine me!"
+          : "That discount is only for children or seniors. I need the standard adult fare.";
+      resetTicketMachineToType(message);
       return;
     }
 
+    ticketMachine.step = "quantity";
+    ticketMachine.message = "";
+    ticketMachine.messageType = "info";
+    renderTicketMachine();
+  }
+
+  function handleTicketQuantity(quantity) {
+    if (!ticketMachineControlsEnabled()) return;
+    if (quantity === "5 Tickets") {
+      resetTicketMachineToType("Five tickets are more than I need today. I should only buy what I will use.");
+      return;
+    }
+
+    ticketMachine.quantity = quantity === "3 Tickets" ? 3 : 1;
     ticketMachine.step = "payment";
     ticketMachine.message = "";
     ticketMachine.messageType = "info";
@@ -1030,6 +1254,7 @@ let gameState = {
   }
 
   function handleTicketPurchase() {
+    if (!ticketMachineControlsEnabled()) return;
     ticketMachine.step = "validate";
     ticketMachine.message = "Ticket purchased!";
     ticketMachine.messageType = "success";
@@ -1037,22 +1262,42 @@ let gameState = {
   }
 
   function handleTicketValidate() {
-    if (ticketMachine.mistakes >= TICKET_MACHINE_MISTAKE_THRESHOLD) {
+    if (!ticketMachineControlsEnabled()) return;
+    completeTicketMachine(ticketMachine.mistakes);
+  }
+
+  function completeTicketMachine(mistakeCount) {
+    ticketMachine.mistakes = mistakeCount;
+    const completedSuccessfully = ticketMachine.mistakes < TICKET_MACHINE_MISTAKE_THRESHOLD;
+    if (!completedSuccessfully) {
       gameState.ch3Strikes += 1;
     }
 
-    const nextNodeId = ticketMachine.onCompleteNodeId || TICKET_MACHINE_NEXT_NODE;
+    const nextNodeId = completedSuccessfully
+      ? TICKET_MACHINE_SUCCESS_NODE
+      : TICKET_MACHINE_FAIL_NODE;
     closeTicketMachine();
     goToNode(nextNodeId);
+  }
+
+  function skipTicketMachineForDev(mistakeCount) {
+    if (!ticketMachine.active) return;
+    ticketMachine.helpOpen = false;
+    ticketMachine.errorOpen = false;
+    if (els.ticketMachineErrorOverlay) els.ticketMachineErrorOverlay.hidden = true;
+    completeTicketMachine(mistakeCount);
   }
 
   function openTicketMachine(onCompleteNodeId) {
     ticketMachine.active = true;
     ticketMachine.step = "type";
+    ticketMachine.quantity = 1;
     ticketMachine.mistakes = 0;
     ticketMachine.message = "";
     ticketMachine.messageType = "info";
     ticketMachine.onCompleteNodeId = onCompleteNodeId;
+    ticketMachine.helpOpen = false;
+    ticketMachine.errorOpen = false;
 
     clearTypeTimer();
     state.typing = false;
@@ -1063,12 +1308,17 @@ let gameState = {
     els.npcContainer.classList.add("is-hidden");
     els.lenaContainer.classList.add("is-hidden");
     els.ticketMachineOverlay.hidden = false;
+    closeTicketMachineHint();
+    if (els.ticketMachineErrorOverlay) els.ticketMachineErrorOverlay.hidden = true;
 
     renderTicketMachine();
   }
 
   function closeTicketMachine() {
     ticketMachine.active = false;
+    closeTicketMachineHint();
+    ticketMachine.errorOpen = false;
+    if (els.ticketMachineErrorOverlay) els.ticketMachineErrorOverlay.hidden = true;
     if (els.ticketMachineOverlay) els.ticketMachineOverlay.hidden = true;
   }
 
@@ -1076,6 +1326,14 @@ let gameState = {
     if (!els.ticketMachineBuyBtn) return;
     els.ticketMachineBuyBtn.addEventListener("click", handleTicketPurchase);
     els.ticketMachineEntwerterBtn.addEventListener("click", handleTicketValidate);
+    els.ticketMachineHintBtn?.addEventListener("click", showTicketMachineHint);
+    els.ticketMachineHintCloseBtn?.addEventListener("click", closeTicketMachineHint);
+    els.ticketMachineHintOverlay?.addEventListener("click", (event) => {
+      if (event.target === els.ticketMachineHintOverlay) closeTicketMachineHint();
+    });
+    els.ticketMachineErrorContinueBtn?.addEventListener("click", dismissTicketMachineError);
+    els.ticketMachineDevSuccessBtn?.addEventListener("click", () => skipTicketMachineForDev(0));
+    els.ticketMachineDevFailBtn?.addEventListener("click", () => skipTicketMachineForDev(3));
   }
 
   // ── Core render ──────────────────────────────────────────────────────────
@@ -1099,8 +1357,15 @@ let gameState = {
       return;
     }
 
+    if (JUMP_SCARE_NODE_IDS.has(node.id) || node.effect === "jumpScare") {
+      renderJumpScareNode(node);
+      return;
+    }
+
     // Make sure any leftover overlay from a previous visit is gone.
     removeBlackScreen();
+    removeJumpScareFlash();
+    els.npcContainer.classList.remove("is-jumpscare-pop");
     closeMeldezettelGame();
     closeTicketMachine();
 
@@ -1165,8 +1430,14 @@ let gameState = {
       return;
     }
 
+    if (nodeId === "end_chapter_3") {
+      showTagebuchScreen(3);
+      return;
+    }
+
     if (nodeId === "main_menu") {
       removeBlackScreen();
+      removeJumpScareFlash();
       closeMeldezettelGame();
       closeTicketMachine();
       removeTagebuchScreen();
@@ -1219,6 +1490,8 @@ let gameState = {
       gameState.house = choiceText === "In der Mitte der Straße" ? "correct" : "wrong";
     } else if (currentNode === "ch3_ubahn_thought" && nextNodeId !== "ch3_ubahn_polite") {
       gameState.ch3Strikes += 1;
+    } else if (currentNode === "ch4_mozart_choice" && nextNodeId !== "ch4_mozart_correct") {
+      gameState.ch4Strikes += 1;
     }
 
     console.log("gameState:", JSON.stringify(gameState));
@@ -1244,6 +1517,46 @@ let gameState = {
   function showStartChaptersSelection() {
     els.startMainActions.hidden = true;
     els.startChaptersSelection.hidden = false;
+  }
+
+  const CHAPTER_START_NODES = {
+    1: "chapter_1_title",
+    2: "chapter_2_teaser",
+    3: "chapter_3_title",
+    4: "chapter_4_title",
+  };
+
+  const CHAPTER_LABELS = {
+    1: "Chapter 1 - Ankunft",
+    2: "Chapter 2 - Check-in",
+    3: "Chapter 3 - Unterwegs",
+    4: "Chapter 4 - Das Herz von Wien",
+  };
+
+  function getCurrentChapterNumber() {
+    const nodeId = state.nodeId || "";
+    if (nodeId.startsWith("ch4_") || nodeId === "chapter_4_title") return 4;
+    if (nodeId.startsWith("ch3_") || nodeId === "chapter_3_title") return 3;
+    if (nodeId.startsWith("ch2_") || nodeId === "chapter_2_teaser") return 2;
+    return 1;
+  }
+
+  function restartCurrentChapter() {
+    clearTypeTimer();
+    state.typing = false;
+    closeMenu();
+    removeBlackScreen();
+    removeJumpScareFlash();
+    removeTagebuchScreen();
+    closeMeldezettelGame();
+    closeTicketMachine();
+    resetGameState();
+    hideChoices();
+
+    const chapterNumber = getCurrentChapterNumber();
+    const startNodeId = CHAPTER_START_NODES[chapterNumber] || CHAPTER_START_NODES[1];
+    els.chapterLabel.textContent = CHAPTER_LABELS[chapterNumber] || CHAPTER_LABELS[1];
+    goToNode(startNodeId);
   }
 
   function startGame() {
@@ -1304,6 +1617,7 @@ let gameState = {
     resetGameState();
     closeMenu();
     removeBlackScreen();
+    removeJumpScareFlash();
     removeTagebuchScreen();
     closeMeldezettelGame();
     closeTicketMachine();
@@ -1330,6 +1644,7 @@ let gameState = {
     els.startMenu.hidden = true;
     showStartMainActions();
     removeBlackScreen();
+    removeJumpScareFlash();
     removeTagebuchScreen();
     closeMeldezettelGame();
     closeTicketMachine();
@@ -1344,6 +1659,8 @@ let gameState = {
       els.chapterLabel.textContent = "Chapter 2 - Check-in";
     } else if (targetNodeId === "chapter_3_title") {
       els.chapterLabel.textContent = "Chapter 3 - Unterwegs";
+    } else if (targetNodeId === "chapter_4_title") {
+      els.chapterLabel.textContent = "Chapter 4 - Das Herz von Wien";
     }
 
     goToNode(targetNodeId);
@@ -1359,6 +1676,18 @@ let gameState = {
       if (meldezettel.tutorialOpen) {
         event.preventDefault();
         if (event.code === "Escape") closeMeldezettelTutorial();
+        return;
+      }
+
+      if (ticketMachine.helpOpen) {
+        event.preventDefault();
+        if (event.code === "Escape") closeTicketMachineHint();
+        return;
+      }
+
+      if (ticketMachine.errorOpen) {
+        event.preventDefault();
+        if (event.code === "Enter" || event.code === "Space") dismissTicketMachineError();
         return;
       }
 
@@ -1401,8 +1730,7 @@ let gameState = {
     els.startMenuFromGameBtn.addEventListener("click", returnToStartMenu);
 
     els.restartBtn.addEventListener("click", () => {
-      closeMenu();
-      startGame();
+      restartCurrentChapter();
     });
 
     els.menuPanel.addEventListener("click", (event) => {

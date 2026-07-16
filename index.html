@@ -27,6 +27,7 @@
           <button type="button" class="start-chapter-select-btn" data-chapter-node="chapter_1_title">Chapter 1: Ankunft</button>
           <button type="button" class="start-chapter-select-btn" data-chapter-node="ch2_reception_greet">Chapter 2: Check-in</button>
           <button type="button" class="start-chapter-select-btn" data-chapter-node="chapter_3_title">Chapter 3: Unterwegs</button>
+          <button type="button" class="start-chapter-select-btn" data-chapter-node="chapter_4_title">Chapter 4: Das Herz von Wien</button>
           <button type="button" id="start-chapters-back-btn" class="start-menu__btn start-menu__btn--secondary">Back</button>
         </div>
       </div>
@@ -125,38 +126,71 @@
     <div id="ticket-machine-overlay" class="ticket-machine-overlay" hidden>
       <div class="ticket-machine">
         <header class="ticket-machine__head">
-          <h2 class="ticket-machine__title">Wiener Linien — Ticket Machine</h2>
-          <p class="ticket-machine__subtitle">U-Bahn Station</p>
+          <h2 class="ticket-machine__title">Wiener Linien — Ticketautomat</h2>
+          <p class="ticket-machine__subtitle">Fahrscheine</p>
+          <div class="ticket-machine__dev-controls" aria-label="Development shortcuts">
+            <button type="button" id="ticket-machine-dev-success">Dev: Skip (Success)</button>
+            <button type="button" id="ticket-machine-dev-fail">Dev: Skip (Fail)</button>
+          </div>
         </header>
 
-        <p class="ticket-machine__message" id="ticket-machine-message"></p>
+        <p class="ticket-machine__goal">Goal: Choose the best-value ticket for Lena's travel plans today.</p>
 
-        <div class="ticket-machine__step" id="ticket-machine-step-type">
-          <p class="ticket-machine__goal">GOAL: Buy a standard Single Ride ticket at full price (Einzelfahrt - Vollpreis).</p>
+        <div class="ticket-machine__screen">
+          <div class="ticket-machine__screen-toolbar">
+            <span class="ticket-machine__screen-label">Touchscreen</span>
+            <button type="button" class="ticket-machine__hint" id="ticket-machine-hint">💡 Hint</button>
+          </div>
 
-          <section class="ticket-machine__group">
-            <h3 class="ticket-machine__group-title">Choose a ticket</h3>
-            <div class="ticket-machine__options" id="ticket-machine-types"></div>
-          </section>
+          <p class="ticket-machine__message" id="ticket-machine-message" role="status" aria-live="polite"></p>
+
+          <div class="ticket-machine__step" id="ticket-machine-step-type">
+            <section class="ticket-machine__group">
+              <h3 class="ticket-machine__group-title">Fahrschein wählen</h3>
+              <div class="ticket-machine__options" id="ticket-machine-types"></div>
+            </section>
+          </div>
+
+          <div class="ticket-machine__step" id="ticket-machine-step-category" hidden>
+            <section class="ticket-machine__group">
+              <h3 class="ticket-machine__group-title">Tarifgruppe wählen</h3>
+              <div class="ticket-machine__options" id="ticket-machine-categories"></div>
+            </section>
+          </div>
+
+          <div class="ticket-machine__step" id="ticket-machine-step-quantity" hidden>
+            <section class="ticket-machine__group">
+              <h3 class="ticket-machine__group-title">Anzahl wählen</h3>
+              <div class="ticket-machine__options" id="ticket-machine-quantities"></div>
+            </section>
+          </div>
+
+          <div class="ticket-machine__step" id="ticket-machine-step-payment" hidden>
+            <button type="button" class="ticket-machine__buy" id="ticket-machine-buy">Jetzt bezahlen</button>
+          </div>
+
+          <div class="ticket-machine__step" id="ticket-machine-step-validate" hidden>
+            <p class="ticket-machine__thought">Wait, in Vienna you have to validate the ticket before entering the platform! Let me click the blue validator machine (Entwerter).</p>
+
+            <div class="ticket-machine__entwerter-row">
+              <button type="button" class="ticket-machine__entwerter" id="ticket-machine-entwerter" aria-label="Validate ticket with Entwerter">Entwerter</button>
+            </div>
+          </div>
         </div>
 
-        <div class="ticket-machine__step" id="ticket-machine-step-category" hidden>
-          <section class="ticket-machine__group">
-            <h3 class="ticket-machine__group-title">Choose a fare category</h3>
-            <div class="ticket-machine__options" id="ticket-machine-categories"></div>
-          </section>
+        <div id="ticket-machine-hint-overlay" class="ticket-machine-hint" hidden>
+          <div class="ticket-machine-hint__panel" role="dialog" aria-modal="true" aria-labelledby="ticket-machine-hint-title">
+            <h3 class="ticket-machine-hint__title" id="ticket-machine-hint-title">Lena's Travel Plan</h3>
+            <div class="ticket-machine-hint__body" id="ticket-machine-hint-text"></div>
+            <button type="button" class="ticket-machine-hint__close" id="ticket-machine-hint-close">Close</button>
+          </div>
         </div>
 
-        <div class="ticket-machine__step" id="ticket-machine-step-payment" hidden>
-          <p class="ticket-machine__thought">Everything looks right. Time to pay for the ticket.</p>
-          <button type="button" class="ticket-machine__buy" id="ticket-machine-buy">Jetzt bezahlen (2.50 €)</button>
-        </div>
-
-        <div class="ticket-machine__step" id="ticket-machine-step-validate" hidden>
-          <p class="ticket-machine__thought">Wait, in Vienna you have to validate the ticket before entering the platform! Let me click the blue validator machine (Entwerter).</p>
-
-          <div class="ticket-machine__entwerter-row">
-            <button type="button" class="ticket-machine__entwerter" id="ticket-machine-entwerter" aria-label="Validate ticket with Entwerter">Entwerter</button>
+        <div id="ticket-machine-error-overlay" class="ticket-machine-error" hidden>
+          <div class="ticket-machine-error__panel" role="alertdialog" aria-modal="true" aria-labelledby="ticket-machine-error-title">
+            <h3 class="ticket-machine-error__title" id="ticket-machine-error-title">Incorrect choice</h3>
+            <p class="ticket-machine-error__text" id="ticket-machine-error-text"></p>
+            <button type="button" class="ticket-machine-error__continue" id="ticket-machine-error-continue">Try again</button>
           </div>
         </div>
       </div>

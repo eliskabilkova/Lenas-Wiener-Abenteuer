@@ -417,7 +417,7 @@ const storyData = {
     lenaMood: "happy",
     npcImage: "none",
     choices: [
-      { text: "Continue", nextNode: "ch3_morning_intro_architecture" },
+      { text: "Get out of bed", nextNode: "ch3_morning_intro_architecture" },
     ],
   },
 
@@ -441,7 +441,7 @@ const storyData = {
     lenaMood: "happy",
     npcImage: "none",
     choices: [
-      { text: "Head to the U-Bahn station", nextNode: "ch3_ticket_machine_intro" },
+      { text: "Head to the station", nextNode: "ch3_ticket_machine_intro" },
     ],
   },
 
@@ -449,7 +449,7 @@ const storyData = {
     id: "ch3_ticket_machine_intro",
     background: "u_bahn_station.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "Okay, here's a Wiener Linien ticket machine. Let's see if I can figure out the right ticket in German...",
+    text: "I need to go to Stephansdom now, then to a museum, and later back to the hotel. That's at least 3 metro trips today. A single ticket (Einzelfahrt) costs €2.40. Let me check the ticket machine. I should buy whatever is cheaper for today: either individual tickets or a 24-hour pass. Also, since I'm a tourist and don't have an Austrian school ID, I must buy a standard adult fare.",
     lenaMood: "unsure",
     npcImage: "none",
     choices: [
@@ -468,15 +468,100 @@ const storyData = {
     choices: [],
   },
 
-  ch3_ubahn_entry: {
-    id: "ch3_ubahn_entry",
+  ch3_ticket_success: {
+    id: "ch3_ticket_success",
     background: "u_bahn_station.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "The station is busy. I step onto the escalator and look at the map on my phone, without noticing that I am blocking the left side.",
+    text: "Yes! I did it! I finally have my ticket. Stephansdom, here I come!",
+    lenaMood: "happy",
+    npcImage: "none",
+    choices: [
+      { text: "Continue", nextNode: "ch3_boarding" },
+    ],
+  },
+
+  ch3_ticket_fail: {
+    id: "ch3_ticket_fail",
+    background: "u_bahn_station.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Oops! That ticket machine was a bit of a puzzle. After a few wrong clicks, I got a little confused, but luckily a friendly local student noticed my struggle and showed me what to select. It was a bit clumsy of me, but hey – now I have my ticket, I learned some new German words, and I'm ready to go! Stephansplatz, here I come!",
+    lenaMood: "happy",
+    npcImage: "none",
+    choices: [
+      { text: "Continue", nextNode: "ch3_boarding" },
+    ],
+  },
+
+  ch3_boarding: {
+    id: "ch3_boarding",
+    background: "u_bahn_station.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Okay, I need the U3 line — the orange one — towards Simmering. I'm at Neubaugasse, so this is my line, and Stephansplatz is just a few stops away. Let me find the right platform...",
     lenaMood: "unsure",
     npcImage: "none",
     choices: [
-      { text: "Continue", nextNode: "ch3_ubahn_dialogue" },
+      { text: "Find the platform", nextNode: "ch3_train_ride" },
+    ],
+  },
+
+  ch3_train_ride: {
+    id: "ch3_train_ride",
+    background: "u_bahn_station.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "The metro here is so clean! I love the voice announcing the stations.",
+    lenaMood: "happy",
+    npcImage: "none",
+    choices: [
+      { text: "Listen to announcements", nextNode: "ch3_train_arrival" },
+    ],
+  },
+
+  ch3_train_arrival: {
+    id: "ch3_train_arrival",
+    background: "u_bahn_station.jpg",
+    speaker: "Ansage",
+    text: "Stephansplatz. Umsteigen zu: U1.",
+    lenaMood: "normal",
+    npcImage: "none",
+    dialogueStyle: "announcement",
+    choices: [
+      { text: "Continue", nextNode: "ch3_prepare_exit" },
+    ],
+  },
+
+  ch3_prepare_exit: {
+    id: "ch3_prepare_exit",
+    background: "u_bahn_station.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "That's my stop! I grab my bag and head towards the long escalator up to the surface.",
+    lenaMood: "happy",
+    npcImage: "none",
+    choices: [
+      { text: "Continue", nextNode: "ch3_escalator_entry" },
+    ],
+  },
+
+  ch3_escalator_entry: {
+    id: "ch3_escalator_entry",
+    background: "u_bahn_station.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "The escalator is long and crowded. I step on and look at the map on my phone, without noticing that I am blocking the left side.",
+    lenaMood: "unsure",
+    npcImage: "none",
+    choices: [
+      { text: "Continue", nextNode: "ch3_ubahn_bump" },
+    ],
+  },
+
+  ch3_ubahn_bump: {
+    id: "ch3_ubahn_bump",
+    background: "u_bahn_station.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Oops! Someone just bumped into me from behind quite hard...",
+    lenaMood: "unsure",
+    npcImage: "none",
+    choices: [
+      { text: "Turn around", nextNode: "ch3_ubahn_dialogue" },
     ],
   },
 
@@ -484,11 +569,11 @@ const storyData = {
     id: "ch3_ubahn_dialogue",
     background: "u_bahn_station.jpg",
     speaker: "Wiener Mann",
-    text: "Heast, rechts stehen, links gehen!",
+    text: "Entschuldigung! Rechts stehen, links gehen!",
     lenaMood: "unsure",
     npcImage: "commuter_man_annoyed.png",
     choices: [
-      { text: "Continue", nextNode: "ch3_ubahn_thought" },
+      { text: "Reply to the man", nextNode: "ch3_ubahn_thought" },
     ],
   },
 
@@ -500,9 +585,9 @@ const storyData = {
     lenaMood: "unsure",
     npcImage: "commuter_man_annoyed.png",
     choices: [
-      { text: "Ach, Entschuldigung! Ich habe auf die Karte geschaut und nicht aufgepasst. (Oh, sorry! I was looking at the map and wasn't paying attention.)", nextNode: "ch3_ubahn_polite" },
-      { text: "Es tut mir leid, aber Sie können doch warten, oder? (I'm sorry, but you can wait, right?)", nextNode: "ch3_ubahn_rude" },
-      { text: "Ja, links ist gut, danke! (Yes, left is good, thank you!)", nextNode: "ch3_ubahn_confused" },
+      { text: "Ach, Entschuldigung! Ich habe auf die Karte geschaut und nicht aufgepasst.", nextNode: "ch3_ubahn_polite" },
+      { text: "Es tut mir leid, aber Sie können doch warten, oder?", nextNode: "ch3_ubahn_rude" },
+      { text: "Ja, links ist gut, danke!", nextNode: "ch3_ubahn_confused" },
     ],
   },
 
@@ -514,7 +599,7 @@ const storyData = {
     lenaMood: "normal",
     npcImage: "none",
     choices: [
-      { text: "Continue", nextNode: "ch3_phase1_end" },
+      { text: "Continue", nextNode: "ch3_station_exit" },
     ],
   },
 
@@ -526,7 +611,7 @@ const storyData = {
     lenaMood: "unsure",
     npcImage: "none",
     choices: [
-      { text: "Continue", nextNode: "ch3_phase1_end" },
+      { text: "Continue", nextNode: "ch3_station_exit" },
     ],
   },
 
@@ -538,27 +623,175 @@ const storyData = {
     lenaMood: "unsure",
     npcImage: "none",
     choices: [
-      { text: "Continue", nextNode: "ch3_phase1_end" },
+      { text: "Continue", nextNode: "ch3_station_exit" },
     ],
   },
 
-  ch3_phase1_end: {
-    id: "ch3_phase1_end",
+  ch3_station_exit: {
+    id: "ch3_station_exit",
+    background: "u_bahn_station.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "I'm almost at the exit. I can see the light... Stephansplatz, here I come!",
+    lenaMood: "happy",
+    npcImage: "none",
+    choices: [
+      { text: "Step out onto Stephansplatz", nextNode: "end_chapter_3" },
+    ],
+  },
+
+  end_chapter_3: {
+    id: "end_chapter_3",
+    background: "u_bahn_station.jpg",
+    speaker: "System",
+    text: "End of Chapter 3",
+    lenaMood: "none",
+    npcImage: "none",
+    choices: [],
+  },
+
+  // ── Chapter 4: Das Herz von Wien ────────────────────────────────────────
+
+  chapter_4_title: {
+    id: "chapter_4_title",
     background: "black",
-    speaker: "Narrator",
-    text: "Next station: Stephansplatz. The doors open...",
+    speaker: "System",
+    text: "Kapitel 4: Das Herz von Wien",
     lenaMood: "none",
     npcImage: "none",
     choices: [
-      { text: "Continue", nextNode: "ch3_placeholder_end" },
+      { text: "Start Chapter", nextNode: "ch4_stephans_amazed" },
     ],
   },
 
-  ch3_placeholder_end: {
-    id: "ch3_placeholder_end",
+  ch4_stephans_amazed: {
+    id: "ch4_stephans_amazed",
+    background: "cathedral.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Oh my goodness... It's absolutely massive! The roof tiles are so colorful and the tower stretches all the way into the clouds. I can't even fit the whole cathedral in one photo! I'm just standing here with my mouth open, completely amazed...",
+    lenaMood: "happy",
+    npcImage: "none",
+    choices: [
+      { text: "Continue", nextNode: "ch4_stephans_intro" },
+    ],
+  },
+
+  ch4_stephans_intro: {
+    id: "ch4_stephans_intro",
+    background: "cathedral.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Stephansdom, or St. Stephen's Cathedral, is the symbol of Vienna. It's a massive Gothic masterpiece from the 12th century. Locals call it 'Steffl' because of its high tower. I've seen it in pictures, but I can't believe I'm seeing it for real!",
+    lenaMood: "happy",
+    npcImage: "none",
+    choices: [
+      { text: "Admire Stephansdom", nextNode: "ch4_mozart_surprise" },
+    ],
+  },
+
+  ch4_mozart_surprise: {
+    id: "ch4_mozart_surprise",
+    background: "cathedral.jpg",
+    speaker: "Narrator",
+    text: "*ZAP!* Suddenly, a man in a white 18-century wig and a red velvet coat steps right into my view, waving a handful of golden tickets!",
+    lenaMood: "surprised",
+    npcImage: "mozart_seller_pushy.png",
+    dialogueStyle: "sensory",
+    effect: "jumpScare",
+    choices: [
+      { text: "Continue", nextNode: "ch4_mozart_seller" },
+    ],
+  },
+
+  ch4_mozart_seller: {
+    id: "ch4_mozart_seller",
+    background: "cathedral.jpg",
+    speaker: "Straßenverkäufer",
+    text: "Hallo! Guten Tag! Suchen Sie klassische Musik? Mozart! Vivaldi! Konzert heute Abend im wunderschönen Saal! Nur heute super Angebot, nur für Sie, meine Dame!",
+    lenaMood: "surprised",
+    npcImage: "mozart_seller_pushy.png",
+    choices: [
+      { text: "Continue", nextNode: "ch4_mozart_shock" },
+    ],
+  },
+
+  ch4_mozart_shock: {
+    id: "ch4_mozart_shock",
+    background: "cathedral.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Oh! He scared me! He literally jumped out of nowhere. Wait... I remember reading about this online. There are tourist scammers in Vienna's city center dressed as Mozart, trying to sell overpriced concert tickets to tourists. I need to be careful and reject him!",
+    lenaMood: "unsure",
+    npcImage: "mozart_seller_pushy.png",
+    choices: [
+      { text: "Reply to him", nextNode: "ch4_mozart_choice" },
+    ],
+  },
+
+  ch4_mozart_choice: {
+    id: "ch4_mozart_choice",
+    background: "cathedral.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "What should I say to him?",
+    lenaMood: "unsure",
+    npcImage: "mozart_seller_pushy.png",
+    choices: [
+      { text: "Ich weiß nicht... Ist das Konzert gut?", nextNode: "ch4_mozart_wrong_a" },
+      { text: "Es tut mir leid, aber ich keine Zeit für Musik habe.", nextNode: "ch4_mozart_wrong_b" },
+      { text: "Nein, danke. Ich habe heute schon andere Pläne.", nextNode: "ch4_mozart_correct" },
+    ],
+  },
+
+  ch4_mozart_wrong_a: {
+    id: "ch4_mozart_wrong_a",
+    background: "cathedral.jpg",
+    speaker: "Narrator",
+    text: "The seller immediately senses hesitation. He thrusts glossy brochures into my hands and blocks my path, insisting the concert is a once-in-a-lifetime experience. Minutes pass before I can finally slip away.",
+    lenaMood: "unsure",
+    npcImage: "mozart_seller_pushy.png",
+    choices: [
+      { text: "Continue", nextNode: "ch4_mozart_after" },
+    ],
+  },
+
+  ch4_mozart_wrong_b: {
+    id: "ch4_mozart_wrong_b",
+    background: "cathedral.jpg",
+    speaker: "Narrator",
+    text: "He waves off my excuse completely. \"Keine Zeit? Das Konzert dauert nur zwei Stunden! Kommen Sie!\" He steps closer, and I feel trapped trying to politely escape.",
+    lenaMood: "unsure",
+    npcImage: "mozart_seller_pushy.png",
+    choices: [
+      { text: "Continue", nextNode: "ch4_mozart_after" },
+    ],
+  },
+
+  ch4_mozart_correct: {
+    id: "ch4_mozart_correct",
+    background: "cathedral.jpg",
+    speaker: "Straßenverkäufer",
+    text: "Schade! Schönen Tag noch!",
+    lenaMood: "normal",
+    npcImage: "mozart_seller_neutral.png",
+    choices: [
+      { text: "Continue", nextNode: "ch4_mozart_after" },
+    ],
+  },
+
+  ch4_mozart_after: {
+    id: "ch4_mozart_after",
+    background: "cathedral.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Phew! That was sudden. He literally jumped out of nowhere! My heart is beating so fast. Welcome to Vienna, I guess! But now... my stomach is rumbling. I need to find something to eat.",
+    lenaMood: "thoughtful",
+    npcImage: "none",
+    choices: [
+      { text: "Look for somewhere to eat", nextNode: "ch4_placeholder_end" },
+    ],
+  },
+
+  ch4_placeholder_end: {
+    id: "ch4_placeholder_end",
     background: "cathedral.jpg",
     speaker: "System",
-    text: "[The cathedral scene begins here.]",
+    text: "[The food scene begins here.]",
     lenaMood: "none",
     npcImage: "none",
     choices: [
