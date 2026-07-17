@@ -135,6 +135,23 @@ button {
     linear-gradient(165deg, #5a6074 0%, #a7a1a3 46%, #806d64 100%);
 }
 
+.game[data-background="cathedral_interior"] {
+  background-image:
+    linear-gradient(180deg, rgba(8, 6, 14, 0.3) 0%, rgba(8, 6, 14, 0.7) 100%),
+    radial-gradient(ellipse at 30% 25%, rgba(180, 60, 80, 0.22) 0%, transparent 40%),
+    radial-gradient(ellipse at 70% 20%, rgba(60, 90, 180, 0.24) 0%, transparent 42%),
+    radial-gradient(ellipse at 50% 80%, rgba(255, 190, 110, 0.18) 0%, transparent 45%),
+    linear-gradient(170deg, #221c2e 0%, #2e2438 45%, #1a1420 100%);
+}
+
+.game[data-background="vienna_view"] {
+  background-image:
+    linear-gradient(180deg, rgba(255, 245, 225, 0.08) 0%, rgba(30, 25, 40, 0.35) 100%),
+    radial-gradient(ellipse at 50% 8%, rgba(255, 240, 200, 0.4) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 60%, rgba(120, 180, 130, 0.2) 0%, transparent 40%),
+    linear-gradient(175deg, #8fb8d8 0%, #c9b8a0 55%, #7a6d70 100%);
+}
+
 .game__overlay {
   position: absolute;
   inset: 0;
@@ -284,6 +301,15 @@ button {
   filter: saturate(0.92) brightness(0.96);
 }
 
+/* Climb moods — placeholder filters until dedicated tired-Lena artwork is added */
+.character__sprite[data-character="lena"][data-mood="tired"] {
+  filter: saturate(0.8) brightness(0.9);
+}
+
+.character__sprite[data-character="lena"][data-mood="exhausted"] {
+  filter: saturate(0.65) brightness(0.82);
+}
+
 /* Mira — receptionist */
 .character__sprite[data-character="mira"] {
   background: linear-gradient(145deg, #bbf7d0 0%, #34d399 52%, #059669 100%);
@@ -318,6 +344,19 @@ button {
 
 .character__sprite[data-character="mozart_seller"][data-mood="pushy"] {
   filter: brightness(1.06);
+}
+
+/* Cathedral warden */
+.character__sprite[data-character="warden"] {
+  background: linear-gradient(145deg, #bfdbfe 0%, #3b82f6 50%, #1e3a8a 100%);
+}
+
+.character__sprite[data-character="warden"]::after {
+  content: "D";
+}
+
+.character__sprite[data-character="warden"][data-mood="stern"] {
+  filter: saturate(0.85) brightness(0.94);
 }
 
 .character--npc.is-jumpscare-pop {
@@ -447,6 +486,343 @@ button {
 @keyframes announcementPulse {
   0%, 100% { opacity: 0.92; }
   50% { opacity: 1; }
+}
+
+.dialogue__text.metro-sign-text {
+  padding: 0;
+  min-height: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.metro-sign-board {
+  width: 100%;
+  border-radius: 12px;
+  border: 2px solid #f37021;
+  background: linear-gradient(165deg, #25252d 0%, #1a1a20 55%, #141418 100%);
+  box-shadow:
+    0 14px 36px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 0 0 1px rgba(243, 112, 33, 0.18);
+  overflow: hidden;
+  animation: metroBoardIn 0.4s ease-out;
+}
+
+@keyframes metroBoardIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.metro-sign-board__head {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.65rem 0.85rem;
+  background: linear-gradient(90deg, rgba(243, 112, 33, 0.22), rgba(243, 112, 33, 0.06));
+  border-bottom: 1px solid rgba(243, 112, 33, 0.35);
+}
+
+.metro-sign-board__badge {
+  display: inline-grid;
+  place-items: center;
+  min-width: 2.1rem;
+  height: 2.1rem;
+  padding: 0 0.45rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  color: #1a1a20;
+  background: linear-gradient(180deg, #ffb347 0%, #f37021 100%);
+  box-shadow: 0 2px 8px rgba(243, 112, 33, 0.45);
+}
+
+.metro-sign-board__headline {
+  flex: 1;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.metro-sign-board__station {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.48);
+}
+
+.metro-sign-board__columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.metro-sign-board__direction {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.85rem 0.75rem 1rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(243, 112, 33, 0.1) 0%, rgba(243, 112, 33, 0.02) 100%);
+}
+
+.metro-sign-board__direction:last-child {
+  border-right: none;
+}
+
+.metro-sign-board__arrow {
+  display: inline-grid;
+  place-items: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #1a1a20;
+  background: linear-gradient(180deg, #ffc56d 0%, #f37021 100%);
+  border: 1px solid rgba(255, 196, 120, 0.65);
+  box-shadow: 0 0 14px rgba(243, 112, 33, 0.45);
+}
+
+.metro-sign-board__heading {
+  margin: 0;
+  font-size: clamp(0.72rem, 1.8vw, 0.84rem);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1.35;
+  color: #ffb86a;
+}
+
+.metro-sign-board__stations {
+  margin: 0;
+  font-size: clamp(0.66rem, 1.55vw, 0.76rem);
+  font-weight: 500;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.52);
+}
+
+@media (max-width: 560px) {
+  .metro-sign-board__columns {
+    grid-template-columns: 1fr;
+  }
+
+  .metro-sign-board__direction {
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .metro-sign-board__direction:last-child {
+    border-bottom: none;
+  }
+}
+
+/* ── Church rules matching mini-game ─────────────────────────────────── */
+
+.rules-game {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(0.8rem, 3vw, 2rem);
+  background:
+    linear-gradient(135deg, rgba(12, 13, 18, 0.9), rgba(27, 23, 25, 0.84)),
+    radial-gradient(circle at 50% 0%, rgba(220, 170, 90, 0.2), transparent 52%);
+  backdrop-filter: blur(10px);
+}
+
+.rules-game__panel {
+  width: min(96vw, 820px);
+  max-height: 92vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: clamp(1rem, 2.8vw, 1.8rem);
+  border-radius: 20px;
+  border: 1px solid rgba(244, 195, 116, 0.28);
+  background: linear-gradient(160deg, rgba(35, 36, 43, 0.98), rgba(22, 23, 29, 0.98));
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, 0.58),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  animation: metroBoardIn 0.35s ease-out;
+}
+
+.rules-game__eyebrow {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-align: center;
+  color: #dca95f;
+}
+
+.rules-game__title {
+  margin: 0;
+  font-size: clamp(1.15rem, 3vw, 1.55rem);
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-align: center;
+  color: #fff8ec;
+}
+
+.rules-game__instruction {
+  margin: 0;
+  font-size: clamp(0.78rem, 1.9vw, 0.9rem);
+  font-weight: 500;
+  line-height: 1.5;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.rules-game__instruction.is-nudge {
+  animation: rulesNudge 0.4s ease;
+}
+
+@keyframes rulesNudge {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.rules-game__columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.7rem, 2vw, 1rem);
+  margin-top: 0.35rem;
+}
+
+.rules-game__column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  min-width: 0;
+  padding: 0.75rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.rules-game__column-title {
+  margin: 0 0 0.1rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(244, 195, 116, 0.76);
+}
+
+.rules-game__item {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  min-height: 3.3rem;
+  padding: 0.7rem 0.8rem;
+  border-radius: 11px;
+  font-family: inherit;
+  font-size: clamp(0.72rem, 1.8vw, 0.85rem);
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.045));
+  color: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.18);
+}
+
+.rules-game__item:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: rgba(244, 195, 116, 0.38);
+  background: linear-gradient(145deg, rgba(244, 195, 116, 0.14), rgba(255, 255, 255, 0.055));
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+}
+
+.rules-game__num {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #1c1b1d;
+  background: linear-gradient(180deg, #f4c374, #dca04d);
+}
+
+.rules-game__item--rule.is-selected {
+  border-color: #f4c374;
+  color: #fff8ec;
+  background: linear-gradient(145deg, rgba(244, 195, 116, 0.25), rgba(220, 160, 77, 0.12));
+  box-shadow:
+    0 0 0 2px rgba(244, 195, 116, 0.16),
+    0 8px 22px rgba(0, 0, 0, 0.3);
+}
+
+.rules-game__item.is-matched {
+  cursor: default;
+  border-color: rgba(91, 203, 136, 0.52);
+  background: linear-gradient(145deg, rgba(57, 151, 96, 0.28), rgba(35, 95, 62, 0.18));
+  color: #c9f4da;
+  opacity: 0.78;
+}
+
+.rules-game__item.is-matched .rules-game__num {
+  color: #effff5;
+  background: #398f5f;
+}
+
+.rules-game__item.is-wrong {
+  animation: rulesShake 0.4s ease;
+  border-color: rgba(239, 99, 99, 0.72);
+  background: linear-gradient(145deg, rgba(187, 60, 60, 0.3), rgba(105, 39, 39, 0.2));
+}
+
+@keyframes rulesShake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+.rules-game__status {
+  margin: 0;
+  font-size: clamp(0.72rem, 1.7vw, 0.82rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.66);
+}
+
+@media (max-width: 560px) {
+  .rules-game {
+    align-items: flex-start;
+    overflow-y: auto;
+  }
+
+  .rules-game__panel {
+    max-height: none;
+  }
+
+  .rules-game__columns {
+    grid-template-columns: 1fr;
+  }
 }
 
 .text-fade-in {

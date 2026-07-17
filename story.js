@@ -496,11 +496,61 @@ const storyData = {
     id: "ch3_boarding",
     background: "u_bahn_station.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "Okay, I need the U3 line — the orange one — towards Simmering. I'm at Neubaugasse, so this is my line, and Stephansplatz is just a few stops away. Let me find the right platform...",
+    text: "Okay, I'm down at the Neubaugasse station on the U3 line. I need to get to Stephansplatz. But there are two platforms! I need to check the overhead signs and choose the correct direction.",
     lenaMood: "unsure",
     npcImage: "none",
     choices: [
-      { text: "Find the platform", nextNode: "ch3_train_ride" },
+      { text: "Look at the signs", nextNode: "ch3_platform_sign" },
+    ],
+  },
+
+  ch3_platform_sign: {
+    id: "ch3_platform_sign",
+    background: "u_bahn_station.jpg",
+    speaker: "Station Sign",
+    text: "",
+    lenaMood: "unsure",
+    npcImage: "none",
+    dialogueStyle: "metro-sign",
+    choices: [
+      { text: "Continue", nextNode: "ch3_platform_deduction" },
+    ],
+  },
+
+  ch3_platform_deduction: {
+    id: "ch3_platform_deduction",
+    background: "u_bahn_station.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Okay, there's the network map. I just need to check where Stephansplatz is located and choose the correct 'Endstation' (final destination) from the choices below.",
+    lenaMood: "unsure",
+    npcImage: "none",
+    choices: [
+      { text: "Gleis 1: U3 Richtung Ottakring", nextNode: "ch3_platform_wrong" },
+      { text: "Gleis 2: U3 Richtung Simmering", nextNode: "ch3_platform_correct" },
+    ],
+  },
+
+  ch3_platform_wrong: {
+    id: "ch3_platform_wrong",
+    background: "u_bahn_station.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Oh no! After one stop, I realized the train is heading away from the center towards Ottakring. I had to get off and wait for the train going back. So embarrassing and such a waste of time!",
+    lenaMood: "unsure",
+    npcImage: "none",
+    choices: [
+      { text: "Continue", nextNode: "ch3_train_ride" },
+    ],
+  },
+
+  ch3_platform_correct: {
+    id: "ch3_platform_correct",
+    background: "u_bahn_station.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Perfect! Simmering is the correct end station. Stephansplatz is just three stops away from here. The doors are opening, let's get in!",
+    lenaMood: "happy",
+    npcImage: "none",
+    choices: [
+      { text: "Continue", nextNode: "ch3_train_ride" },
     ],
   },
 
@@ -649,7 +699,7 @@ const storyData = {
     choices: [],
   },
 
-  // ── Chapter 4: Das Herz von Wien ────────────────────────────────────────
+  // ── Kapitel 4: Das Herz von Wien ────────────────────────────────────────
 
   chapter_4_title: {
     id: "chapter_4_title",
@@ -667,8 +717,20 @@ const storyData = {
     id: "ch4_stephans_amazed",
     background: "cathedral.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "Oh my goodness... It's absolutely massive! The roof tiles are so colorful and the tower stretches all the way into the clouds. I can't even fit the whole cathedral in one photo! I'm just standing here with my mouth open, completely amazed...",
+    text: "Oh my goodness... It's huge! The roof has so many colors, and the tower goes all the way up into the clouds. I can't fit the whole cathedral in one photo! I'm just standing here with my mouth open...",
     lenaMood: "happy",
+    npcImage: "none",
+    choices: [
+      { text: "Continue", nextNode: "ch4_square_crowds" },
+    ],
+  },
+
+  ch4_square_crowds: {
+    id: "ch4_square_crowds",
+    background: "cathedral.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "And so many people! Tourists with cameras, street artists, music from every corner... The square is loud and full of life. I feel very small next to this giant church and this big crowd.",
+    lenaMood: "surprised",
     npcImage: "none",
     choices: [
       { text: "Continue", nextNode: "ch4_stephans_intro" },
@@ -679,7 +741,7 @@ const storyData = {
     id: "ch4_stephans_intro",
     background: "cathedral.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "Stephansdom, or St. Stephen's Cathedral, is the symbol of Vienna. It's a massive Gothic masterpiece from the 12th century. Locals call it 'Steffl' because of its high tower. I've seen it in pictures, but I can't believe I'm seeing it for real!",
+    text: "Stephansdom, or St. Stephen's Cathedral, is the symbol of Vienna. It is a huge Gothic church from the 12th century. People from Vienna call it 'Steffl' because of its tall tower. I saw it in so many pictures — and now it is real!",
     lenaMood: "happy",
     npcImage: "none",
     choices: [
@@ -691,7 +753,7 @@ const storyData = {
     id: "ch4_mozart_surprise",
     background: "cathedral.jpg",
     speaker: "Narrator",
-    text: "*ZAP!* Suddenly, a man in a white 18-century wig and a red velvet coat steps right into my view, waving a handful of golden tickets!",
+    text: "*ZAP!* Suddenly, a man in a white wig and a red coat jumps right in front of me. He waves a handful of golden tickets!",
     lenaMood: "surprised",
     npcImage: "mozart_seller_pushy.png",
     dialogueStyle: "sensory",
@@ -717,7 +779,7 @@ const storyData = {
     id: "ch4_mozart_shock",
     background: "cathedral.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "Oh! He scared me! He literally jumped out of nowhere. Wait... I remember reading about this online. There are tourist scammers in Vienna's city center dressed as Mozart, trying to sell overpriced concert tickets to tourists. I need to be careful and reject him!",
+    text: "Oh! He scared me! Wait... I read about this online. In the city center, there are ticket sellers dressed as Mozart. They sell very expensive concert tickets to tourists. I have to be careful and say no!",
     lenaMood: "unsure",
     npcImage: "mozart_seller_pushy.png",
     choices: [
@@ -743,7 +805,7 @@ const storyData = {
     id: "ch4_mozart_wrong_a",
     background: "cathedral.jpg",
     speaker: "Narrator",
-    text: "The seller immediately senses hesitation. He thrusts glossy brochures into my hands and blocks my path, insisting the concert is a once-in-a-lifetime experience. Minutes pass before I can finally slip away.",
+    text: "The seller sees that I am not sure. He puts shiny brochures into my hands and stands in my way. He talks and talks about the 'best concert in Vienna'. Many minutes pass before I can finally walk away.",
     lenaMood: "unsure",
     npcImage: "mozart_seller_pushy.png",
     choices: [
@@ -755,7 +817,7 @@ const storyData = {
     id: "ch4_mozart_wrong_b",
     background: "cathedral.jpg",
     speaker: "Narrator",
-    text: "He waves off my excuse completely. \"Keine Zeit? Das Konzert dauert nur zwei Stunden! Kommen Sie!\" He steps closer, and I feel trapped trying to politely escape.",
+    text: "He does not accept my excuse. \"Keine Zeit? Das Konzert dauert nur zwei Stunden! Kommen Sie!\" He steps closer, and I feel trapped. It is hard to escape politely.",
     lenaMood: "unsure",
     npcImage: "mozart_seller_pushy.png",
     choices: [
@@ -778,24 +840,230 @@ const storyData = {
   ch4_mozart_after: {
     id: "ch4_mozart_after",
     background: "cathedral.jpg",
-    speaker: "Lena (Internal Monologue)",
-    text: "Phew! That was sudden. He literally jumped out of nowhere! My heart is beating so fast. Welcome to Vienna, I guess! But now... my stomach is rumbling. I need to find something to eat.",
+    speaker: "Lena",
+    text: "Whew, that was intense! The square is so busy. I need a moment of peace. I'll head inside the cathedral—the famous Stephansdom.",
     lenaMood: "thoughtful",
     npcImage: "none",
     choices: [
-      { text: "Look for somewhere to eat", nextNode: "ch4_placeholder_end" },
+      { text: "Walk to the Giant's Door (Riesentor)", nextNode: "ch4_rules_game" },
     ],
   },
 
-  ch4_placeholder_end: {
-    id: "ch4_placeholder_end",
+  // ── Entrance mini-game: match the visitor rules ─────────────────────────
+
+  ch4_rules_game: {
+    id: "ch4_rules_game",
     background: "cathedral.jpg",
     speaker: "System",
-    text: "[The food scene begins here.]",
-    lenaMood: "none",
+    text: "",
+    lenaMood: "unsure",
+    npcImage: "none",
+    choices: [],
+  },
+
+  ch4_rules_perfect: {
+    id: "ch4_rules_perfect",
+    background: "cathedral.jpg",
+    speaker: "Lena",
+    text: "Great, I understood all the rules. I'm ready to go inside!",
+    lenaMood: "happy",
     npcImage: "none",
     choices: [
-      { text: "Back to Main Menu", nextNode: "main_menu" },
+      { text: "Step inside", nextNode: "ch4_inside_atmosphere" },
+    ],
+  },
+
+  ch4_rules_ok: {
+    id: "ch4_rules_ok",
+    background: "cathedral.jpg",
+    speaker: "Lena",
+    text: "I got a bit confused with some rules, but I think I've got it now.",
+    lenaMood: "thoughtful",
+    npcImage: "none",
+    choices: [
+      { text: "Step inside", nextNode: "ch4_inside_atmosphere" },
+    ],
+  },
+
+  ch4_rules_fail: {
+    id: "ch4_rules_fail",
+    background: "cathedral_interior.jpg",
+    speaker: "Narrator",
+    text: "Lena walks in. But she did not really understand the rules: she still wears her cap, and she talks to herself very loudly. Heads turn. A warden in a dark uniform comes to her quickly.",
+    lenaMood: "surprised",
+    npcImage: "none",
+    choices: [
+      { text: "Continue", nextNode: "ch4_warden_shush" },
+    ],
+  },
+
+  ch4_warden_shush: {
+    id: "ch4_warden_shush",
+    background: "cathedral_interior.jpg",
+    speaker: "Domaufseher",
+    text: "Psst! Ruhe, bitte! Und keine Kappe im Dom!",
+    lenaMood: "surprised",
+    npcImage: "warden_stern.png",
+    choices: [
+      { text: "Continue", nextNode: "ch4_warden_sorry" },
+    ],
+  },
+
+  ch4_warden_sorry: {
+    id: "ch4_warden_sorry",
+    background: "cathedral_interior.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Oops! How embarrassing. I quickly take off my cap and whisper 'Entschuldigung'. I have to be more careful in here.",
+    lenaMood: "unsure",
+    npcImage: "none",
+    choices: [
+      { text: "Move on quietly", nextNode: "ch4_inside_atmosphere" },
+    ],
+  },
+
+  // ── Inside the cathedral ────────────────────────────────────────────────
+
+  ch4_inside_atmosphere: {
+    id: "ch4_inside_atmosphere",
+    background: "cathedral_interior.jpg",
+    speaker: "Narrator",
+    text: "Inside, everything is quiet. The church is huge. Tall stone columns go up like old trees. Colorful light falls through the glass windows onto the floor. The air smells like candles and old stone.",
+    lenaMood: "surprised",
+    npcImage: "none",
+    dialogueStyle: "sensory",
+    choices: [
+      { text: "Continue", nextNode: "ch4_inside_thought" },
+    ],
+  },
+
+  ch4_inside_thought: {
+    id: "ch4_inside_thought",
+    background: "cathedral_interior.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "It's so much bigger than it looks from the outside. The silence is beautiful. What should I do here?",
+    lenaMood: "happy",
+    npcImage: "none",
+    choices: [
+      { text: "Eine Kerze anzünden (Light a candle)", nextNode: "ch4_candle" },
+      { text: "Head back outside to find the tower", nextNode: "ch4_exit_cathedral" },
+    ],
+  },
+
+  ch4_candle: {
+    id: "ch4_candle",
+    background: "cathedral_interior.jpg",
+    speaker: "Narrator",
+    text: "Lena puts a coin into the small metal box and takes a thin candle. She lights it. Now her little flame burns together with many others — one small wish for her big journey.",
+    lenaMood: "happy",
+    npcImage: "none",
+    choices: [
+      { text: "Continue", nextNode: "ch4_candle_words" },
+    ],
+  },
+
+  ch4_candle_words: {
+    id: "ch4_candle_words",
+    background: "cathedral_interior.jpg",
+    speaker: "Lena",
+    text: "Small light, big wishes. Now, I feel ready for the challenge.",
+    lenaMood: "happy",
+    npcImage: "none",
+    choices: [
+      { text: "Head back outside to find the tower", nextNode: "ch4_exit_cathedral" },
+    ],
+  },
+
+  // ── Transition: back outside, finding the Südturm door ─────────────────
+
+  ch4_exit_cathedral: {
+    id: "ch4_exit_cathedral",
+    background: "cathedral.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Back outside, the sunlight is bright and the square is loud again. What a contrast! Now... where is the entrance to the South Tower (Südturm)? There! A small door on the side of the church, with a sign: 'Südturm'. It looks so tiny next to this giant cathedral.",
+    lenaMood: "thoughtful",
+    npcImage: "none",
+    choices: [
+      { text: "Open the small door", nextNode: "ch4_tower_entrance" },
+    ],
+  },
+
+  // ── The Südturm climb ───────────────────────────────────────────────────
+
+  ch4_tower_entrance: {
+    id: "ch4_tower_entrance",
+    background: "cathedral_interior.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Here are the stairs. The sign says: 343 Stufen (steps) to the top. No elevator here. Should I?",
+    lenaMood: "unsure",
+    npcImage: "none",
+    choices: [
+      { text: "Start the climb (343 steps)", nextNode: "ch4_climb_1" },
+    ],
+  },
+
+  ch4_climb_1: {
+    id: "ch4_climb_1",
+    background: "cathedral_interior.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Okay, let's go! The stone steps are old and very narrow. The staircase turns and turns, like a snail shell. Step 100 already — this is easy! ...Okay, maybe not so easy.",
+    lenaMood: "happy",
+    npcImage: "none",
+    climbStage: 1,
+    choices: [
+      { text: "Keep climbing", nextNode: "ch4_climb_2" },
+    ],
+  },
+
+  ch4_climb_2: {
+    id: "ch4_climb_2",
+    background: "cathedral_interior.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Step 200... Puh! My legs are heavy and I am out of breath. My heart is beating so fast. How do the bell ringers do this every day?!",
+    lenaMood: "tired",
+    npcImage: "none",
+    climbStage: 2,
+    choices: [
+      { text: "Don't stop now!", nextNode: "ch4_climb_3" },
+    ],
+  },
+
+  ch4_climb_3: {
+    id: "ch4_climb_3",
+    background: "cathedral_interior.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Step 300... I can't feel my legs anymore. But wait — there is more light coming through the small windows! The top must be very close. Come on, Lena, only a few more steps!",
+    lenaMood: "exhausted",
+    npcImage: "none",
+    climbStage: 3,
+    choices: [
+      { text: "Push to the top", nextNode: "ch4_tower_view" },
+    ],
+  },
+
+  // ── The reward: the view from the Türmerstube ───────────────────────────
+
+  ch4_tower_view: {
+    id: "ch4_tower_view",
+    background: "vienna_view.jpg",
+    speaker: "Narrator",
+    text: "The Tower Room (Türmerstube). Lena looks out the window. Wow! She can see all of Vienna. Right below her is the famous colorful roof of the cathedral. In the distance, she can see the giant Ferris Wheel (Riesenrad) and many green hills. It is beautiful!",
+    lenaMood: "surprised",
+    npcImage: "none",
+    dialogueStyle: "sensory",
+    choices: [
+      { text: "Continue", nextNode: "ch4_tower_lena" },
+    ],
+  },
+
+  ch4_tower_lena: {
+    id: "ch4_tower_lena",
+    background: "vienna_view.jpg",
+    speaker: "Lena",
+    text: "I did it! 136 meters high. Vienna looks like a toy city from here. The 'Steffl' is truly the best spot in town.",
+    lenaMood: "happy",
+    npcImage: "none",
+    choices: [
+      { text: "Take a photo and go back down", nextNode: "end_chapter_4" },
     ],
   },
 };

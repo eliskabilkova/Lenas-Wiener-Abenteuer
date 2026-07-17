@@ -42,6 +42,8 @@ let gameState = {
     "hotel_room.jpg": "hotel_room",
     "u_bahn_station.jpg": "u_bahn_station",
     "cathedral.jpg": "cathedral",
+    "cathedral_interior.jpg": "cathedral_interior",
+    "vienna_view.jpg": "vienna_view",
     "cafe": "cafe",
     "black": "black",
   };
@@ -57,6 +59,7 @@ let gameState = {
     "commuter_man_annoyed.png": { visible: true, character: "elder", name: "Wiener Mann", mood: "neutral" },
     "mozart_seller_neutral.png": { visible: true, character: "mozart_seller", name: "Straßenverkäufer", mood: "neutral" },
     "mozart_seller_pushy.png": { visible: true, character: "mozart_seller", name: "Straßenverkäufer", mood: "pushy" },
+    "warden_stern.png": { visible: true, character: "warden", name: "Domaufseher", mood: "stern" },
   };
 
   const LENA_MOOD_MAP = {
@@ -65,6 +68,9 @@ let gameState = {
     unsure: "thoughtful",
     surprised: "surprised",
     thoughtful: "thoughtful",
+    // Distinct mood values so tired/exhausted Lena artwork can be swapped in later.
+    tired: "tired",
+    exhausted: "exhausted",
     none: "neutral",
   };
 
@@ -86,7 +92,40 @@ let gameState = {
   const TICKET_MACHINE_NEXT_NODE = "ch3_boarding";
   const TICKET_MACHINE_SUCCESS_NODE = "ch3_ticket_success";
   const TICKET_MACHINE_FAIL_NODE = "ch3_ticket_fail";
+
+  const METRO_SIGN_BOARD_HTML = `
+    <div class="metro-sign-board" role="img" aria-label="U3 line direction board at Neubaugasse station">
+      <header class="metro-sign-board__head">
+        <span class="metro-sign-board__badge">U3</span>
+        <span class="metro-sign-board__headline">Line Directions</span>
+        <span class="metro-sign-board__station">Neubaugasse</span>
+      </header>
+      <div class="metro-sign-board__columns">
+        <section class="metro-sign-board__direction">
+          <div class="metro-sign-board__arrow" aria-hidden="true">⬅</div>
+          <h3 class="metro-sign-board__heading">Richtung: Ottakring</h3>
+          <p class="metro-sign-board__stations">Zieglergasse · Westbahnhof · …</p>
+        </section>
+        <section class="metro-sign-board__direction">
+          <div class="metro-sign-board__arrow" aria-hidden="true">➡</div>
+          <h3 class="metro-sign-board__heading">Richtung: Simmering</h3>
+          <p class="metro-sign-board__stations">Volkstheater · Herrengasse · Stephansplatz · Stubentor · …</p>
+        </section>
+      </div>
+    </div>
+  `;
+
   const TICKET_MACHINE_MISTAKE_THRESHOLD = 3;
+
+  const RULES_GAME_TRIGGER_NODE = "ch4_rules_game";
+  const RULES_GAME_MISTAKE_THRESHOLD = 3;
+
+  const CHURCH_RULES_PAIRS = [
+    { id: "quiet", german: "Bitte Ruhe bewahren.", english: "Keep quiet / Stay calm" },
+    { id: "dogs", german: "Keine Hunde im Dom.", english: "No dogs allowed" },
+    { id: "flash", german: "Keine Fotos mit Blitzlicht.", english: "No flash photography" },
+    { id: "hats", german: "Bitte keine Kappen oder Hüte tragen.", english: "Remove hats and caps" },
+  ];
 
   const TICKET_TYPES = [
     "Einzelfahrt (€ 2,40)",
@@ -370,7 +409,7 @@ let gameState = {
     const isInternalMonologue = speaker.includes("Internal Monologue");
 
     els.dialogueText.classList.toggle("internal-thought", isInternalMonologue);
-    els.dialogueText.classList.remove("sensory-text", "announcement-text");
+    els.dialogueText.classList.remove("sensory-text", "announcement-text", "metro-sign-text");
     els.speakerName.classList.remove("is-hidden");
     els.speakerName.textContent = isInternalMonologue ? "Lena" : speaker;
 
@@ -395,6 +434,11 @@ let gameState = {
     }, TYPE_SPEED);
   }
 
+  function renderMetroSignBoard() {
+    els.dialogueText.innerHTML = METRO_SIGN_BOARD_HTML;
+    state.fullText = els.dialogueText.textContent.trim();
+  }
+
   function applyDialogueStyle(node) {
     const speaker = node.speaker || "";
     const isInternalMonologue = speaker.includes("Internal Monologue");
@@ -402,6 +446,7 @@ let gameState = {
     els.dialogueText.classList.toggle("internal-thought", isInternalMonologue);
     els.dialogueText.classList.toggle("sensory-text", node.dialogueStyle === "sensory");
     els.dialogueText.classList.toggle("announcement-text", node.dialogueStyle === "announcement");
+    els.dialogueText.classList.toggle("metro-sign-text", node.dialogueStyle === "metro-sign");
   }
 
   function renderDialogue(node) {
@@ -414,6 +459,19 @@ let gameState = {
 
     els.speakerName.classList.remove("is-hidden");
     els.speakerName.textContent = isInternalMonologue ? "Lena" : speaker || "???";
+
+    if (node.dialogueStyle === "metro-sign") {
+      clearTypeTimer();
+      state.typing = false;
+      renderMetroSignBoard();
+      const choices = node.choices || [];
+      if (choices.length) {
+        showChoices(choices);
+      } else {
+        els.advanceHint.classList.remove("is-hidden");
+      }
+      return;
+    }
 
     startTypewriter(node.text);
   }
@@ -457,6 +515,7 @@ let gameState = {
     removeBlackScreen();
     closeMeldezettelGame();
     closeTicketMachine();
+    closeRulesGame();
     removeJumpScareFlash();
 
     setBackground(node.background);
@@ -606,6 +665,24 @@ let gameState = {
           "Today was a stressful day. I made many mistakes at the ticket machine and everything on the U-Bahn was complicated. A man was very angry because of the escalator. I am tired, but I am finally at Stephansplatz.",
       },
     },
+    4: {
+      success: {
+        photo: "photo-c4-a.png",
+        alt: "Lena smiling at the top of the Stephansdom tower",
+        german:
+          "Stephansdom war fantastisch! Ich habe die Regeln verstanden und bin 343 Stufen gestiegen. Der Ausblick war super. Ich bin stolz auf mich!",
+        english:
+          "The cathedral was fantastic! I understood the rules and climbed 343 steps. The view was great. I'm proud of myself!",
+      },
+      challenge: {
+        photo: "photo-c4-b.png",
+        alt: "Lena looking exhausted on the cathedral tower stairs",
+        german:
+          "Ein langer Tag. Der Stephansdom ist schön, aber die Treppen waren sehr schwer. Ein Mann war im Dom böse zu mir, weil ich laut war. Ich bin sehr müde.",
+        english:
+          "A long day. The cathedral is beautiful, but the stairs were very hard. A man was angry with me because I was loud. I am very tired.",
+      },
+    },
   };
 
   function removeTagebuchScreen() {
@@ -622,12 +699,16 @@ let gameState = {
       return Math.min(gameState.ch3Strikes, 2);
     }
 
+    if (chapterNumber === 4) {
+      return Math.min(gameState.ch4Strikes, 2);
+    }
+
     return [gameState.ch1StationFailed, gameState.ch1LateArrival].filter(Boolean).length;
   }
 
   function getTagebuchVariant(chapterNumber, strikes) {
     const content = TAGEBUCH_CONTENT[chapterNumber] || TAGEBUCH_CONTENT[1];
-    const isChallenging = chapterNumber === 3 ? strikes >= 2 : strikes === 2;
+    const isChallenging = chapterNumber >= 3 ? strikes >= 2 : strikes === 2;
     const variant = isChallenging ? content.challenge : content.success;
 
     return {
@@ -655,7 +736,7 @@ let gameState = {
   const NEXT_CHAPTER_MAP = {
     1: { label: "Chapter 2 - Check-in", nodeId: "chapter_2_teaser" },
     2: { label: "Chapter 3 - Unterwegs", nodeId: "chapter_3_title" },
-    3: { label: "Chapter 4 - Das Herz von Wien", nodeId: "chapter_4_title" },
+    3: { label: "Kapitel 4: Das Herz von Wien", nodeId: "chapter_4_title" },
   };
 
   function goToNextChapterOrMenu(completedChapter) {
@@ -684,6 +765,7 @@ let gameState = {
     removeBlackScreen();
     closeMeldezettelGame();
     closeTicketMachine();
+    closeRulesGame();
     removeTagebuchScreen();
 
     els.dialogueBox.hidden = true;
@@ -709,7 +791,13 @@ let gameState = {
     const heading = document.createElement("h2");
     heading.className = "tagebuch-card__title";
     heading.textContent =
-      chapterNumber === 2 ? "Check-in" : chapterNumber === 3 ? "Unterwegs" : "Ankunft";
+      chapterNumber === 2
+        ? "Check-in"
+        : chapterNumber === 3
+          ? "Unterwegs"
+          : chapterNumber === 4
+            ? "Das Herz von Wien"
+            : "Ankunft";
     card.appendChild(heading);
 
     const photo = document.createElement("img");
@@ -718,7 +806,7 @@ let gameState = {
     photo.alt = variant.alt;
     card.appendChild(photo);
 
-    if (chapterNumber === 3 && variant.german && variant.english) {
+    if (variant.german && variant.english) {
       const germanLabel = document.createElement("p");
       germanLabel.className = "tagebuch-card__lang-label";
       germanLabel.textContent = "German (A2)";
@@ -1336,6 +1424,178 @@ let gameState = {
     els.ticketMachineDevFailBtn?.addEventListener("click", () => skipTicketMachineForDev(3));
   }
 
+  // ── Church rules matching mini-game ──────────────────────────────────────
+
+  const rulesGame = {
+    active: false,
+    selectedRuleId: null,
+    matchedCount: 0,
+    mistakes: 0,
+  };
+
+  function closeRulesGame() {
+    rulesGame.active = false;
+    document.getElementById("rules-game")?.remove();
+  }
+
+  function updateRulesGameStatus() {
+    const status = document.getElementById("rules-game-status");
+    if (!status) return;
+    status.textContent =
+      rulesGame.matchedCount === CHURCH_RULES_PAIRS.length
+        ? "Alle Regeln zugeordnet! (All rules matched!)"
+        : `Matched: ${rulesGame.matchedCount} / ${CHURCH_RULES_PAIRS.length} — Mistakes: ${rulesGame.mistakes}`;
+  }
+
+  function finishRulesGame() {
+    const mistakes = rulesGame.mistakes;
+    closeRulesGame();
+
+    let outcomeNodeId = "ch4_rules_perfect";
+    if (mistakes >= RULES_GAME_MISTAKE_THRESHOLD) {
+      gameState.ch4Strikes += 1;
+      outcomeNodeId = "ch4_rules_fail";
+    } else if (mistakes > 0) {
+      outcomeNodeId = "ch4_rules_ok";
+    }
+
+    goToNode(outcomeNodeId);
+  }
+
+  function handleRulesMeaningClick(meaningBtn, overlay) {
+    if (meaningBtn.classList.contains("is-matched")) return;
+
+    const selectedRuleBtn = overlay.querySelector(".rules-game__item--rule.is-selected");
+    if (!selectedRuleBtn) {
+      const instruction = overlay.querySelector(".rules-game__instruction");
+      instruction.classList.remove("is-nudge");
+      void instruction.offsetWidth;
+      instruction.classList.add("is-nudge");
+      return;
+    }
+
+    if (meaningBtn.dataset.ruleId === selectedRuleBtn.dataset.ruleId) {
+      selectedRuleBtn.classList.remove("is-selected");
+      selectedRuleBtn.classList.add("is-matched");
+      selectedRuleBtn.disabled = true;
+      meaningBtn.classList.add("is-matched");
+      meaningBtn.disabled = true;
+      rulesGame.selectedRuleId = null;
+      rulesGame.matchedCount += 1;
+      updateRulesGameStatus();
+
+      if (rulesGame.matchedCount === CHURCH_RULES_PAIRS.length) {
+        window.setTimeout(finishRulesGame, 900);
+      }
+    } else {
+      rulesGame.mistakes += 1;
+      updateRulesGameStatus();
+      meaningBtn.classList.remove("is-wrong");
+      void meaningBtn.offsetWidth;
+      meaningBtn.classList.add("is-wrong");
+      window.setTimeout(() => meaningBtn.classList.remove("is-wrong"), 450);
+    }
+  }
+
+  function openRulesGame() {
+    closeRulesGame();
+    rulesGame.active = true;
+    rulesGame.selectedRuleId = null;
+    rulesGame.matchedCount = 0;
+    rulesGame.mistakes = 0;
+
+    els.dialogueBox.hidden = true;
+    els.npcContainer.style.display = "none";
+    els.npcContainer.classList.add("is-hidden");
+    els.lenaContainer.classList.add("is-hidden");
+
+    const overlay = document.createElement("div");
+    overlay.id = "rules-game";
+    overlay.className = "rules-game";
+
+    const panel = document.createElement("section");
+    panel.className = "rules-game__panel";
+    panel.setAttribute("aria-labelledby", "rules-game-title");
+    panel.setAttribute("aria-describedby", "rules-game-instruction");
+
+    const eyebrow = document.createElement("p");
+    eyebrow.className = "rules-game__eyebrow";
+    eyebrow.textContent = "Stephansdom · Eingang";
+    panel.appendChild(eyebrow);
+
+    const title = document.createElement("h2");
+    title.id = "rules-game-title";
+    title.className = "rules-game__title";
+    title.textContent = "Information für Besucher";
+    panel.appendChild(title);
+
+    const instruction = document.createElement("p");
+    instruction.id = "rules-game-instruction";
+    instruction.className = "rules-game__instruction";
+    instruction.textContent = "Choose a German rule, then choose its English meaning.";
+    panel.appendChild(instruction);
+
+    const columns = document.createElement("div");
+    columns.className = "rules-game__columns";
+
+    const rulesColumn = document.createElement("div");
+    rulesColumn.className = "rules-game__column";
+    const rulesHeading = document.createElement("h3");
+    rulesHeading.className = "rules-game__column-title";
+    rulesHeading.textContent = "Deutsch";
+    rulesColumn.appendChild(rulesHeading);
+    CHURCH_RULES_PAIRS.forEach((pair, index) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "rules-game__item rules-game__item--rule";
+      btn.dataset.ruleId = pair.id;
+      btn.setAttribute("aria-pressed", "false");
+      btn.innerHTML = `<span class="rules-game__num">${index + 1}</span>${pair.german}`;
+      btn.addEventListener("click", () => {
+        if (btn.classList.contains("is-matched")) return;
+        rulesColumn.querySelectorAll(".is-selected").forEach((el) => {
+          el.classList.remove("is-selected");
+          el.setAttribute("aria-pressed", "false");
+        });
+        btn.classList.add("is-selected");
+        btn.setAttribute("aria-pressed", "true");
+        rulesGame.selectedRuleId = pair.id;
+      });
+      rulesColumn.appendChild(btn);
+    });
+    columns.appendChild(rulesColumn);
+
+    const meaningsColumn = document.createElement("div");
+    meaningsColumn.className = "rules-game__column";
+    const meaningsHeading = document.createElement("h3");
+    meaningsHeading.className = "rules-game__column-title";
+    meaningsHeading.textContent = "English";
+    meaningsColumn.appendChild(meaningsHeading);
+    shuffleArray(CHURCH_RULES_PAIRS).forEach((pair) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "rules-game__item rules-game__item--meaning";
+      btn.dataset.ruleId = pair.id;
+      btn.textContent = pair.english;
+      btn.addEventListener("click", () => handleRulesMeaningClick(btn, overlay));
+      meaningsColumn.appendChild(btn);
+    });
+    columns.appendChild(meaningsColumn);
+
+    panel.appendChild(columns);
+
+    const status = document.createElement("p");
+    status.id = "rules-game-status";
+    status.className = "rules-game__status";
+    status.setAttribute("role", "status");
+    status.setAttribute("aria-live", "polite");
+    panel.appendChild(status);
+
+    overlay.appendChild(panel);
+    els.game.appendChild(overlay);
+    updateRulesGameStatus();
+  }
+
   // ── Core render ──────────────────────────────────────────────────────────
 
   function renderNode() {
@@ -1357,6 +1617,14 @@ let gameState = {
       return;
     }
 
+    if (node.id === RULES_GAME_TRIGGER_NODE) {
+      removeBlackScreen();
+      removeJumpScareFlash();
+      setBackground(node.background);
+      openRulesGame();
+      return;
+    }
+
     if (JUMP_SCARE_NODE_IDS.has(node.id) || node.effect === "jumpScare") {
       renderJumpScareNode(node);
       return;
@@ -1368,6 +1636,7 @@ let gameState = {
     els.npcContainer.classList.remove("is-jumpscare-pop");
     closeMeldezettelGame();
     closeTicketMachine();
+    closeRulesGame();
 
     setBackground(node.background);
     updateCharacters(node);
@@ -1435,11 +1704,17 @@ let gameState = {
       return;
     }
 
+    if (nodeId === "end_chapter_4") {
+      showTagebuchScreen(4);
+      return;
+    }
+
     if (nodeId === "main_menu") {
       removeBlackScreen();
       removeJumpScareFlash();
       closeMeldezettelGame();
       closeTicketMachine();
+      closeRulesGame();
       removeTagebuchScreen();
       resetGameState();
       showStartMainActions();
@@ -1488,6 +1763,8 @@ let gameState = {
       gameState.stop = choiceText === "Station 'Neubaugasse'" ? "correct" : "wrong";
     } else if (currentNode.startsWith("quiz_house")) {
       gameState.house = choiceText === "In der Mitte der Straße" ? "correct" : "wrong";
+    } else if (currentNode === "ch3_platform_deduction" && nextNodeId !== "ch3_platform_correct") {
+      gameState.ch3Strikes += 1;
     } else if (currentNode === "ch3_ubahn_thought" && nextNodeId !== "ch3_ubahn_polite") {
       gameState.ch3Strikes += 1;
     } else if (currentNode === "ch4_mozart_choice" && nextNodeId !== "ch4_mozart_correct") {
@@ -1530,7 +1807,7 @@ let gameState = {
     1: "Chapter 1 - Ankunft",
     2: "Chapter 2 - Check-in",
     3: "Chapter 3 - Unterwegs",
-    4: "Chapter 4 - Das Herz von Wien",
+    4: "Kapitel 4: Das Herz von Wien",
   };
 
   function getCurrentChapterNumber() {
@@ -1550,6 +1827,7 @@ let gameState = {
     removeTagebuchScreen();
     closeMeldezettelGame();
     closeTicketMachine();
+    closeRulesGame();
     resetGameState();
     hideChoices();
 
@@ -1565,6 +1843,7 @@ let gameState = {
     removeTagebuchScreen();
     closeMeldezettelGame();
     closeTicketMachine();
+    closeRulesGame();
     resetGameState();
     state.nodeId = START_NODE;
     els.chapterLabel.textContent = "Chapter 1 - Ankunft";
@@ -1621,6 +1900,7 @@ let gameState = {
     removeTagebuchScreen();
     closeMeldezettelGame();
     closeTicketMachine();
+    closeRulesGame();
     hideChoices();
     showStartMainActions();
 
@@ -1648,6 +1928,7 @@ let gameState = {
     removeTagebuchScreen();
     closeMeldezettelGame();
     closeTicketMachine();
+    closeRulesGame();
     hideChoices();
     resetGameState();
     els.dialogueText.textContent = "";
@@ -1660,7 +1941,7 @@ let gameState = {
     } else if (targetNodeId === "chapter_3_title") {
       els.chapterLabel.textContent = "Chapter 3 - Unterwegs";
     } else if (targetNodeId === "chapter_4_title") {
-      els.chapterLabel.textContent = "Chapter 4 - Das Herz von Wien";
+      els.chapterLabel.textContent = "Kapitel 4: Das Herz von Wien";
     }
 
     goToNode(targetNodeId);
@@ -1688,6 +1969,13 @@ let gameState = {
       if (ticketMachine.errorOpen) {
         event.preventDefault();
         if (event.code === "Enter" || event.code === "Space") dismissTicketMachineError();
+        return;
+      }
+
+      if (rulesGame.active) {
+        if (event.code === "Escape") {
+          els.menuPanel.hidden ? openMenu() : closeMenu();
+        }
         return;
       }
 
