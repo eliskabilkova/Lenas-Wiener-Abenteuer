@@ -7,7 +7,8 @@ let gameState = {
   receptionistMistake: false,
   meldezettelMistakes: 0,
   ch3Strikes: 0,
-  ch4Strikes: 0
+  ch4Strikes: 0,
+  hasSeenVokabelTutorial: false
 };
 
 /**
@@ -116,9 +117,61 @@ let gameState = {
   `;
 
   const TICKET_MACHINE_MISTAKE_THRESHOLD = 3;
+  const MELDEZETTEL_MISTAKE_THRESHOLD = 3;
 
   const RULES_GAME_TRIGGER_NODE = "ch4_rules_game";
   const RULES_GAME_MISTAKE_THRESHOLD = 3;
+
+  const VOCAB_CONTENT = {
+    1: [
+      { de: "der Fahrkartenautomat", en: "ticket vending machine" },
+      { de: "die Fahrkarte / das Ticket", en: "ticket" },
+      { de: "die Ankunft", en: "arrival" },
+      { de: "der Hauptbahnhof", en: "main train station" },
+      { de: "der Schaffner", en: "train conductor" },
+      { de: "kaufen", en: "to buy" },
+      { de: "helfen", en: "to help" },
+      { de: "die Entschuldigung", en: "excuse me / apology" },
+      { de: "verstehen", en: "to understand" },
+      { de: "der Bahnsteig", en: "train platform" },
+    ],
+    2: [
+      { de: "die Rezeption", en: "reception desk" },
+      { de: "einchecken", en: "to check in" },
+      { de: "der Zimmerschlüssel / die Karte", en: "room key / keycard" },
+      { de: "das Einzelzimmer", en: "single room" },
+      { de: "das Frühstück", en: "breakfast" },
+      { de: "inklusive", en: "included" },
+      { de: "das WLAN-Passwort", en: "Wi-Fi password" },
+      { de: "der Aufzug / der Lift", en: "elevator" },
+      { de: "die Etage / der Stock", en: "floor / level" },
+      { de: "Gute Nacht", en: "good night" },
+    ],
+    3: [
+      { de: "die U-Bahn-Linie", en: "underground line (e.g., U3)" },
+      { de: "die Richtung", en: "direction" },
+      { de: "das Gleis", en: "track / platform" },
+      { de: "die Endstation", en: "terminus / last stop" },
+      { de: "die Rolltreppe", en: "escalator" },
+      { de: "rechts stehen, links gehen", en: "stand on the right, walk on the left" },
+      { de: "umsteigen", en: "to change trains / lines" },
+      { de: "der Fahrplan", en: "timetable / schedule" },
+      { de: "drängeln", en: "to push / hustle" },
+      { de: "nächste Station", en: "next station" },
+    ],
+    4: [
+      { de: "die Hausordnung / die Regeln", en: "building rules / code of conduct" },
+      { de: "Ruhe bewahren", en: "to stay quiet / keep calm" },
+      { de: "das Blitzlicht", en: "camera flash" },
+      { de: "keine Kappen tragen", en: "no hats / caps allowed" },
+      { de: "der Ausblick / die Aussicht", en: "view / panorama" },
+      { de: "die Stufe", en: "step (staircase)" },
+      { de: "der Südturm", en: "South Tower" },
+      { de: "steigen / klettern", en: "to climb" },
+      { de: "anstrengend", en: "exhausting / tiring" },
+      { de: "eine Kerze anzünden", en: "to light a candle" },
+    ],
+  };
 
   const CHURCH_RULES_PAIRS = [
     { id: "quiet", german: "Bitte Ruhe bewahren.", english: "Keep quiet / Stay calm" },
@@ -232,6 +285,13 @@ let gameState = {
     choiceButtons: Array.from(document.querySelectorAll(".choice-btn")),
     menuBtn: document.getElementById("menu-btn"),
     menuPanel: document.getElementById("menu-panel"),
+    vocabBtn: document.getElementById("vocab-btn"),
+    vocabOverlay: document.getElementById("vocab-overlay"),
+    vocabTitle: document.getElementById("vocab-title"),
+    vocabList: document.getElementById("vocab-list"),
+    vocabCloseBtn: document.getElementById("vocab-close-btn"),
+    vocabTutorial: document.getElementById("vocab-tutorial"),
+    vocabTutorialBtn: document.getElementById("vocab-tutorial-btn"),
     menuMainActions: document.getElementById("menu-main-actions"),
     restartBtn: document.getElementById("restart-btn"),
     startMenuFromGameBtn: document.getElementById("start-menu-from-game-btn"),
@@ -473,6 +533,22 @@ let gameState = {
       return;
     }
 
+    // Instant text: show everything at once so the player can't accidentally
+    // click a choice button while trying to skip the typewriter effect.
+    if (node.instantText) {
+      clearTypeTimer();
+      state.typing = false;
+      state.fullText = node.text;
+      els.dialogueText.textContent = node.text;
+      const choices = node.choices || [];
+      if (choices.length) {
+        showChoices(choices);
+      } else {
+        els.advanceHint.classList.remove("is-hidden");
+      }
+      return;
+    }
+
     startTypewriter(node.text);
   }
 
@@ -604,6 +680,7 @@ let gameState = {
     "chapter_2_teaser",
     "chapter_3_title",
     "chapter_4_title",
+    "ch4_time_passes",
   ]);
 
   function getBlackScreenTitleText(node) {
@@ -627,24 +704,36 @@ let gameState = {
       success: {
         photo: "photo-c1-a.png",
         alt: "Lena smiling at Vienna Hauptbahnhof",
-        text: "I made it to Vienna! The train ride was smooth, and speaking German with the local guy at the station went surprisingly well. I easily found my way to the hotel on time without getting lost. A perfect start!",
+        german:
+          "Mein erster Tag in Wien! Die Reise mit dem Zug war sehr schön und bequem. Ich habe ein Busticket auf Deutsch gekauft und eine nette Frau hat mir geholfen. Ich fühle mich glücklich und bereit für mein Abenteuer!",
+        english:
+          "My first day in Vienna! The train journey was very nice and comfortable. I bought a bus ticket in German and a friendly woman helped me. I feel happy and ready for my adventure!",
       },
       challenge: {
         photo: "photo-c1-b.png",
         alt: "Lena looking lost near the station",
-        text: "Phew, my first hours in Vienna were pretty stressful. My conversation at the station was clumsy, and then I got completely lost looking for the hotel because my phone died. Arriving late wasn't great, but I'm here now and won't give up.",
+        german:
+          "Uff, was für ein Tag! Die Ankunft in Wien war etwas stressig. Der Fahrkartenautomat war kompliziert und ich war sehr nervös beim Deutschsprechen. Aber ich bin hier und morgen wird es sicher besser!",
+        english:
+          "Phew, what a day! Arriving in Vienna was a bit stressful. The ticket machine was complicated and I was very nervous speaking German. But I am here and tomorrow will surely be better!",
       },
     },
     2: {
       success: {
         photo: "photo-c2-a.png",
         alt: "Lena smiling at the hotel reception",
-        text: "Checking into the hotel was a breeze! I understood the receptionist perfectly, and filling out the Meldezettel form felt natural. I'm really starting to feel more confident speaking German here.",
+        german:
+          "Das Hotel ist sehr schön! Das Einchecken an der Rezeption hat super geklappt. Ich habe auf Deutsch nach dem Frühstück und dem WLAN-Passwort gefragt. Der Rezeptionist war sehr nett. Jetzt kann ich mich ausruhen.",
+        english:
+          "The hotel is very nice! Checking in at reception went great. I asked about breakfast and the Wi-Fi password in German. The receptionist was very kind. Now I can rest.",
       },
       challenge: {
         photo: "photo-c2-b.png",
         alt: "Lena looking overwhelmed at the hotel reception",
-        text: "The hotel check-in felt like a linguistic obstacle course. I panicked during the conversation and made quite a few silly mistakes while filling out the official registration form. Tomorrow is a new chance to improve.",
+        german:
+          "Ein schwieriger Abend. An der Rezeption habe ich ein paar Fehler gemacht und der Rezeptionist hat mich nicht sofort verstanden. Es war ein bisschen peinlich, aber ich habe mein Zimmer bekommen. Ich muss mehr lernen.",
+        english:
+          "A difficult evening. I made a few mistakes at reception and the receptionist didn't understand me right away. It was a bit embarrassing, but I got my room. I need to study more.",
       },
     },
     3: {
@@ -652,17 +741,17 @@ let gameState = {
         photo: "photo-c3-a.png",
         alt: "Lena smiling on the U-Bahn in Vienna",
         german:
-          "Heute war ein interessanter Tag. Ich habe mein Ticket gekauft und bin mit der U-Bahn gefahren. Ein Mann war ein bisschen böse, aber ich kenne jetzt die Regel: Rechts stehen, links gehen! Jetzt bin ich am Stephansplatz.",
+          "Heute bin ich mit der U-Bahn gefahren. Ich habe die richtige Linie U3 und das richtige Gleis nach Simmering gefunden. Auf der Rolltreppe habe ich gelernt: Rechts stehen, links gehen! Ich fühle mich schon wie eine echte Wienerin.",
         english:
-          "Today was an interesting day. I bought my ticket and rode the U-Bahn. A man was a little angry, but I now know the rule: stand on the right, walk on the left! Now I am at Stephansplatz.",
+          "Today I took the underground train. I found the correct line U3 and the right platform towards Simmering. On the escalator I learned: Stand on the right, walk on the left! I already feel like a real Viennese.",
       },
       challenge: {
         photo: "photo-c3-b.png",
         alt: "Lena looking stressed on the U-Bahn in Vienna",
         german:
-          "Heute war ein stressiger Tag. Am Ticketautomaten habe ich viele Fehler gemacht und in der U-Bahn war alles kompliziert. Ein Mann war sehr wütend wegen der Rolltreppe. Ich bin müde, aber ich bin endlich am Stephansplatz.",
+          "Die U-Bahn in Wien ist sehr schnell und voll. Ich habe zuerst den falschen Bahnsteig gewählt und Zeit verloren. Dann gab es ein kleines Missverständnis auf der Rolltreppe. Aber zum Glück bin ich am Stephansplatz angekommen.",
         english:
-          "Today was a stressful day. I made many mistakes at the ticket machine and everything on the U-Bahn was complicated. A man was very angry because of the escalator. I am tired, but I am finally at Stephansplatz.",
+          "The underground in Vienna is very fast and crowded. I chose the wrong platform at first and lost time. Then there was a small misunderstanding on the escalator. But luckily I arrived at Stephansplatz.",
       },
     },
     4: {
@@ -670,17 +759,17 @@ let gameState = {
         photo: "photo-c4-a.png",
         alt: "Lena smiling at the top of the Stephansdom tower",
         german:
-          "Stephansdom war fantastisch! Ich habe die Regeln verstanden und bin 343 Stufen gestiegen. Der Ausblick war super. Ich bin stolz auf mich!",
+          "Stephansdom war fantastisch! Ich habe die Regeln verstanden und bin 343 Stufen auf den Südturm gestiegen. Der Ausblick über ganz Wien war unglaublich schön. Ich bin sehr stolz auf mich!",
         english:
-          "The cathedral was fantastic! I understood the rules and climbed 343 steps. The view was great. I'm proud of myself!",
+          "Stephansdom was fantastic! I understood the rules and climbed 343 steps up the South Tower. The view over all of Vienna was unbelievably beautiful. I am very proud of myself!",
       },
       challenge: {
         photo: "photo-c4-b.png",
         alt: "Lena looking exhausted on the cathedral tower stairs",
         german:
-          "Ein langer Tag. Der Stephansdom ist schön, aber die Treppen waren sehr schwer. Ein Mann war im Dom böse zu mir, weil ich laut war. Ich bin sehr müde.",
+          "Ein sehr langer und anstrengender Tag. Der Stephansdom ist wunderschön, aber die vielen Treppen waren sehr schwer für mich. Im Dom war ich kurz etwas verwirrt wegen der Regeln. Aber der Ausblick war es trotzdem wert.",
         english:
-          "A long day. The cathedral is beautiful, but the stairs were very hard. A man was angry with me because I was loud. I am very tired.",
+          "A very long and exhausting day. Stephansdom is beautiful, but the many stairs were very hard for me. In the cathedral I was briefly confused about the rules. But the view was still worth it.",
       },
     },
   };
@@ -690,9 +779,27 @@ let gameState = {
     if (existing) existing.remove();
   }
 
+  function getMistakeAllowance(threshold) {
+    return Math.max(threshold - 1, 0);
+  }
+
+  function updateMistakeCounter(element, count, threshold) {
+    if (!element) return;
+
+    const maxAllowed = getMistakeAllowance(threshold);
+    element.textContent = `Fehler: ${count} / ${maxAllowed}`;
+    element.classList.remove("mistake-counter--warning", "mistake-counter--critical");
+
+    if (count >= threshold) {
+      element.classList.add("mistake-counter--critical");
+    } else if (count >= maxAllowed) {
+      element.classList.add("mistake-counter--warning");
+    }
+  }
+
   function getChapterStrikeCount(chapterNumber) {
     if (chapterNumber === 2) {
-      return [gameState.receptionistMistake, gameState.meldezettelMistakes >= 3].filter(Boolean).length;
+      return [gameState.receptionistMistake, gameState.meldezettelMistakes >= MELDEZETTEL_MISTAKE_THRESHOLD].filter(Boolean).length;
     }
 
     if (chapterNumber === 3) {
@@ -708,12 +815,12 @@ let gameState = {
 
   function getTagebuchVariant(chapterNumber, strikes) {
     const content = TAGEBUCH_CONTENT[chapterNumber] || TAGEBUCH_CONTENT[1];
-    const isChallenging = chapterNumber >= 3 ? strikes >= 2 : strikes === 2;
+    // Variant A (success): 0-1 strikes. Variant B (challenge): 2+ strikes.
+    const isChallenging = strikes >= 2;
     const variant = isChallenging ? content.challenge : content.success;
 
     return {
       ...variant,
-      text: variant.text || variant.english || variant.german || "",
       label: isChallenging ? "Challenging Day" : "Successful Day",
     };
   }
@@ -736,7 +843,7 @@ let gameState = {
   const NEXT_CHAPTER_MAP = {
     1: { label: "Chapter 2 - Check-in", nodeId: "chapter_2_teaser" },
     2: { label: "Chapter 3 - Unterwegs", nodeId: "chapter_3_title" },
-    3: { label: "Kapitel 4: Das Herz von Wien", nodeId: "chapter_4_title" },
+    3: { label: "Chapter 4: Dem Himmel so nah", nodeId: "chapter_4_title" },
   };
 
   function goToNextChapterOrMenu(completedChapter) {
@@ -796,7 +903,7 @@ let gameState = {
         : chapterNumber === 3
           ? "Unterwegs"
           : chapterNumber === 4
-            ? "Das Herz von Wien"
+            ? "Dem Himmel so nah"
             : "Ankunft";
     card.appendChild(heading);
 
@@ -806,32 +913,25 @@ let gameState = {
     photo.alt = variant.alt;
     card.appendChild(photo);
 
-    if (variant.german && variant.english) {
-      const germanLabel = document.createElement("p");
-      germanLabel.className = "tagebuch-card__lang-label";
-      germanLabel.textContent = "German (A2)";
-      card.appendChild(germanLabel);
+    const germanLabel = document.createElement("p");
+    germanLabel.className = "tagebuch-card__lang-label";
+    germanLabel.textContent = "German";
+    card.appendChild(germanLabel);
 
-      const germanText = document.createElement("p");
-      germanText.className = "tagebuch-card__text tagebuch-card__text--german";
-      germanText.textContent = variant.german;
-      card.appendChild(germanText);
+    const germanText = document.createElement("p");
+    germanText.className = "tagebuch-card__text tagebuch-card__text--german";
+    germanText.textContent = variant.german;
+    card.appendChild(germanText);
 
-      const englishLabel = document.createElement("p");
-      englishLabel.className = "tagebuch-card__lang-label";
-      englishLabel.textContent = "English";
-      card.appendChild(englishLabel);
+    const englishLabel = document.createElement("p");
+    englishLabel.className = "tagebuch-card__lang-label";
+    englishLabel.textContent = "English";
+    card.appendChild(englishLabel);
 
-      const englishText = document.createElement("p");
-      englishText.className = "tagebuch-card__text tagebuch-card__text--english";
-      englishText.textContent = variant.english;
-      card.appendChild(englishText);
-    } else {
-      const text = document.createElement("p");
-      text.className = "tagebuch-card__text";
-      text.textContent = variant.text;
-      card.appendChild(text);
-    }
+    const englishText = document.createElement("p");
+    englishText.className = "tagebuch-card__text tagebuch-card__text--english";
+    englishText.textContent = variant.english;
+    card.appendChild(englishText);
 
     const btn = document.createElement("button");
     btn.type = "button";
@@ -1439,12 +1539,17 @@ let gameState = {
   }
 
   function updateRulesGameStatus() {
-    const status = document.getElementById("rules-game-status");
-    if (!status) return;
-    status.textContent =
-      rulesGame.matchedCount === CHURCH_RULES_PAIRS.length
-        ? "Alle Regeln zugeordnet! (All rules matched!)"
-        : `Matched: ${rulesGame.matchedCount} / ${CHURCH_RULES_PAIRS.length} — Mistakes: ${rulesGame.mistakes}`;
+    const progress = document.getElementById("rules-game-progress");
+    const counter = document.getElementById("rules-game-mistakes");
+
+    if (progress) {
+      progress.textContent =
+        rulesGame.matchedCount === CHURCH_RULES_PAIRS.length
+          ? "Alle Regeln zugeordnet! (All rules matched!)"
+          : `Zugeordnet: ${rulesGame.matchedCount} / ${CHURCH_RULES_PAIRS.length}`;
+    }
+
+    updateMistakeCounter(counter, rulesGame.mistakes, RULES_GAME_MISTAKE_THRESHOLD);
   }
 
   function finishRulesGame() {
@@ -1584,12 +1689,48 @@ let gameState = {
 
     panel.appendChild(columns);
 
-    const status = document.createElement("p");
-    status.id = "rules-game-status";
-    status.className = "rules-game__status";
-    status.setAttribute("role", "status");
-    status.setAttribute("aria-live", "polite");
-    panel.appendChild(status);
+    const footerStatus = document.createElement("div");
+    footerStatus.className = "rules-game__footer-status";
+
+    const progress = document.createElement("p");
+    progress.id = "rules-game-progress";
+    progress.className = "rules-game__status";
+    progress.setAttribute("role", "status");
+    progress.setAttribute("aria-live", "polite");
+    footerStatus.appendChild(progress);
+
+    const counter = document.createElement("p");
+    counter.id = "rules-game-mistakes";
+    counter.className = "mistake-counter";
+    counter.setAttribute("role", "status");
+    counter.setAttribute("aria-live", "polite");
+    footerStatus.appendChild(counter);
+
+    panel.appendChild(footerStatus);
+
+    const devControls = document.createElement("div");
+    devControls.className = "rules-game__dev-controls";
+    devControls.setAttribute("aria-label", "Development shortcuts");
+
+    const devSuccessBtn = document.createElement("button");
+    devSuccessBtn.type = "button";
+    devSuccessBtn.textContent = "DEV: Skip Success";
+    devSuccessBtn.addEventListener("click", () => {
+      rulesGame.mistakes = 0;
+      finishRulesGame();
+    });
+    devControls.appendChild(devSuccessBtn);
+
+    const devFailBtn = document.createElement("button");
+    devFailBtn.type = "button";
+    devFailBtn.textContent = "DEV: Skip Fail";
+    devFailBtn.addEventListener("click", () => {
+      rulesGame.mistakes = RULES_GAME_MISTAKE_THRESHOLD;
+      finishRulesGame();
+    });
+    devControls.appendChild(devFailBtn);
+
+    panel.appendChild(devControls);
 
     overlay.appendChild(panel);
     els.game.appendChild(overlay);
@@ -1641,6 +1782,12 @@ let gameState = {
     setBackground(node.background);
     updateCharacters(node);
     renderDialogue(node);
+
+    if (node.highlightVocab) {
+      pulseVocabButton();
+    } else {
+      stopVocabButtonPulse();
+    }
   }
 
   function advanceBeat() {
@@ -1807,14 +1954,21 @@ let gameState = {
     1: "Chapter 1 - Ankunft",
     2: "Chapter 2 - Check-in",
     3: "Chapter 3 - Unterwegs",
-    4: "Kapitel 4: Das Herz von Wien",
+    4: "Chapter 4: Dem Himmel so nah",
   };
 
   function getCurrentChapterNumber() {
     const nodeId = state.nodeId || "";
-    if (nodeId.startsWith("ch4_") || nodeId === "chapter_4_title") return 4;
-    if (nodeId.startsWith("ch3_") || nodeId === "chapter_3_title") return 3;
-    if (nodeId.startsWith("ch2_") || nodeId === "chapter_2_teaser") return 2;
+    if (nodeId.startsWith("ch4_") || nodeId === "chapter_4_title" || nodeId === "end_chapter_4") return 4;
+    if (nodeId.startsWith("ch3_") || nodeId === "chapter_3_title" || nodeId === "end_chapter_3") return 3;
+    if (
+      nodeId.startsWith("ch2_") ||
+      nodeId === "chapter_2_teaser" ||
+      nodeId === "hotel_lobby_arrival" ||
+      nodeId === "end_chapter_2"
+    ) {
+      return 2;
+    }
     return 1;
   }
 
@@ -1845,6 +1999,7 @@ let gameState = {
     closeTicketMachine();
     closeRulesGame();
     resetGameState();
+    gameState.hasSeenVokabelTutorial = false;
     state.nodeId = START_NODE;
     els.chapterLabel.textContent = "Chapter 1 - Ankunft";
     hideChoices();
@@ -1859,6 +2014,69 @@ let gameState = {
   function closeMenu() {
     els.menuPanel.hidden = true;
     showMainMenuActions();
+  }
+
+  // ── Vocabulary glossary (Vokabelheft) ────────────────────────────────────
+  // Purely visual overlay: it never touches game state, so closing it returns
+  // the player to exactly where they were.
+
+  function stopVocabButtonPulse() {
+    els.vocabBtn?.classList.remove("is-pulsing");
+  }
+
+  function pulseVocabButton() {
+    if (!els.vocabBtn) return;
+    stopVocabButtonPulse();
+    void els.vocabBtn.offsetWidth;
+    els.vocabBtn.classList.add("is-pulsing");
+    window.setTimeout(stopVocabButtonPulse, 4200);
+  }
+
+  function populateVocabList(chapterNumber) {
+    els.vocabList.innerHTML = "";
+    (VOCAB_CONTENT[chapterNumber] || VOCAB_CONTENT[1]).forEach((entry) => {
+      const item = document.createElement("li");
+      item.className = "vocab-panel__item";
+
+      const german = document.createElement("span");
+      german.className = "vocab-panel__german";
+      german.textContent = entry.de;
+      item.appendChild(german);
+
+      const english = document.createElement("span");
+      english.className = "vocab-panel__english";
+      english.textContent = entry.en;
+      item.appendChild(english);
+
+      els.vocabList.appendChild(item);
+    });
+  }
+
+  function revealVocabList() {
+    if (els.vocabTutorial) els.vocabTutorial.hidden = true;
+    els.vocabList.hidden = false;
+  }
+
+  function dismissVocabTutorial() {
+    gameState.hasSeenVokabelTutorial = true;
+    revealVocabList();
+  }
+
+  function openVocabPanel() {
+    stopVocabButtonPulse();
+    const chapterNumber = getCurrentChapterNumber();
+    els.vocabTitle.textContent = `Vokabelheft — Kapitel ${chapterNumber}`;
+    populateVocabList(chapterNumber);
+
+    const showTutorial = !gameState.hasSeenVokabelTutorial;
+    if (els.vocabTutorial) els.vocabTutorial.hidden = !showTutorial;
+    els.vocabList.hidden = showTutorial;
+
+    els.vocabOverlay.hidden = false;
+  }
+
+  function closeVocabPanel() {
+    els.vocabOverlay.hidden = true;
   }
 
   function showMainMenuActions() {
@@ -1894,6 +2112,7 @@ let gameState = {
     clearTypeTimer();
     state.typing = false;
     resetGameState();
+    gameState.hasSeenVokabelTutorial = false;
     closeMenu();
     removeBlackScreen();
     removeJumpScareFlash();
@@ -1941,7 +2160,7 @@ let gameState = {
     } else if (targetNodeId === "chapter_3_title") {
       els.chapterLabel.textContent = "Chapter 3 - Unterwegs";
     } else if (targetNodeId === "chapter_4_title") {
-      els.chapterLabel.textContent = "Kapitel 4: Das Herz von Wien";
+      els.chapterLabel.textContent = "Chapter 4: Dem Himmel so nah";
     }
 
     goToNode(targetNodeId);
@@ -1954,6 +2173,14 @@ let gameState = {
     });
 
     document.addEventListener("keydown", (event) => {
+      if (!els.vocabOverlay.hidden) {
+        if (event.code === "Escape") {
+          event.preventDefault();
+          closeVocabPanel();
+        }
+        return;
+      }
+
       if (meldezettel.tutorialOpen) {
         event.preventDefault();
         if (event.code === "Escape") closeMeldezettelTutorial();
@@ -2015,6 +2242,13 @@ let gameState = {
 
     els.menuBtn.addEventListener("click", openMenu);
     els.closeMenuBtn.addEventListener("click", closeMenu);
+
+    els.vocabBtn.addEventListener("click", openVocabPanel);
+    els.vocabCloseBtn.addEventListener("click", closeVocabPanel);
+    els.vocabTutorialBtn?.addEventListener("click", dismissVocabTutorial);
+    els.vocabOverlay.addEventListener("click", (event) => {
+      if (event.target === els.vocabOverlay) closeVocabPanel();
+    });
     els.startMenuFromGameBtn.addEventListener("click", returnToStartMenu);
 
     els.restartBtn.addEventListener("click", () => {

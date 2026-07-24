@@ -39,11 +39,38 @@ const storyData = {
     lenaMood: "normal",
     npcImage: "none",
     choices: [
-      { text: "Get off the train", nextNode: "start" },
+      { text: "Get off the train", nextNode: "start_arrival_excited" },
     ],
   },
 
-  // ── Scene 1: Asking for directions ───────────────────────────────────────
+  // ── Scene 1: Arrival & vocabulary onboarding ─────────────────────────────
+
+  start_arrival_excited: {
+    id: "start_arrival_excited",
+    background: "vienna_hauptbahnhof.jpg",
+    speaker: "Lena",
+    text: "I made it to Vienna! Alright, let me take a deep breath... Here we go!",
+    lenaMood: "happy",
+    npcImage: "none",
+    choices: [
+      { text: "Continue", nextNode: "start_vocab_intro" },
+    ],
+  },
+
+  start_vocab_intro: {
+    id: "start_vocab_intro",
+    background: "vienna_hauptbahnhof.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "To help me along the way, I brought my trusty Vocabulary Notebook (Vokabeln). Whenever I see unfamiliar German words, I can check it in the top corner of the screen!",
+    lenaMood: "thoughtful",
+    npcImage: "none",
+    highlightVocab: true,
+    choices: [
+      { text: "Continue", nextNode: "start" },
+    ],
+  },
+
+  // ── Scene 1b: Asking for directions ──────────────────────────────────────
 
   start: {
     id: "start",
@@ -699,13 +726,13 @@ const storyData = {
     choices: [],
   },
 
-  // ── Kapitel 4: Das Herz von Wien ────────────────────────────────────────
+  // ── Kapitel 4: Dem Himmel so nah ────────────────────────────────────────
 
   chapter_4_title: {
     id: "chapter_4_title",
     background: "black",
     speaker: "System",
-    text: "Kapitel 4: Das Herz von Wien",
+    text: "Chapter 4: Dem Himmel so nah",
     lenaMood: "none",
     npcImage: "none",
     choices: [
@@ -794,6 +821,7 @@ const storyData = {
     text: "What should I say to him?",
     lenaMood: "unsure",
     npcImage: "mozart_seller_pushy.png",
+    instantText: true,
     choices: [
       { text: "Ich weiß nicht... Ist das Konzert gut?", nextNode: "ch4_mozart_wrong_a" },
       { text: "Es tut mir leid, aber ich keine Zeit für Musik habe.", nextNode: "ch4_mozart_wrong_b" },
@@ -845,11 +873,23 @@ const storyData = {
     lenaMood: "thoughtful",
     npcImage: "none",
     choices: [
-      { text: "Walk to the Giant's Door (Riesentor)", nextNode: "ch4_rules_game" },
+      { text: "Walk into Stephansdom", nextNode: "ch4_rules_intro" },
     ],
   },
 
   // ── Entrance mini-game: match the visitor rules ─────────────────────────
+
+  ch4_rules_intro: {
+    id: "ch4_rules_intro",
+    background: "cathedral.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Wait, there's a sign here with rules for visitors. I should read it carefully so I don't cause any trouble inside. Let's see if I can understand these rules...",
+    lenaMood: "unsure",
+    npcImage: "none",
+    choices: [
+      { text: "Read the sign", nextNode: "ch4_rules_game" },
+    ],
+  },
 
   ch4_rules_game: {
     id: "ch4_rules_game",
@@ -944,8 +984,36 @@ const storyData = {
     lenaMood: "happy",
     npcImage: "none",
     choices: [
-      { text: "Eine Kerze anzünden (Light a candle)", nextNode: "ch4_candle" },
-      { text: "Head back outside to find the tower", nextNode: "ch4_exit_cathedral" },
+      { text: "Light a candle", nextNode: "ch4_candle" },
+      { text: "Look around the cathedral", nextNode: "ch4_time_passes" },
+      { text: "Find the tower entrance", nextNode: "ch4_exit_cathedral" },
+    ],
+  },
+
+  // ── Optional: taking a moment to look around ────────────────────────────
+
+  ch4_time_passes: {
+    id: "ch4_time_passes",
+    background: "black",
+    speaker: "System",
+    text: "A few minutes later...",
+    lenaMood: "none",
+    npcImage: "none",
+    choices: [
+      { text: "Continue", nextNode: "ch4_look_around" },
+    ],
+  },
+
+  ch4_look_around: {
+    id: "ch4_look_around",
+    background: "cathedral_interior.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "The Gothic architecture is breathtaking. Those stained glass windows are so colorful, and the columns feel like they're touching the sky. I'm glad I took a moment to just soak it all in. Now, I'm ready to find that tower!",
+    lenaMood: "happy",
+    npcImage: "none",
+    choices: [
+      { text: "Light a candle", nextNode: "ch4_candle" },
+      { text: "Find the tower entrance", nextNode: "ch4_exit_cathedral" },
     ],
   },
 
@@ -969,7 +1037,7 @@ const storyData = {
     lenaMood: "happy",
     npcImage: "none",
     choices: [
-      { text: "Head back outside to find the tower", nextNode: "ch4_exit_cathedral" },
+      { text: "Find the tower entrance", nextNode: "ch4_exit_cathedral" },
     ],
   },
 

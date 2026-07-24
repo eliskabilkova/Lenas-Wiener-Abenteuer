@@ -27,7 +27,7 @@
           <button type="button" class="start-chapter-select-btn" data-chapter-node="chapter_1_title">Chapter 1: Ankunft</button>
           <button type="button" class="start-chapter-select-btn" data-chapter-node="ch2_reception_greet">Chapter 2: Check-in</button>
           <button type="button" class="start-chapter-select-btn" data-chapter-node="chapter_3_title">Chapter 3: Unterwegs</button>
-          <button type="button" class="start-chapter-select-btn" data-chapter-node="chapter_4_title">Kapitel 4: Das Herz von Wien</button>
+          <button type="button" class="start-chapter-select-btn" data-chapter-node="chapter_4_title">Chapter 4: Dem Himmel so nah</button>
           <button type="button" id="start-chapters-back-btn" class="start-menu__btn start-menu__btn--secondary">Back</button>
         </div>
       </div>
@@ -58,7 +58,13 @@
 
     <header class="game__hud">
       <p class="game__chapter" id="chapter-label">Chapter 1</p>
-      <button type="button" class="game__menu-btn" id="menu-btn" aria-label="Open menu">☰</button>
+      <div class="game__hud-actions">
+        <button type="button" class="vocab-btn" id="vocab-btn" aria-haspopup="dialog">
+          <span class="vocab-btn__icon" aria-hidden="true">📖</span>
+          <span class="vocab-btn__label">Vokabeln</span>
+        </button>
+        <button type="button" class="game__menu-btn" id="menu-btn" aria-label="Open menu">☰</button>
+      </div>
     </header>
 
     <main class="game__stage" aria-live="polite">
@@ -193,6 +199,22 @@
             <button type="button" class="ticket-machine-error__continue" id="ticket-machine-error-continue">Try again</button>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Vocabulary glossary (Vokabelheft) overlay -->
+    <div id="vocab-overlay" class="vocab-overlay" hidden>
+      <div class="vocab-panel" role="dialog" aria-modal="true" aria-labelledby="vocab-title">
+        <header class="vocab-panel__head">
+          <h2 class="vocab-panel__title" id="vocab-title">Vokabelheft — Kapitel 1</h2>
+          <button type="button" class="vocab-panel__close" id="vocab-close-btn" aria-label="Close vocabulary">✕</button>
+        </header>
+        <div id="vocab-tutorial" class="vocab-tutorial" hidden>
+          <h3 class="vocab-tutorial__title">Welcome to your Vokabelheft!</h3>
+          <p class="vocab-tutorial__text">Here you will find key German words and phrases tailored specifically to the current chapter and its mini-games. Use this tool whenever you feel unsure or want to learn new vocabulary in context! You can access your vocabulary anytime during your journey.</p>
+          <button type="button" class="vocab-tutorial__btn" id="vocab-tutorial-btn">Got it!</button>
+        </div>
+        <ul class="vocab-panel__list" id="vocab-list"></ul>
       </div>
     </div>
 

@@ -194,6 +194,246 @@ button {
   transform: scale(1.05);
 }
 
+.game__hud-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+/* ── Floating vocabulary button ─────────────────────────────────── */
+.vocab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  height: 2.5rem;
+  padding: 0 0.95rem;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--dialogue-border);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+  transition: background 0.2s ease, transform 0.15s ease, border-color 0.2s ease;
+}
+
+.vocab-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.32);
+  transform: scale(1.04);
+}
+
+.vocab-btn.is-pulsing {
+  animation: vocabBtnPulse 1.05s ease-in-out 4;
+  border-color: rgba(196, 180, 255, 0.7);
+  box-shadow:
+    0 0 0 0 rgba(168, 148, 255, 0.55),
+    0 6px 18px rgba(0, 0, 0, 0.28);
+}
+
+@keyframes vocabBtnPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow:
+      0 0 0 0 rgba(168, 148, 255, 0.45),
+      0 4px 14px rgba(0, 0, 0, 0.22);
+  }
+  50% {
+    transform: scale(1.08);
+    box-shadow:
+      0 0 0 12px rgba(168, 148, 255, 0),
+      0 8px 22px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.vocab-btn__icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+@media (max-width: 560px) {
+  .vocab-btn__label {
+    display: none;
+  }
+
+  .vocab-btn {
+    width: 2.5rem;
+    justify-content: center;
+    padding: 0;
+  }
+}
+
+/* ── Vocabulary glossary modal ──────────────────────────────────── */
+.vocab-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(0.8rem, 3vw, 2rem);
+  background: rgba(8, 6, 16, 0.6);
+  backdrop-filter: blur(7px);
+}
+
+.vocab-overlay[hidden] {
+  display: none !important;
+}
+
+.vocab-panel {
+  width: min(94vw, 560px);
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: linear-gradient(160deg, rgba(32, 30, 44, 0.98), rgba(20, 18, 32, 0.98));
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+  animation: metroBoardIn 0.3s ease-out;
+}
+
+.vocab-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.9rem 1.15rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(90deg, rgba(124, 108, 240, 0.18), rgba(124, 108, 240, 0.04));
+}
+
+.vocab-panel__title {
+  margin: 0;
+  font-size: clamp(0.95rem, 2.4vw, 1.15rem);
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  color: #f0edff;
+}
+
+.vocab-panel__close {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.vocab-panel__close:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.18);
+  transform: scale(1.06);
+}
+
+.vocab-panel__list {
+  margin: 0;
+  padding: 0.65rem 0.9rem 0.9rem;
+  list-style: none;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.vocab-panel__list[hidden] {
+  display: none !important;
+}
+
+.vocab-tutorial {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1.15rem 1.25rem 1.35rem;
+}
+
+.vocab-tutorial[hidden] {
+  display: none !important;
+}
+
+.vocab-tutorial__title {
+  margin: 0;
+  font-size: clamp(1rem, 2.6vw, 1.2rem);
+  font-weight: 800;
+  color: #f0edff;
+}
+
+.vocab-tutorial__text {
+  margin: 0;
+  font-size: clamp(0.86rem, 2.1vw, 0.98rem);
+  font-weight: 500;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.vocab-tutorial__btn {
+  align-self: flex-start;
+  margin-top: 0.25rem;
+  padding: 0.65rem 1.35rem;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  color: #1a1628;
+  background: linear-gradient(180deg, #d9d0ff 0%, #b8a8ff 100%);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.vocab-tutorial__btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.vocab-panel__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  align-items: baseline;
+  gap: 0.35rem 0.9rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.vocab-panel__item:nth-child(even) {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.vocab-panel__german {
+  font-size: clamp(0.82rem, 2vw, 0.92rem);
+  font-weight: 800;
+  color: #cfc4ff;
+}
+
+.vocab-panel__english {
+  font-size: clamp(0.76rem, 1.9vw, 0.86rem);
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.66);
+}
+
+@media (max-width: 560px) {
+  .vocab-panel__item {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ── Character stage ────────────────────────────────────────── */
 .game__stage {
   position: relative;
@@ -808,6 +1048,73 @@ button {
   letter-spacing: 0.04em;
   text-align: center;
   color: rgba(255, 255, 255, 0.66);
+}
+
+/* ── Universal mistake counter (Fehler-Zähler) ───────────────── */
+.mistake-counter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  margin: 0;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  font-size: clamp(0.72rem, 1.7vw, 0.82rem);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.88);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+
+.mistake-counter--warning {
+  color: #ffe6b0;
+  background: rgba(220, 160, 60, 0.18);
+  border-color: rgba(240, 180, 80, 0.4);
+}
+
+.mistake-counter--critical {
+  color: #ffd0c8;
+  background: rgba(190, 55, 55, 0.22);
+  border-color: rgba(239, 99, 99, 0.5);
+}
+
+.rules-game__footer-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.rules-game__dev-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.45rem;
+  margin-top: 0.15rem;
+}
+
+.rules-game__dev-controls button {
+  padding: 0.28rem 0.55rem;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.45);
+  background: rgba(0, 0, 0, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.rules-game__dev-controls button:hover {
+  color: rgba(255, 255, 255, 0.88);
+  background: rgba(0, 0, 0, 0.28);
+  border-color: rgba(255, 255, 255, 0.22);
 }
 
 @media (max-width: 560px) {
