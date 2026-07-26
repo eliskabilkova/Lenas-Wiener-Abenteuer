@@ -1134,4 +1134,124 @@ const storyData = {
       { text: "Take a photo and go back down", nextNode: "end_chapter_4" },
     ],
   },
+
+  // ── Kapitel 5: Im Supermarkt ────────────────────────────────────────────
+
+  chapter_5_title: {
+    id: "chapter_5_title",
+    background: "black",
+    speaker: "System",
+    text: "Chapter 5: Im Supermarkt",
+    lenaMood: "none",
+    npcImage: "none",
+    choices: [
+      { text: "Start Chapter", nextNode: "ch5_outside_intro" },
+    ],
+  },
+
+  ch5_outside_intro: {
+    id: "ch5_outside_intro",
+    background: "supermarket_exterior.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Phew, that was a long climb up Stephansdom! I'm really hungry now. Let's step into this supermarket to grab some dinner and snacks for tomorrow. I need to find the right aisles and then pay at the cashier in German!",
+    lenaMood: "tired",
+    npcImage: "none",
+    choices: [
+      { text: "Enter Supermarket", nextNode: "ch5_aisles_game" },
+    ],
+  },
+
+  ch5_aisles_game: {
+    id: "ch5_aisles_game",
+    background: "supermarket_interior.jpg",
+    speaker: "System",
+    text: "",
+    lenaMood: "none",
+    npcImage: "none",
+    choices: [],
+  },
+
+  ch5_basket_done: {
+    id: "ch5_basket_done",
+    background: "supermarket_interior.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Awesome, I got everything I needed in my basket! Now off to the cashier to pay.",
+    lenaMood: "happy",
+    npcImage: "none",
+    choices: [
+      { text: "Go to the cashier", nextNode: "ch5_cashier_game" },
+    ],
+  },
+
+  ch5_cashier_game: {
+    id: "ch5_cashier_game",
+    background: "supermarket_cashier.jpg",
+    speaker: "System",
+    text: "",
+    lenaMood: "none",
+    npcImage: "none",
+    choices: [],
+  },
+
+  ch5_paid_thought: {
+    id: "ch5_paid_thought",
+    background: "supermarket_cashier.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Phew, I paid in German without any hesitation! Time to head to my room and rest.",
+    lenaMood: "happy",
+    npcImage: "none",
+    choices: [
+      { text: "Head back to the hotel", nextNode: "end_chapter_5" },
+    ],
+  },
+
+  // ── Kapitel 6: Epilog ───────────────────────────────────────────────────
+
+  chapter_6_title: {
+    id: "chapter_6_title",
+    background: "black",
+    speaker: "System",
+    text: "Chapter 6: Epilog — Das Ende einer tollen Reise",
+    lenaMood: "none",
+    npcImage: "none",
+    choices: [
+      { text: "Start Chapter", nextNode: "ch6_morning_title" },
+    ],
+  },
+
+  ch6_morning_title: {
+    id: "ch6_morning_title",
+    background: "black",
+    speaker: "System",
+    text: "The Next Morning — Lena's Final Day in Vienna...",
+    lenaMood: "none",
+    npcImage: "none",
+    choices: [
+      { text: "Continue", nextNode: "ch6_cafe_scene" },
+    ],
+  },
+
+  ch6_cafe_scene: {
+    id: "ch6_cafe_scene",
+    background: "kaffeehaus.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "I'm sitting in this beautiful Viennese café, enjoying my last Melange before my train back to Prague. Looking back at this week, I'm so proud of myself! From buying train tickets to finding my way through the U-Bahn, visiting Stephansdom, and buying groceries... I actually spoke German every day!",
+    lenaMood: "happy",
+    npcImage: "none",
+    choices: [
+      { text: "Write in the Tagebuch", nextNode: "end_chapter_6" },
+    ],
+  },
+
+  ch6_departure: {
+    id: "ch6_departure",
+    background: "vienna_hauptbahnhof.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "My train leaves in an hour from Hauptbahnhof. Tschüss Wien, auf Wiedersehen!",
+    lenaMood: "happy",
+    npcImage: "none",
+    choices: [
+      { text: "Complete Journey", nextNode: "journey_complete" },
+    ],
+  },
 };

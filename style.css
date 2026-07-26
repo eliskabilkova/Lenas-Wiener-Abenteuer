@@ -152,6 +152,35 @@ button {
     linear-gradient(175deg, #8fb8d8 0%, #c9b8a0 55%, #7a6d70 100%);
 }
 
+.game[data-background="supermarket_exterior"] {
+  background-image:
+    linear-gradient(180deg, rgba(18, 22, 20, 0.12) 0%, rgba(18, 22, 20, 0.55) 100%),
+    radial-gradient(ellipse at 40% 20%, rgba(255, 220, 140, 0.28) 0%, transparent 50%),
+    linear-gradient(165deg, #6a9a72 0%, #c4c8a8 40%, #8a9088 75%, #4a5548 100%);
+}
+
+.game[data-background="supermarket_interior"] {
+  background-image:
+    linear-gradient(180deg, rgba(20, 24, 28, 0.18) 0%, rgba(20, 24, 28, 0.58) 100%),
+    radial-gradient(ellipse at 50% 0%, rgba(255, 245, 220, 0.35) 0%, transparent 55%),
+    linear-gradient(160deg, #e8e4d8 0%, #c8d0c4 35%, #9aa898 70%, #5a6558 100%);
+}
+
+.game[data-background="supermarket_cashier"] {
+  background-image:
+    linear-gradient(180deg, rgba(24, 20, 18, 0.2) 0%, rgba(24, 20, 18, 0.62) 100%),
+    radial-gradient(ellipse at 50% 15%, rgba(255, 200, 120, 0.3) 0%, transparent 50%),
+    linear-gradient(155deg, #d8c8b0 0%, #b0a090 40%, #6a5850 100%);
+}
+
+.game[data-background="kaffeehaus"] {
+  background-image:
+    linear-gradient(180deg, rgba(30, 18, 12, 0.18) 0%, rgba(30, 18, 12, 0.62) 100%),
+    radial-gradient(ellipse at 50% 10%, rgba(255, 200, 130, 0.4) 0%, transparent 55%),
+    radial-gradient(ellipse at 20% 70%, rgba(180, 100, 60, 0.2) 0%, transparent 40%),
+    linear-gradient(150deg, #4a3020 0%, #8a5a38 40%, #c49a68 75%, #6a4830 100%);
+}
+
 .game__overlay {
   position: absolute;
   inset: 0;
@@ -1357,6 +1386,20 @@ button {
   width: min(90vw, 420px);
 }
 
+.start-menu--chapter-select .start-menu__content {
+  width: min(94vw, 620px);
+  max-height: 92vh;
+  overflow-y: auto;
+  padding: clamp(1.5rem, 3.5vw, 2.25rem);
+}
+
+.start-chapters-selection {
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  gap: 0;
+}
+
 .start-menu__actions[hidden],
 .start-chapters-selection[hidden] {
   display: none !important;
@@ -1454,9 +1497,9 @@ button {
 }
 
 #start-options-btn,
-#start-credits-btn {
-  flex: 0 1 130px;
-  min-width: 120px;
+#start-vokabeltrainer-btn {
+  flex: 0 1 150px;
+  min-width: 130px;
   margin-top: 0.55rem;
   padding: 9px 16px;
   font-size: 0.82rem;
@@ -1472,7 +1515,7 @@ button {
 }
 
 #start-options-btn:hover,
-#start-credits-btn:hover {
+#start-vokabeltrainer-btn:hover {
   color: white;
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.48);
@@ -1481,30 +1524,156 @@ button {
   filter: none;
 }
 
-.start-chapter-select-btn {
-  width: min(80vw, 360px);
-  padding: 0.9rem 1.2rem;
-  border-radius: 14px;
-  color: #fff;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  font-size: clamp(1rem, 2.4vw, 1.15rem);
-  font-weight: 800;
-  letter-spacing: 0.03em;
-  text-align: center;
-  box-shadow: 0 4px 22px rgba(0, 0, 0, 0.22);
-  transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+/* ── Chapter Select — minimal list ─────────────────────────────────── */
+
+.chapter-select {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
 }
 
-.start-chapter-select-btn:hover,
-.start-chapter-select-btn:focus-visible {
-  transform: translateY(-2px);
-  background: rgba(240, 208, 128, 0.18);
-  border-color: rgba(240, 208, 128, 0.5);
+.chapter-select__back {
+  align-self: flex-start;
+  padding: 0.35rem 0.15rem;
+  border: none;
+  background: none;
+  color: rgba(255, 255, 255, 0.65);
+  font-family: var(--font);
+  font-size: clamp(0.95rem, 2.2vw, 1.05rem);
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.chapter-select__back:hover,
+.chapter-select__back:focus-visible {
+  color: #fff;
   outline: none;
 }
 
-/* ── Options & Credits panels ─────────────────────────────────────── */
+.chapter-select__heading {
+  margin: 0;
+  font-size: clamp(1.35rem, 3.8vw, 1.75rem);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #fff;
+  text-align: center;
+}
+
+.chapter-select__list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+.chapter-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  min-height: 4.25rem;
+  padding: 1.25rem 1.35rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.03) 100%);
+  color: #fff;
+  font-family: var(--font);
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.chapter-card:hover:not(:disabled),
+.chapter-card:focus-visible:not(:disabled) {
+  transform: translateY(-8px) scale(1.02);
+  border-color: rgba(240, 208, 128, 0.55);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.16) 0%, rgba(240, 208, 128, 0.1) 100%);
+  box-shadow:
+    0 10px 25px rgba(255, 255, 255, 0.15),
+    0 0 0 1px rgba(240, 208, 128, 0.28),
+    0 18px 36px rgba(196, 120, 64, 0.22);
+  outline: none;
+}
+
+.chapter-card:active:not(:disabled) {
+  transform: translateY(-2px) scale(0.98);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.12) 0%, rgba(240, 208, 128, 0.08) 100%);
+  box-shadow:
+    0 6px 16px rgba(255, 255, 255, 0.1),
+    0 0 0 1px rgba(240, 208, 128, 0.35),
+    0 10px 24px rgba(196, 120, 64, 0.18);
+}
+
+.chapter-card__icon {
+  flex-shrink: 0;
+  display: inline-block;
+  font-size: clamp(1.75rem, 3.5vw, 1.9rem);
+  line-height: 1;
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.chapter-card:hover:not(:disabled) .chapter-card__icon,
+.chapter-card:focus-visible:not(:disabled) .chapter-card__icon {
+  transform: scale(1.15) rotate(3deg);
+}
+
+.chapter-card:active:not(:disabled) .chapter-card__icon {
+  transform: scale(1.05) rotate(1deg);
+}
+
+.chapter-card__title {
+  font-size: clamp(1.05rem, 2.3vw, 1.25rem);
+  font-weight: 700;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.92);
+  transition: color 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.chapter-card:hover:not(:disabled) .chapter-card__title,
+.chapter-card:focus-visible:not(:disabled) .chapter-card__title {
+  color: #fff8ec;
+}
+
+.chapter-card--active {
+  border-color: rgba(240, 208, 128, 0.35);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.1) 0%, rgba(240, 208, 128, 0.06) 100%);
+}
+
+.chapter-card--locked {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.chapter-card--locked:hover,
+.chapter-card--locked:focus-visible,
+.chapter-card--locked:active {
+  transform: none;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.03) 100%);
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  outline: none;
+}
+
+.chapter-card--locked:hover .chapter-card__icon,
+.chapter-card--locked:focus-visible .chapter-card__icon {
+  transform: none;
+}
+
+.chapter-card--locked:hover .chapter-card__title,
+.chapter-card--locked:focus-visible .chapter-card__title {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+@media (max-width: 560px) {
+  .chapter-select__list {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+}
+
+/* ── Options panel ─────────────────────────────────────────────────── */
 .info-panel {
   position: absolute;
   inset: 0;
@@ -1552,36 +1721,279 @@ button {
   font-weight: 600;
 }
 
-.info-panel__credits {
-  list-style: none;
+/* ── Vokabeltrainer practice mode ─────────────────────────────────── */
+.vokabeltrainer {
+  position: absolute;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(0.8rem, 3vw, 1.75rem);
+  background:
+    linear-gradient(160deg, rgba(16, 12, 30, 0.88) 0%, rgba(8, 7, 18, 0.94) 100%),
+    linear-gradient(135deg, #3a2d6e 0%, #6b4a9a 40%, #c47840 100%);
+}
+
+.vokabeltrainer[hidden] {
+  display: none !important;
+}
+
+.vokabeltrainer__panel {
+  width: min(94vw, 560px);
+  max-height: 92vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: clamp(1.25rem, 3.5vw, 2rem);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: linear-gradient(160deg, rgba(34, 30, 48, 0.97), rgba(20, 18, 32, 0.98));
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(14px);
+  animation: metroBoardIn 0.32s ease-out;
+}
+
+.vokabeltrainer__view {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.85rem;
+}
+
+.vokabeltrainer__view[hidden] {
+  display: none !important;
+}
+
+.vokabeltrainer__title {
+  margin: 0;
+  font-size: clamp(1.2rem, 3.4vw, 1.65rem);
+  font-weight: 800;
+  text-align: center;
+  color: #f4f0ff;
+  letter-spacing: 0.02em;
+}
+
+.vokabeltrainer__subtitle {
+  margin: 0;
+  text-align: center;
+  font-size: clamp(0.85rem, 2.1vw, 0.98rem);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.vokabeltrainer__set-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin: 0.25rem 0 0.4rem;
+}
+
+.vokabeltrainer__set-btn {
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.info-panel__credits li {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  padding: 0.85rem 1rem;
+  padding: 0.8rem 1rem;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.06);
+  font-family: inherit;
+  font-size: clamp(0.88rem, 2.2vw, 1rem);
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
 }
 
-.info-panel__role {
-  font-size: 0.75rem;
-  font-weight: 700;
+.vokabeltrainer__set-btn:hover,
+.vokabeltrainer__set-btn:focus-visible {
+  transform: translateY(-2px);
+  background: rgba(168, 148, 255, 0.18);
+  border-color: rgba(196, 180, 255, 0.45);
+}
+
+.vokabeltrainer__set-btn--mixed {
+  background: linear-gradient(135deg, rgba(196, 120, 64, 0.22), rgba(124, 108, 240, 0.2));
+  border-color: rgba(240, 200, 140, 0.35);
+}
+
+.vokabeltrainer__progress-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.vokabeltrainer__progress-label {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.vokabeltrainer__progress-bar {
+  width: 100%;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.vokabeltrainer__progress-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #b8a8ff, #f0b070);
+  transition: width 0.35s ease;
+}
+
+.vokabeltrainer__prompt {
+  margin: 0.35rem 0 0;
+  text-align: center;
+  font-size: 0.88rem;
+  font-weight: 600;
   color: rgba(255, 255, 255, 0.55);
 }
 
-.info-panel__name {
-  font-size: clamp(1.05rem, 2.6vw, 1.25rem);
+.vokabeltrainer__german {
+  margin: 0;
+  text-align: center;
+  font-size: clamp(1.25rem, 3.8vw, 1.7rem);
+  font-weight: 800;
+  line-height: 1.35;
+  color: #d8ceff;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  background: rgba(124, 108, 240, 0.14);
+  border: 1px solid rgba(168, 148, 255, 0.28);
+}
+
+.vokabeltrainer__german.is-pop {
+  animation: vocabWordPop 0.35s ease-out;
+}
+
+@keyframes vocabWordPop {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.vokabeltrainer__options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-top: 0.25rem;
+}
+
+.vokabeltrainer__option {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: clamp(0.88rem, 2.2vw, 1rem);
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.vokabeltrainer__option:hover:not(:disabled),
+.vokabeltrainer__option:focus-visible:not(:disabled) {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.vokabeltrainer__option:disabled {
+  cursor: default;
+}
+
+.vokabeltrainer__option.is-correct {
+  color: #d8ffe6;
+  background: linear-gradient(145deg, rgba(57, 151, 96, 0.35), rgba(35, 95, 62, 0.25));
+  border-color: rgba(91, 203, 136, 0.65);
+}
+
+.vokabeltrainer__option.is-correct.is-pulse {
+  animation: trainerCorrectPulse 0.55s ease;
+}
+
+.vokabeltrainer__option.is-incorrect {
+  color: #ffd5cf;
+  background: linear-gradient(145deg, rgba(187, 60, 60, 0.35), rgba(105, 39, 39, 0.25));
+  border-color: rgba(239, 99, 99, 0.7);
+}
+
+@keyframes trainerCorrectPulse {
+  0%, 100% { transform: scale(1); }
+  40% { transform: scale(1.03); }
+  70% { transform: scale(0.99); }
+}
+
+.vokabeltrainer__quit {
+  align-self: center;
+  margin-top: 0.35rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.55);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.vokabeltrainer__quit:hover {
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.vokabeltrainer__score {
+  margin: 0.4rem 0 0;
+  text-align: center;
+  font-size: clamp(1.4rem, 4vw, 1.9rem);
   font-weight: 800;
   color: #f0d080;
+  text-shadow: 0 0 24px rgba(240, 180, 80, 0.35);
+}
+
+.vokabeltrainer__message {
+  margin: 0;
+  text-align: center;
+  font-size: clamp(0.95rem, 2.4vw, 1.1rem);
+  font-weight: 600;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.vokabeltrainer__result-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+.vokabeltrainer__result-actions .start-menu__btn {
+  width: 100%;
+}
+
+@media (max-width: 560px) {
+  .vokabeltrainer__panel {
+    max-height: 94vh;
+  }
 }
 
 /* ── Full-screen transition overlay ──────────────────────────────── */
@@ -2614,6 +3026,485 @@ button {
   box-shadow: 0 14px 32px rgba(124, 108, 240, 0.5);
 }
 
+/* ── Supermarket aisle finder ─────────────────────────────────────────── */
+
+.aisle-game {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(0.8rem, 3vw, 2rem);
+  background:
+    linear-gradient(135deg, rgba(16, 22, 18, 0.88), rgba(28, 34, 28, 0.82)),
+    radial-gradient(circle at 50% 0%, rgba(120, 180, 110, 0.22), transparent 55%);
+  backdrop-filter: blur(10px);
+}
+
+.aisle-game__panel {
+  width: min(96vw, 720px);
+  max-height: 92vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: clamp(1rem, 2.8vw, 1.8rem);
+  border-radius: 20px;
+  border: 1px solid rgba(140, 190, 120, 0.28);
+  background: linear-gradient(160deg, rgba(38, 44, 38, 0.98), rgba(22, 26, 22, 0.98));
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  animation: metroBoardIn 0.35s ease-out;
+}
+
+.aisle-game__eyebrow {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-align: center;
+  color: #8fca7a;
+}
+
+.aisle-game__title {
+  margin: 0;
+  font-size: clamp(1.1rem, 3vw, 1.45rem);
+  font-weight: 800;
+  text-align: center;
+  color: #f4ffe8;
+}
+
+.aisle-game__progress {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.aisle-game__thought {
+  padding: 0.85rem 1rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.aisle-game__thought-label {
+  margin: 0 0 0.3rem;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(200, 230, 170, 0.7);
+}
+
+.aisle-game__prompt {
+  margin: 0;
+  font-size: clamp(0.95rem, 2.4vw, 1.1rem);
+  font-weight: 700;
+  line-height: 1.45;
+  color: #fff8ec;
+}
+
+.aisle-game__map {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.aisle-game__aisle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  min-height: 6.2rem;
+  padding: 0.9rem 0.7rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04));
+  color: #fff;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
+
+.aisle-game__aisle:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: rgba(140, 190, 120, 0.45);
+  background: linear-gradient(145deg, rgba(140, 190, 120, 0.18), rgba(255, 255, 255, 0.06));
+}
+
+.aisle-game__aisle.is-correct {
+  border-color: rgba(91, 203, 136, 0.7);
+  background: linear-gradient(145deg, rgba(57, 151, 96, 0.4), rgba(35, 95, 62, 0.25));
+  color: #c9f4da;
+}
+
+.aisle-game__aisle.is-wrong {
+  animation: rulesShake 0.4s ease;
+  border-color: rgba(239, 99, 99, 0.72);
+  background: linear-gradient(145deg, rgba(187, 60, 60, 0.3), rgba(105, 39, 39, 0.2));
+}
+
+.aisle-game__icon {
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+.aisle-game__name {
+  font-size: clamp(0.78rem, 1.9vw, 0.92rem);
+  font-weight: 800;
+  text-align: center;
+}
+
+.aisle-game__sub {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.aisle-game__feedback {
+  min-height: 1.4rem;
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.aisle-game__feedback--success {
+  color: #9fe8b4;
+}
+
+.aisle-game__feedback--hint {
+  color: #f0c89a;
+}
+
+.aisle-game__dev-controls,
+.cashier-game__dev-controls {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.2rem;
+}
+
+.aisle-game__dev-controls button,
+.cashier-game__dev-controls button {
+  padding: 0.35rem 0.7rem;
+  border-radius: 8px;
+  border: 1px dashed rgba(255, 255, 255, 0.25);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.45);
+  font-family: inherit;
+  font-size: 0.68rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ── Cashier dialogue mini-game ───────────────────────────────────────── */
+
+.cashier-game {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(0.8rem, 3vw, 2rem);
+  background:
+    linear-gradient(135deg, rgba(22, 16, 14, 0.9), rgba(36, 28, 24, 0.84)),
+    radial-gradient(circle at 50% 0%, rgba(220, 160, 90, 0.22), transparent 52%);
+  backdrop-filter: blur(10px);
+}
+
+.cashier-game__panel {
+  width: min(96vw, 640px);
+  max-height: 92vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: clamp(1rem, 2.8vw, 1.8rem);
+  border-radius: 20px;
+  border: 1px solid rgba(220, 170, 100, 0.28);
+  background: linear-gradient(160deg, rgba(42, 34, 30, 0.98), rgba(24, 20, 18, 0.98));
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, 0.58),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  animation: metroBoardIn 0.35s ease-out;
+}
+
+.cashier-game__eyebrow {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-align: center;
+  color: #dca95f;
+}
+
+.cashier-game__title {
+  margin: 0;
+  font-size: clamp(1.1rem, 3vw, 1.45rem);
+  font-weight: 800;
+  text-align: center;
+  color: #fff8ec;
+}
+
+.cashier-game__register {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.cashier-game__cashier-avatar {
+  width: 3.4rem;
+  height: 3.4rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background:
+    radial-gradient(circle at 35% 30%, #f2d2b0 0%, #d4a07a 45%, #8a5a40 100%);
+  box-shadow: 0 0 0 3px rgba(220, 170, 100, 0.35);
+}
+
+.cashier-game__register-screen {
+  flex: 1;
+  padding: 0.55rem 0.8rem;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #1a2a22, #0e1814);
+  border: 1px solid rgba(100, 200, 140, 0.25);
+  font-family: "Courier New", monospace;
+}
+
+.cashier-game__total-label {
+  margin: 0;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(140, 220, 170, 0.7);
+}
+
+.cashier-game__total {
+  margin: 0.1rem 0 0;
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #9fe8b4;
+}
+
+.cashier-game__speaker {
+  margin: 0.2rem 0 0;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #dca95f;
+}
+
+.cashier-game__dialogue {
+  margin: 0;
+  font-size: clamp(0.95rem, 2.3vw, 1.1rem);
+  font-weight: 700;
+  line-height: 1.45;
+  color: #fff8ec;
+}
+
+.cashier-game__feedback {
+  min-height: 1.25rem;
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.cashier-game__feedback--success {
+  color: #9fe8b4;
+}
+
+.cashier-game__feedback--hint {
+  color: #f0c89a;
+}
+
+.cashier-game__options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.cashier-game__option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04));
+  color: #fff;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.cashier-game__option:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: rgba(220, 170, 100, 0.45);
+}
+
+.cashier-game__option.is-correct {
+  border-color: rgba(91, 203, 136, 0.7);
+  background: linear-gradient(145deg, rgba(57, 151, 96, 0.35), rgba(35, 95, 62, 0.22));
+}
+
+.cashier-game__option.is-wrong {
+  animation: rulesShake 0.4s ease;
+  border-color: rgba(239, 99, 99, 0.72);
+  background: linear-gradient(145deg, rgba(187, 60, 60, 0.3), rgba(105, 39, 39, 0.2));
+}
+
+.cashier-game__option-de {
+  font-size: clamp(0.85rem, 2vw, 0.95rem);
+  font-weight: 800;
+}
+
+.cashier-game__option-en {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.cashier-game__continue {
+  align-self: center;
+  margin-top: 0.3rem;
+  padding: 0.75rem 2rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: linear-gradient(135deg, #6a9a72, #4a7a52);
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(74, 122, 82, 0.35);
+}
+
+.cashier-game__continue:hover {
+  transform: translateY(-1px);
+}
+
+/* ── Journey celebration screen ───────────────────────────────────────── */
+
+.celebration-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1rem, 4vw, 2.5rem);
+  background:
+    linear-gradient(160deg, rgba(18, 14, 28, 0.92), rgba(40, 28, 20, 0.9)),
+    radial-gradient(circle at 50% 20%, rgba(255, 200, 120, 0.25), transparent 55%);
+  backdrop-filter: blur(12px);
+  animation: metroBoardIn 0.4s ease-out;
+}
+
+.celebration-card {
+  width: min(94vw, 520px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: clamp(1.5rem, 4vw, 2.4rem);
+  border-radius: 22px;
+  border: 1px solid rgba(244, 195, 116, 0.35);
+  background: linear-gradient(165deg, rgba(48, 38, 32, 0.98), rgba(26, 22, 28, 0.98));
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  text-align: center;
+}
+
+.celebration-card__title {
+  margin: 0;
+  font-size: clamp(1.35rem, 4vw, 1.85rem);
+  font-weight: 800;
+  line-height: 1.25;
+  color: #fff8ec;
+}
+
+.celebration-card__badge {
+  margin: 0;
+  padding: 0.7rem 1.2rem;
+  border-radius: 999px;
+  font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+  font-weight: 800;
+  color: #1c1610;
+  background: linear-gradient(135deg, #f4c374, #e0a050);
+  box-shadow: 0 8px 22px rgba(220, 160, 80, 0.4);
+}
+
+.celebration-card__summary {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.celebration-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.7rem;
+  width: 100%;
+  margin-top: 0.4rem;
+}
+
+.celebration-card__btn {
+  flex: 1 1 180px;
+  padding: 0.85rem 1.2rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: linear-gradient(135deg, #dca95f, #c48a3a);
+  color: #1c1610;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(196, 138, 58, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.celebration-card__btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(196, 138, 58, 0.45);
+}
+
+.celebration-card__btn--secondary {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.88);
+  border-color: rgba(255, 255, 255, 0.28);
+  box-shadow: none;
+}
+
+.celebration-card__btn--secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+}
+
 @media (max-width: 640px) {
   .meldezettel__grid {
     grid-template-columns: 1fr;
@@ -2621,5 +3512,9 @@ button {
 
   .meldezettel__title {
     font-size: 1.15rem;
+  }
+
+  .aisle-game__map {
+    grid-template-columns: 1fr;
   }
 }

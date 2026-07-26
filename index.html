@@ -15,20 +15,52 @@
     <!-- Start Menu — sits above everything until the player begins -->
     <div id="start-menu" class="start-menu">
       <div class="start-menu__content">
-        <h1 class="start-menu__title">Lenas Wiener<br>Abenteuer</h1>
+        <h1 class="start-menu__title" id="start-menu-title">Lenas Wiener<br>Abenteuer</h1>
         <div id="start-main-actions" class="start-menu__actions">
           <button type="button" id="start-game-btn" class="start-menu__btn">Start Game</button>
           <button type="button" id="start-chapters-btn" class="start-menu__btn start-menu__btn--secondary">Select Chapter</button>
           <button type="button" id="start-options-btn" class="start-menu__btn start-menu__btn--secondary">Options</button>
-          <button type="button" id="start-credits-btn" class="start-menu__btn start-menu__btn--secondary">Credits</button>
+          <button type="button" id="start-vokabeltrainer-btn" class="start-menu__btn start-menu__btn--secondary">Vocabulary Practice</button>
         </div>
 
         <div id="start-chapters-selection" class="start-chapters-selection" hidden>
-          <button type="button" class="start-chapter-select-btn" data-chapter-node="chapter_1_title">Chapter 1: Ankunft</button>
-          <button type="button" class="start-chapter-select-btn" data-chapter-node="ch2_reception_greet">Chapter 2: Check-in</button>
-          <button type="button" class="start-chapter-select-btn" data-chapter-node="chapter_3_title">Chapter 3: Unterwegs</button>
-          <button type="button" class="start-chapter-select-btn" data-chapter-node="chapter_4_title">Chapter 4: Dem Himmel so nah</button>
-          <button type="button" id="start-chapters-back-btn" class="start-menu__btn start-menu__btn--secondary">Back</button>
+          <div class="chapter-select" role="region" aria-labelledby="chapter-select-heading">
+            <button type="button" id="start-chapters-back-btn" class="chapter-select__back">← Back</button>
+
+            <h2 class="chapter-select__heading" id="chapter-select-heading">Select Chapter</h2>
+
+            <div class="chapter-select__list" id="chapter-select-grid">
+              <button type="button" class="chapter-card" data-chapter-node="chapter_1_title" data-chapter="1">
+                <span class="chapter-card__icon" aria-hidden="true">🚆</span>
+                <span class="chapter-card__title">Chapter 1: Ankunft</span>
+              </button>
+
+              <button type="button" class="chapter-card" data-chapter-node="ch2_reception_greet" data-chapter="2">
+                <span class="chapter-card__icon" aria-hidden="true">🏨</span>
+                <span class="chapter-card__title">Chapter 2: Check-in</span>
+              </button>
+
+              <button type="button" class="chapter-card" data-chapter-node="chapter_3_title" data-chapter="3">
+                <span class="chapter-card__icon" aria-hidden="true">🚇</span>
+                <span class="chapter-card__title">Chapter 3: Unterwegs</span>
+              </button>
+
+              <button type="button" class="chapter-card" data-chapter-node="chapter_4_title" data-chapter="4">
+                <span class="chapter-card__icon" aria-hidden="true">⛪</span>
+                <span class="chapter-card__title">Chapter 4: Dem Himmel so nah</span>
+              </button>
+
+              <button type="button" class="chapter-card" data-chapter-node="chapter_5_title" data-chapter="5">
+                <span class="chapter-card__icon" aria-hidden="true">🛒</span>
+                <span class="chapter-card__title">Chapter 5: Im Supermarkt</span>
+              </button>
+
+              <button type="button" class="chapter-card" data-chapter-node="chapter_6_title" data-chapter="6">
+                <span class="chapter-card__icon" aria-hidden="true">☕</span>
+                <span class="chapter-card__title">Chapter 6: Epilog</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -42,15 +74,46 @@
       </div>
     </div>
 
-    <!-- Credits panel -->
-    <div id="credits-panel" class="info-panel" hidden>
-      <div class="info-panel__content">
-        <h2 class="info-panel__title">Credits</h2>
-        <ul class="info-panel__credits">
-          <li><span class="info-panel__role">Story &amp; Code</span><span class="info-panel__name">Eliška</span></li>
-          <li><span class="info-panel__role">Graphics</span><span class="info-panel__name">Midjourney AI</span></li>
-        </ul>
-        <button type="button" id="credits-back-btn" class="start-menu__btn start-menu__btn--secondary">Back</button>
+    <!-- Vokabeltrainer practice mode -->
+    <div id="vokabeltrainer" class="vokabeltrainer" hidden>
+      <div class="vokabeltrainer__panel" role="dialog" aria-modal="true" aria-labelledby="vt-title">
+        <div id="vt-select" class="vokabeltrainer__view">
+          <h2 class="vokabeltrainer__title" id="vt-title">Vokabeltrainer — Choose Practice Set</h2>
+          <p class="vokabeltrainer__subtitle">Practice German vocabulary from Lena's journey.</p>
+          <div class="vokabeltrainer__set-list">
+            <button type="button" class="vokabeltrainer__set-btn" data-vt-set="1">Kapitel 1: Die Ankunft</button>
+            <button type="button" class="vokabeltrainer__set-btn" data-vt-set="2">Kapitel 2: Das Hotel</button>
+            <button type="button" class="vokabeltrainer__set-btn" data-vt-set="3">Kapitel 3: Die U-Bahn</button>
+            <button type="button" class="vokabeltrainer__set-btn" data-vt-set="4">Kapitel 4: Über den Dächern von Wien</button>
+            <button type="button" class="vokabeltrainer__set-btn" data-vt-set="5">Kapitel 5: Im Supermarkt</button>
+            <button type="button" class="vokabeltrainer__set-btn" data-vt-set="6">Kapitel 6: Epilog</button>
+            <button type="button" class="vokabeltrainer__set-btn vokabeltrainer__set-btn--mixed" data-vt-set="mixed">Alle Kapitel (Mixed Challenge)</button>
+          </div>
+          <button type="button" id="vt-back-menu-btn" class="start-menu__btn start-menu__btn--secondary">Back to Menu</button>
+        </div>
+
+        <div id="vt-quiz" class="vokabeltrainer__view" hidden>
+          <div class="vokabeltrainer__progress-row">
+            <p class="vokabeltrainer__progress-label" id="vt-progress-label">Question 1 / 10</p>
+            <div class="vokabeltrainer__progress-bar" aria-hidden="true">
+              <div class="vokabeltrainer__progress-fill" id="vt-progress-fill"></div>
+            </div>
+          </div>
+          <p class="vokabeltrainer__prompt">What does this mean?</p>
+          <p class="vokabeltrainer__german" id="vt-german-word">der Fahrkartenautomat</p>
+          <div class="vokabeltrainer__options" id="vt-options"></div>
+          <button type="button" id="vt-quiz-back-btn" class="vokabeltrainer__quit">Back to Menu</button>
+        </div>
+
+        <div id="vt-results" class="vokabeltrainer__view" hidden>
+          <h2 class="vokabeltrainer__title">Exercise Complete!</h2>
+          <p class="vokabeltrainer__score" id="vt-score">8 / 10 Correct!</p>
+          <p class="vokabeltrainer__message" id="vt-message">Gute Arbeit! Übung macht den Meister!</p>
+          <div class="vokabeltrainer__result-actions">
+            <button type="button" id="vt-retry-btn" class="start-menu__btn">Try Again</button>
+            <button type="button" id="vt-results-menu-btn" class="start-menu__btn start-menu__btn--secondary">Main Menu</button>
+          </div>
+        </div>
       </div>
     </div>
 

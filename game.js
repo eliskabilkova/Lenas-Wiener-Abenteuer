@@ -8,6 +8,7 @@ let gameState = {
   meldezettelMistakes: 0,
   ch3Strikes: 0,
   ch4Strikes: 0,
+  ch5Strikes: 0,
   hasSeenVokabelTutorial: false
 };
 
@@ -20,8 +21,101 @@ let gameState = {
 
   const START_NODE = "chapter_1_title";
   const TYPE_SPEED = 24;
-  const TOTAL_CHAPTERS = 4;
+  const TOTAL_CHAPTERS = 6;
   const PROGRESS_STORAGE_KEY = "lenasWienerAbenteuer.progress";
+
+  // ── Vocabulary lists (edit words here — glossary & practice mode read from this) ──
+  const VOCABULARY_DATA = {
+    chapter1: [
+      { german: "der Fahrkartenautomat", english: "ticket vending machine" },
+      { german: "die Fahrkarte / das Ticket", english: "ticket" },
+      { german: "die Ankunft", english: "arrival" },
+      { german: "der Hauptbahnhof", english: "main train station" },
+      { german: "der Schaffner", english: "train conductor" },
+      { german: "kaufen", english: "to buy" },
+      { german: "helfen", english: "to help" },
+      { german: "die Entschuldigung", english: "excuse me / apology" },
+      { german: "verstehen", english: "to understand" },
+      { german: "der Bahnsteig", english: "train platform" },
+    ],
+    chapter2: [
+      { german: "die Rezeption", english: "reception desk" },
+      { german: "einchecken", english: "to check in" },
+      { german: "der Zimmerschlüssel / die Karte", english: "room key / keycard" },
+      { german: "das Einzelzimmer", english: "single room" },
+      { german: "das Frühstück", english: "breakfast" },
+      { german: "inklusive", english: "included" },
+      { german: "das WLAN-Passwort", english: "Wi-Fi password" },
+      { german: "der Aufzug / der Lift", english: "elevator" },
+      { german: "die Etage / der Stock", english: "floor / level" },
+      { german: "Gute Nacht", english: "good night" },
+    ],
+    chapter3: [
+      { german: "die U-Bahn-Linie", english: "underground line (e.g., U3)" },
+      { german: "die Richtung", english: "direction" },
+      { german: "das Gleis", english: "track / platform" },
+      { german: "die Endstation", english: "terminus / last stop" },
+      { german: "die Rolltreppe", english: "escalator" },
+      { german: "rechts stehen, links gehen", english: "stand on the right, walk on the left" },
+      { german: "umsteigen", english: "to change trains / lines" },
+      { german: "der Fahrplan", english: "timetable / schedule" },
+      { german: "drängeln", english: "to push / hustle" },
+      { german: "nächste Station", english: "next station" },
+    ],
+    chapter4: [
+      { german: "die Hausordnung / die Regeln", english: "building rules / code of conduct" },
+      { german: "Ruhe bewahren", english: "to stay quiet / keep calm" },
+      { german: "das Blitzlicht", english: "camera flash" },
+      { german: "keine Kappen tragen", english: "no hats / caps allowed" },
+      { german: "der Ausblick / die Aussicht", english: "view / panorama" },
+      { german: "die Stufe", english: "step (staircase)" },
+      { german: "der Südturm", english: "South Tower" },
+      { german: "steigen / klettern", english: "to climb" },
+      { german: "anstrengend", english: "exhausting / tiring" },
+      { german: "eine Kerze anzünden", english: "to light a candle" },
+    ],
+    chapter5: [
+      { german: "der Supermarkt", english: "supermarket" },
+      { german: "das Regal / die Regale", english: "shelf / shelves" },
+      { german: "Obst & Gemüse", english: "fruit & vegetables (produce)" },
+      { german: "die Bäckerei", english: "bakery" },
+      { german: "das Kühlregal", english: "refrigerated section / dairy aisle" },
+      { german: "die Süßigkeiten", english: "sweets / candy" },
+      { german: "die Getränke", english: "drinks / beverages" },
+      { german: "der Einkaufskorb", english: "shopping basket" },
+      { german: "die Kasse / der Kassierer", english: "checkout / cashier" },
+      { german: "Stimmt so!", english: "Keep the change!" },
+    ],
+    chapter6: [
+      { german: "das Kaffeehaus", english: "coffee house / café" },
+      { german: "die Melange", english: "Viennese coffee with milk foam" },
+      { german: "das Frühstück", english: "breakfast" },
+      { german: "die Abreise", english: "departure" },
+      { german: "auf Wiedersehen", english: "goodbye (until we see each other again)" },
+      { german: "Tschüss", english: "bye (informal)" },
+      { german: "stolz", english: "proud" },
+      { german: "lernen", english: "to learn" },
+      { german: "die Reise", english: "journey / trip" },
+      { german: "wunderbar", english: "wonderful" },
+    ],
+  };
+
+  const VOCABULARY_CHAPTER_KEYS = [
+    "chapter1",
+    "chapter2",
+    "chapter3",
+    "chapter4",
+    "chapter5",
+    "chapter6",
+  ];
+
+  function getVocabularyForChapter(chapterNumber) {
+    return VOCABULARY_DATA[`chapter${chapterNumber}`] || VOCABULARY_DATA.chapter1;
+  }
+
+  function getAllVocabularyEntries() {
+    return VOCABULARY_CHAPTER_KEYS.flatMap((key) => VOCABULARY_DATA[key] || []);
+  }
 
   function resetGameState() {
     gameState.transport = null;
@@ -33,6 +127,7 @@ let gameState = {
     gameState.meldezettelMistakes = 0;
     gameState.ch3Strikes = 0;
     gameState.ch4Strikes = 0;
+    gameState.ch5Strikes = 0;
   }
 
   const BACKGROUND_MAP = {
@@ -45,6 +140,10 @@ let gameState = {
     "cathedral.jpg": "cathedral",
     "cathedral_interior.jpg": "cathedral_interior",
     "vienna_view.jpg": "vienna_view",
+    "supermarket_exterior.jpg": "supermarket_exterior",
+    "supermarket_interior.jpg": "supermarket_interior",
+    "supermarket_cashier.jpg": "supermarket_cashier",
+    "kaffeehaus.jpg": "kaffeehaus",
     "cafe": "cafe",
     "black": "black",
   };
@@ -61,6 +160,7 @@ let gameState = {
     "mozart_seller_neutral.png": { visible: true, character: "mozart_seller", name: "Straßenverkäufer", mood: "neutral" },
     "mozart_seller_pushy.png": { visible: true, character: "mozart_seller", name: "Straßenverkäufer", mood: "pushy" },
     "warden_stern.png": { visible: true, character: "warden", name: "Domaufseher", mood: "stern" },
+    "cashier_friendly.png": { visible: true, character: "mira", name: "Kassiererin", mood: "happy" },
   };
 
   const LENA_MOOD_MAP = {
@@ -122,56 +222,59 @@ let gameState = {
   const RULES_GAME_TRIGGER_NODE = "ch4_rules_game";
   const RULES_GAME_MISTAKE_THRESHOLD = 3;
 
-  const VOCAB_CONTENT = {
-    1: [
-      { de: "der Fahrkartenautomat", en: "ticket vending machine" },
-      { de: "die Fahrkarte / das Ticket", en: "ticket" },
-      { de: "die Ankunft", en: "arrival" },
-      { de: "der Hauptbahnhof", en: "main train station" },
-      { de: "der Schaffner", en: "train conductor" },
-      { de: "kaufen", en: "to buy" },
-      { de: "helfen", en: "to help" },
-      { de: "die Entschuldigung", en: "excuse me / apology" },
-      { de: "verstehen", en: "to understand" },
-      { de: "der Bahnsteig", en: "train platform" },
-    ],
-    2: [
-      { de: "die Rezeption", en: "reception desk" },
-      { de: "einchecken", en: "to check in" },
-      { de: "der Zimmerschlüssel / die Karte", en: "room key / keycard" },
-      { de: "das Einzelzimmer", en: "single room" },
-      { de: "das Frühstück", en: "breakfast" },
-      { de: "inklusive", en: "included" },
-      { de: "das WLAN-Passwort", en: "Wi-Fi password" },
-      { de: "der Aufzug / der Lift", en: "elevator" },
-      { de: "die Etage / der Stock", en: "floor / level" },
-      { de: "Gute Nacht", en: "good night" },
-    ],
-    3: [
-      { de: "die U-Bahn-Linie", en: "underground line (e.g., U3)" },
-      { de: "die Richtung", en: "direction" },
-      { de: "das Gleis", en: "track / platform" },
-      { de: "die Endstation", en: "terminus / last stop" },
-      { de: "die Rolltreppe", en: "escalator" },
-      { de: "rechts stehen, links gehen", en: "stand on the right, walk on the left" },
-      { de: "umsteigen", en: "to change trains / lines" },
-      { de: "der Fahrplan", en: "timetable / schedule" },
-      { de: "drängeln", en: "to push / hustle" },
-      { de: "nächste Station", en: "next station" },
-    ],
-    4: [
-      { de: "die Hausordnung / die Regeln", en: "building rules / code of conduct" },
-      { de: "Ruhe bewahren", en: "to stay quiet / keep calm" },
-      { de: "das Blitzlicht", en: "camera flash" },
-      { de: "keine Kappen tragen", en: "no hats / caps allowed" },
-      { de: "der Ausblick / die Aussicht", en: "view / panorama" },
-      { de: "die Stufe", en: "step (staircase)" },
-      { de: "der Südturm", en: "South Tower" },
-      { de: "steigen / klettern", en: "to climb" },
-      { de: "anstrengend", en: "exhausting / tiring" },
-      { de: "eine Kerze anzünden", en: "to light a candle" },
-    ],
-  };
+  const AISLE_GAME_TRIGGER_NODE = "ch5_aisles_game";
+  const AISLE_GAME_SUCCESS_NODE = "ch5_basket_done";
+  const CASHIER_GAME_TRIGGER_NODE = "ch5_cashier_game";
+  const CASHIER_GAME_SUCCESS_NODE = "ch5_paid_thought";
+
+  const SUPERMARKET_AISLES = [
+    { id: "produce", icon: "🍎", german: "Obst & Gemüse", english: "Produce" },
+    { id: "bakery", icon: "🥖", german: "Bäckerei", english: "Bakery" },
+    { id: "dairy", icon: "🧀", german: "Kühlregal", english: "Dairy / Refrigerated" },
+    { id: "sweets", icon: "🍫", german: "Süßigkeiten & Getränke", english: "Sweets & Drinks" },
+  ];
+
+  const AISLE_TASKS = [
+    {
+      prompt: "I need some fresh apples. Where should I go?",
+      correctId: "produce",
+      successText: "Richtig! Das ist im Obst & Gemüse.",
+      hintItem: "apples",
+    },
+    {
+      prompt: "Now I need a loaf of bread!",
+      correctId: "bakery",
+      successText: "Richtig! Das ist in der Bäckerei.",
+      hintItem: "bread",
+    },
+    {
+      prompt: "And some cheese for dinner!",
+      correctId: "dairy",
+      successText: "Richtig! Das ist im Kühlregal.",
+      hintItem: "cheese",
+    },
+  ];
+
+  const CASHIER_OPTIONS = [
+    {
+      id: "tip",
+      correct: true,
+      german: "Hier bitte, 10 Euro. Stimmt so!",
+      english: "Here you go, 10 Euros. Keep the change!",
+    },
+    {
+      id: "exact",
+      correct: true,
+      german: "Hier bitte, 10 Euro.",
+      english: "Here you go, 10 Euros.",
+    },
+    {
+      id: "wrong",
+      correct: false,
+      german: "Entschuldigung, wo ist die U-Bahn?",
+      english: "Excuse me, where is the subway?",
+    },
+  ];
 
   const CHURCH_RULES_PAIRS = [
     { id: "quiet", german: "Bitte Ruhe bewahren.", english: "Keep quiet / Stay calm" },
@@ -259,18 +362,33 @@ let gameState = {
   const els = {
     game: document.getElementById("game"),
     startMenu: document.getElementById("start-menu"),
+    startMenuTitle: document.getElementById("start-menu-title"),
     startMainActions: document.getElementById("start-main-actions"),
     startGameBtn: document.getElementById("start-game-btn"),
     startChaptersBtn: document.getElementById("start-chapters-btn"),
     startChaptersSelection: document.getElementById("start-chapters-selection"),
     startChaptersBackBtn: document.getElementById("start-chapters-back-btn"),
-    startChapterSelectButtons: Array.from(document.querySelectorAll(".start-chapter-select-btn")),
+    chapterSelectGrid: document.getElementById("chapter-select-grid"),
+    chapterCards: Array.from(document.querySelectorAll(".chapter-card")),
     startOptionsBtn: document.getElementById("start-options-btn"),
-    startCreditsBtn: document.getElementById("start-credits-btn"),
+    startVokabeltrainerBtn: document.getElementById("start-vokabeltrainer-btn"),
     optionsPanel: document.getElementById("options-panel"),
     optionsBackBtn: document.getElementById("options-back-btn"),
-    creditsPanel: document.getElementById("credits-panel"),
-    creditsBackBtn: document.getElementById("credits-back-btn"),
+    vokabeltrainer: document.getElementById("vokabeltrainer"),
+    vtSelect: document.getElementById("vt-select"),
+    vtQuiz: document.getElementById("vt-quiz"),
+    vtResults: document.getElementById("vt-results"),
+    vtBackMenuBtn: document.getElementById("vt-back-menu-btn"),
+    vtQuizBackBtn: document.getElementById("vt-quiz-back-btn"),
+    vtProgressLabel: document.getElementById("vt-progress-label"),
+    vtProgressFill: document.getElementById("vt-progress-fill"),
+    vtGermanWord: document.getElementById("vt-german-word"),
+    vtOptions: document.getElementById("vt-options"),
+    vtScore: document.getElementById("vt-score"),
+    vtMessage: document.getElementById("vt-message"),
+    vtRetryBtn: document.getElementById("vt-retry-btn"),
+    vtResultsMenuBtn: document.getElementById("vt-results-menu-btn"),
+    vtSetButtons: Array.from(document.querySelectorAll("[data-vt-set]")),
     chapterLabel: document.getElementById("chapter-label"),
     npcContainer: document.getElementById("npc-container"),
     npcSprite: document.getElementById("npc-sprite"),
@@ -647,7 +765,7 @@ let gameState = {
 
     const message = document.createElement("p");
     message.textContent = getBlackScreenTitleText(node);
-    if (node.id === "chapter_1_title" || node.id === "chapter_2_teaser" || node.id === "chapter_3_title" || node.id === "chapter_4_title") {
+    if (isChapterTitleNode(node)) {
       message.style.fontWeight = "800";
       message.style.fontSize = "clamp(2rem, 7vw, 4rem)";
       message.style.letterSpacing = "0.04em";
@@ -671,7 +789,14 @@ let gameState = {
   }
 
   function isChapterTitleNode(node) {
-    return node?.id === "chapter_1_title" || node?.id === "chapter_2_teaser" || node?.id === "chapter_3_title" || node?.id === "chapter_4_title";
+    return (
+      node?.id === "chapter_1_title" ||
+      node?.id === "chapter_2_teaser" ||
+      node?.id === "chapter_3_title" ||
+      node?.id === "chapter_4_title" ||
+      node?.id === "chapter_5_title" ||
+      node?.id === "chapter_6_title"
+    );
   }
 
   const BLACK_SCREEN_NODE_IDS = new Set([
@@ -680,7 +805,10 @@ let gameState = {
     "chapter_2_teaser",
     "chapter_3_title",
     "chapter_4_title",
+    "chapter_5_title",
+    "chapter_6_title",
     "ch4_time_passes",
+    "ch6_morning_title",
   ]);
 
   function getBlackScreenTitleText(node) {
@@ -772,6 +900,51 @@ let gameState = {
           "A very long and exhausting day. Stephansdom is beautiful, but the many stairs were very hard for me. In the cathedral I was briefly confused about the rules. But the view was still worth it.",
       },
     },
+    5: {
+      success: {
+        photo: "photo-c5-a.png",
+        alt: "Lena shopping happily at a Viennese supermarket",
+        german:
+          "Im Supermarkt habe ich alles gefunden! Obst, Brot und Käse — und an der Kasse habe ich auf Deutsch bezahlt. 'Stimmt so!' fühlt sich schon ganz natürlich an.",
+        english:
+          "At the supermarket I found everything! Fruit, bread and cheese — and at the checkout I paid in German. 'Keep the change!' already feels completely natural.",
+      },
+      challenge: {
+        photo: "photo-c5-b.png",
+        alt: "Lena looking unsure at a supermarket checkout",
+        german:
+          "Einkaufen auf Deutsch war spannend, aber auch ein bisschen stressig. An der Kasse war ich kurz verwirrt. Trotzdem habe ich meine Sachen bekommen — Übung macht den Meister!",
+        english:
+          "Shopping in German was exciting, but also a bit stressful. At the checkout I was briefly confused. Still, I got my groceries — practice makes perfect!",
+      },
+    },
+    6: {
+      success: {
+        photo: "photo-c6-a.png",
+        alt: "Lena enjoying a Melange in a Viennese café",
+        german:
+          "Wien war einfach wunderbar! Ich hatte am Anfang Angst, Deutsch zu sprechen, aber mit jedem Tag wurde es einfacher. Ich habe so viel gelernt!",
+        english:
+          "Vienna was simply wonderful! I was afraid to speak German at first, but it got easier every day. I learned so much!",
+      },
+      challenge: {
+        photo: "photo-c6-b.png",
+        alt: "Lena reflecting in a Viennese café before departure",
+        german:
+          "Wien war einfach wunderbar! Ich hatte am Anfang Angst, Deutsch zu sprechen, aber mit jedem Tag wurde es einfacher. Ich habe so viel gelernt!",
+        english:
+          "Vienna was simply wonderful! I was afraid to speak German at first, but it got easier every day. I learned so much!",
+      },
+    },
+  };
+
+  const TAGEBUCH_CHAPTER_TITLES = {
+    1: "Ankunft",
+    2: "Check-in",
+    3: "Unterwegs",
+    4: "Dem Himmel so nah",
+    5: "Im Supermarkt",
+    6: "Epilog",
   };
 
   function removeTagebuchScreen() {
@@ -810,7 +983,32 @@ let gameState = {
       return Math.min(gameState.ch4Strikes, 2);
     }
 
+    if (chapterNumber === 5) {
+      return Math.min(gameState.ch5Strikes, 2);
+    }
+
+    if (chapterNumber === 6) {
+      return 0;
+    }
+
     return [gameState.ch1StationFailed, gameState.ch1LateArrival].filter(Boolean).length;
+  }
+
+  function getTotalJourneyStrikes() {
+    try {
+      const progress = loadSavedProgress();
+      let total = 0;
+      for (let chapter = 1; chapter <= TOTAL_CHAPTERS; chapter += 1) {
+        const entry = progress[`chapter${chapter}`];
+        if (entry && typeof entry.strikes === "number") {
+          total += entry.strikes;
+        }
+      }
+      return total;
+    } catch (error) {
+      console.warn("Unable to read journey progress:", error);
+      return 0;
+    }
   }
 
   function getTagebuchVariant(chapterNumber, strikes) {
@@ -844,6 +1042,8 @@ let gameState = {
     1: { label: "Chapter 2 - Check-in", nodeId: "chapter_2_teaser" },
     2: { label: "Chapter 3 - Unterwegs", nodeId: "chapter_3_title" },
     3: { label: "Chapter 4: Dem Himmel so nah", nodeId: "chapter_4_title" },
+    4: { label: "Chapter 5: Im Supermarkt", nodeId: "chapter_5_title" },
+    5: { label: "Chapter 6: Epilog", nodeId: "chapter_6_title" },
   };
 
   function goToNextChapterOrMenu(completedChapter) {
@@ -873,6 +1073,9 @@ let gameState = {
     closeMeldezettelGame();
     closeTicketMachine();
     closeRulesGame();
+    closeAisleGame();
+    closeCashierGame();
+    removeCelebrationScreen();
     removeTagebuchScreen();
 
     els.dialogueBox.hidden = true;
@@ -897,14 +1100,7 @@ let gameState = {
 
     const heading = document.createElement("h2");
     heading.className = "tagebuch-card__title";
-    heading.textContent =
-      chapterNumber === 2
-        ? "Check-in"
-        : chapterNumber === 3
-          ? "Unterwegs"
-          : chapterNumber === 4
-            ? "Dem Himmel so nah"
-            : "Ankunft";
+    heading.textContent = TAGEBUCH_CHAPTER_TITLES[chapterNumber] || "Ankunft";
     card.appendChild(heading);
 
     const photo = document.createElement("img");
@@ -936,11 +1132,22 @@ let gameState = {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "tagebuch-card__button";
-    btn.textContent = chapterNumber < TOTAL_CHAPTERS ? "Next" : "Finish";
-    btn.addEventListener("click", () => {
-      saveChapterProgress(chapterNumber, strikes);
-      goToNextChapterOrMenu(chapterNumber);
-    });
+
+    if (chapterNumber === 6) {
+      btn.textContent = "Continue";
+      btn.addEventListener("click", () => {
+        saveChapterProgress(chapterNumber, strikes);
+        removeTagebuchScreen();
+        goToNode("ch6_departure");
+      });
+    } else {
+      btn.textContent = chapterNumber < TOTAL_CHAPTERS ? "Next" : "Finish";
+      btn.addEventListener("click", () => {
+        saveChapterProgress(chapterNumber, strikes);
+        goToNextChapterOrMenu(chapterNumber);
+      });
+    }
+
     card.appendChild(btn);
 
     overlay.appendChild(card);
@@ -1737,6 +1944,418 @@ let gameState = {
     updateRulesGameStatus();
   }
 
+  // ── Supermarket aisle finder mini-game ───────────────────────────────────
+
+  const aisleGame = {
+    active: false,
+    taskIndex: 0,
+    locked: false,
+  };
+
+  function closeAisleGame() {
+    aisleGame.active = false;
+    aisleGame.locked = false;
+    document.getElementById("aisle-game")?.remove();
+  }
+
+  function finishAisleGame() {
+    closeAisleGame();
+    goToNode(AISLE_GAME_SUCCESS_NODE);
+  }
+
+  function updateAisleGamePrompt(overlay) {
+    const task = AISLE_TASKS[aisleGame.taskIndex];
+    const prompt = overlay.querySelector("#aisle-game-prompt");
+    const progress = overlay.querySelector("#aisle-game-progress");
+    const feedback = overlay.querySelector("#aisle-game-feedback");
+
+    if (prompt) prompt.textContent = task.prompt;
+    if (progress) {
+      progress.textContent = `Item ${aisleGame.taskIndex + 1} / ${AISLE_TASKS.length}`;
+    }
+    if (feedback) {
+      feedback.textContent = "";
+      feedback.className = "aisle-game__feedback";
+    }
+
+    overlay.querySelectorAll(".aisle-game__aisle").forEach((btn) => {
+      btn.classList.remove("is-correct", "is-wrong", "is-done");
+      btn.disabled = false;
+    });
+  }
+
+  function handleAisleClick(aisleId, aisleBtn, overlay) {
+    if (!aisleGame.active || aisleGame.locked) return;
+
+    const task = AISLE_TASKS[aisleGame.taskIndex];
+    const feedback = overlay.querySelector("#aisle-game-feedback");
+
+    if (aisleId === task.correctId) {
+      aisleGame.locked = true;
+      aisleBtn.classList.add("is-correct");
+      if (feedback) {
+        feedback.textContent = task.successText;
+        feedback.className = "aisle-game__feedback aisle-game__feedback--success";
+      }
+
+      window.setTimeout(() => {
+        aisleGame.taskIndex += 1;
+        aisleGame.locked = false;
+
+        if (aisleGame.taskIndex >= AISLE_TASKS.length) {
+          finishAisleGame();
+          return;
+        }
+
+        updateAisleGamePrompt(overlay);
+      }, 900);
+      return;
+    }
+
+    aisleBtn.classList.remove("is-wrong");
+    void aisleBtn.offsetWidth;
+    aisleBtn.classList.add("is-wrong");
+    if (feedback) {
+      feedback.textContent = `Hmm, that's not where you find ${task.hintItem}. Try again!`;
+      feedback.className = "aisle-game__feedback aisle-game__feedback--hint";
+    }
+    window.setTimeout(() => aisleBtn.classList.remove("is-wrong"), 450);
+  }
+
+  function openAisleGame() {
+    closeAisleGame();
+    aisleGame.active = true;
+    aisleGame.taskIndex = 0;
+    aisleGame.locked = false;
+
+    els.dialogueBox.hidden = true;
+    els.npcContainer.style.display = "none";
+    els.npcContainer.classList.add("is-hidden");
+    els.lenaContainer.classList.add("is-hidden");
+
+    const overlay = document.createElement("div");
+    overlay.id = "aisle-game";
+    overlay.className = "aisle-game";
+
+    const panel = document.createElement("section");
+    panel.className = "aisle-game__panel";
+    panel.setAttribute("aria-labelledby", "aisle-game-title");
+
+    const eyebrow = document.createElement("p");
+    eyebrow.className = "aisle-game__eyebrow";
+    eyebrow.textContent = "Billa · Wien";
+    panel.appendChild(eyebrow);
+
+    const title = document.createElement("h2");
+    title.id = "aisle-game-title";
+    title.className = "aisle-game__title";
+    title.textContent = "Die Regale — Find the right aisle";
+    panel.appendChild(title);
+
+    const progress = document.createElement("p");
+    progress.id = "aisle-game-progress";
+    progress.className = "aisle-game__progress";
+    panel.appendChild(progress);
+
+    const thought = document.createElement("div");
+    thought.className = "aisle-game__thought";
+    thought.setAttribute("aria-live", "polite");
+
+    const thoughtLabel = document.createElement("p");
+    thoughtLabel.className = "aisle-game__thought-label";
+    thoughtLabel.textContent = "Lena's thought";
+    thought.appendChild(thoughtLabel);
+
+    const prompt = document.createElement("p");
+    prompt.id = "aisle-game-prompt";
+    prompt.className = "aisle-game__prompt";
+    thought.appendChild(prompt);
+    panel.appendChild(thought);
+
+    const map = document.createElement("div");
+    map.className = "aisle-game__map";
+    map.setAttribute("role", "group");
+    map.setAttribute("aria-label", "Supermarket aisle map");
+
+    SUPERMARKET_AISLES.forEach((aisle) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "aisle-game__aisle";
+      btn.dataset.aisleId = aisle.id;
+      btn.innerHTML = `
+        <span class="aisle-game__icon" aria-hidden="true">${aisle.icon}</span>
+        <span class="aisle-game__name">${aisle.german}</span>
+        <span class="aisle-game__sub">${aisle.english}</span>
+      `;
+      btn.addEventListener("click", () => handleAisleClick(aisle.id, btn, overlay));
+      map.appendChild(btn);
+    });
+    panel.appendChild(map);
+
+    const feedback = document.createElement("p");
+    feedback.id = "aisle-game-feedback";
+    feedback.className = "aisle-game__feedback";
+    feedback.setAttribute("aria-live", "polite");
+    panel.appendChild(feedback);
+
+    const devControls = document.createElement("div");
+    devControls.className = "aisle-game__dev-controls";
+    const devSkip = document.createElement("button");
+    devSkip.type = "button";
+    devSkip.textContent = "DEV: Skip";
+    devSkip.addEventListener("click", finishAisleGame);
+    devControls.appendChild(devSkip);
+    panel.appendChild(devControls);
+
+    overlay.appendChild(panel);
+    els.game.appendChild(overlay);
+    updateAisleGamePrompt(overlay);
+  }
+
+  // ── Cashier dialogue mini-game ───────────────────────────────────────────
+
+  const cashierGame = {
+    active: false,
+    resolved: false,
+  };
+
+  function closeCashierGame() {
+    cashierGame.active = false;
+    cashierGame.resolved = false;
+    document.getElementById("cashier-game")?.remove();
+  }
+
+  function finishCashierGame() {
+    closeCashierGame();
+    goToNode(CASHIER_GAME_SUCCESS_NODE);
+  }
+
+  function showCashierSuccess(overlay) {
+    cashierGame.resolved = true;
+
+    const dialogue = overlay.querySelector("#cashier-game-dialogue");
+    const options = overlay.querySelector("#cashier-game-options");
+    const feedback = overlay.querySelector("#cashier-game-feedback");
+    const continueBtn = overlay.querySelector("#cashier-game-continue");
+
+    if (dialogue) {
+      dialogue.textContent =
+        "Vielen Dank! Hier sind 1 Euro 50 zurück. Einen schönen Abend noch!";
+    }
+    if (feedback) {
+      feedback.textContent = "The cashier smiles warmly.";
+      feedback.className = "cashier-game__feedback cashier-game__feedback--success";
+    }
+    if (options) options.hidden = true;
+    if (continueBtn) continueBtn.hidden = false;
+  }
+
+  function handleCashierOption(option, optionBtn, overlay) {
+    if (!cashierGame.active || cashierGame.resolved) return;
+
+    if (option.correct) {
+      overlay.querySelectorAll(".cashier-game__option").forEach((btn) => {
+        btn.disabled = true;
+        if (btn === optionBtn) btn.classList.add("is-correct");
+      });
+      showCashierSuccess(overlay);
+      return;
+    }
+
+    gameState.ch5Strikes += 1;
+    optionBtn.classList.remove("is-wrong");
+    void optionBtn.offsetWidth;
+    optionBtn.classList.add("is-wrong");
+
+    const feedback = overlay.querySelector("#cashier-game-feedback");
+    if (feedback) {
+      feedback.textContent =
+        "Hmm, that doesn't fit at the cashier. Try a payment phrase!";
+      feedback.className = "cashier-game__feedback cashier-game__feedback--hint";
+    }
+
+    window.setTimeout(() => optionBtn.classList.remove("is-wrong"), 450);
+  }
+
+  function openCashierGame() {
+    closeCashierGame();
+    cashierGame.active = true;
+    cashierGame.resolved = false;
+
+    els.dialogueBox.hidden = true;
+    els.npcContainer.style.display = "none";
+    els.npcContainer.classList.add("is-hidden");
+    els.lenaContainer.classList.add("is-hidden");
+
+    const overlay = document.createElement("div");
+    overlay.id = "cashier-game";
+    overlay.className = "cashier-game";
+
+    const panel = document.createElement("section");
+    panel.className = "cashier-game__panel";
+    panel.setAttribute("aria-labelledby", "cashier-game-title");
+
+    const eyebrow = document.createElement("p");
+    eyebrow.className = "cashier-game__eyebrow";
+    eyebrow.textContent = "An der Kasse";
+    panel.appendChild(eyebrow);
+
+    const title = document.createElement("h2");
+    title.id = "cashier-game-title";
+    title.className = "cashier-game__title";
+    title.textContent = "Pay at the cashier";
+    panel.appendChild(title);
+
+    const register = document.createElement("div");
+    register.className = "cashier-game__register";
+    register.innerHTML = `
+      <div class="cashier-game__cashier-avatar" aria-hidden="true"></div>
+      <div class="cashier-game__register-screen">
+        <p class="cashier-game__total-label">Summe</p>
+        <p class="cashier-game__total">€ 8,50</p>
+      </div>
+    `;
+    panel.appendChild(register);
+
+    const speaker = document.createElement("p");
+    speaker.className = "cashier-game__speaker";
+    speaker.textContent = "Kassiererin";
+    panel.appendChild(speaker);
+
+    const dialogue = document.createElement("p");
+    dialogue.id = "cashier-game-dialogue";
+    dialogue.className = "cashier-game__dialogue";
+    dialogue.textContent = "Guten Tag! Das macht zusammen 8 Euro 50, bitte.";
+    panel.appendChild(dialogue);
+
+    const feedback = document.createElement("p");
+    feedback.id = "cashier-game-feedback";
+    feedback.className = "cashier-game__feedback";
+    feedback.setAttribute("aria-live", "polite");
+    panel.appendChild(feedback);
+
+    const options = document.createElement("div");
+    options.id = "cashier-game-options";
+    options.className = "cashier-game__options";
+
+    CASHIER_OPTIONS.forEach((option) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "cashier-game__option";
+      btn.innerHTML = `
+        <span class="cashier-game__option-de">${option.german}</span>
+        <span class="cashier-game__option-en">${option.english}</span>
+      `;
+      btn.addEventListener("click", () => handleCashierOption(option, btn, overlay));
+      options.appendChild(btn);
+    });
+    panel.appendChild(options);
+
+    const continueBtn = document.createElement("button");
+    continueBtn.type = "button";
+    continueBtn.id = "cashier-game-continue";
+    continueBtn.className = "cashier-game__continue";
+    continueBtn.textContent = "Continue";
+    continueBtn.hidden = true;
+    continueBtn.addEventListener("click", finishCashierGame);
+    panel.appendChild(continueBtn);
+
+    const devControls = document.createElement("div");
+    devControls.className = "cashier-game__dev-controls";
+    const devSkip = document.createElement("button");
+    devSkip.type = "button";
+    devSkip.textContent = "DEV: Skip";
+    devSkip.addEventListener("click", finishCashierGame);
+    devControls.appendChild(devSkip);
+    panel.appendChild(devControls);
+
+    overlay.appendChild(panel);
+    els.game.appendChild(overlay);
+  }
+
+  // ── Journey completion celebration ───────────────────────────────────────
+
+  function removeCelebrationScreen() {
+    document.getElementById("celebration-screen")?.remove();
+  }
+
+  function showCelebrationScreen() {
+    clearTypeTimer();
+    state.typing = false;
+    hideChoices();
+    removeBlackScreen();
+    closeMeldezettelGame();
+    closeTicketMachine();
+    closeRulesGame();
+    closeAisleGame();
+    closeCashierGame();
+    removeTagebuchScreen();
+    removeCelebrationScreen();
+
+    els.dialogueBox.hidden = true;
+    els.npcContainer.style.display = "none";
+    els.npcContainer.classList.add("is-hidden");
+    els.lenaContainer.classList.add("is-hidden");
+
+    const totalStrikes = getTotalJourneyStrikes();
+    const isExpert = totalStrikes <= 2;
+
+    const overlay = document.createElement("div");
+    overlay.id = "celebration-screen";
+    overlay.className = "celebration-screen";
+
+    const card = document.createElement("article");
+    card.className = "celebration-card";
+
+    const title = document.createElement("h2");
+    title.className = "celebration-card__title";
+    title.textContent = "Herzlichen Glückwunsch! Journey Complete!";
+    card.appendChild(title);
+
+    const badge = document.createElement("p");
+    badge.className = "celebration-card__badge";
+    badge.textContent = isExpert
+      ? "🏆 Wien-Profi (Vienna Expert)"
+      : "🥉 Mutige Entdeckerin (Brave Explorer)";
+    card.appendChild(badge);
+
+    const summary = document.createElement("p");
+    summary.className = "celebration-card__summary";
+    summary.textContent = isExpert
+      ? "You navigated Vienna with confidence — outstanding work!"
+      : "You kept going even when it was tricky — that takes real courage!";
+    card.appendChild(summary);
+
+    const actions = document.createElement("div");
+    actions.className = "celebration-card__actions";
+
+    const vocabBtn = document.createElement("button");
+    vocabBtn.type = "button";
+    vocabBtn.className = "celebration-card__btn";
+    vocabBtn.textContent = "Practice Vocabulary";
+    vocabBtn.addEventListener("click", () => {
+      removeCelebrationScreen();
+      showStartMainActions();
+      els.startMenu.hidden = false;
+      openVokabeltrainer();
+    });
+    actions.appendChild(vocabBtn);
+
+    const menuBtn = document.createElement("button");
+    menuBtn.type = "button";
+    menuBtn.className = "celebration-card__btn celebration-card__btn--secondary";
+    menuBtn.textContent = "Main Menu";
+    menuBtn.addEventListener("click", () => {
+      removeCelebrationScreen();
+      returnToStartMenu();
+    });
+    actions.appendChild(menuBtn);
+
+    card.appendChild(actions);
+    overlay.appendChild(card);
+    els.game.appendChild(overlay);
+  }
+
   // ── Core render ──────────────────────────────────────────────────────────
 
   function renderNode() {
@@ -1766,6 +2385,20 @@ let gameState = {
       return;
     }
 
+    if (node.id === AISLE_GAME_TRIGGER_NODE) {
+      removeBlackScreen();
+      setBackground(node.background);
+      openAisleGame();
+      return;
+    }
+
+    if (node.id === CASHIER_GAME_TRIGGER_NODE) {
+      removeBlackScreen();
+      setBackground(node.background);
+      openCashierGame();
+      return;
+    }
+
     if (JUMP_SCARE_NODE_IDS.has(node.id) || node.effect === "jumpScare") {
       renderJumpScareNode(node);
       return;
@@ -1778,6 +2411,9 @@ let gameState = {
     closeMeldezettelGame();
     closeTicketMachine();
     closeRulesGame();
+    closeAisleGame();
+    closeCashierGame();
+    removeCelebrationScreen();
 
     setBackground(node.background);
     updateCharacters(node);
@@ -1856,12 +2492,30 @@ let gameState = {
       return;
     }
 
+    if (nodeId === "end_chapter_5") {
+      showTagebuchScreen(5);
+      return;
+    }
+
+    if (nodeId === "end_chapter_6") {
+      showTagebuchScreen(6);
+      return;
+    }
+
+    if (nodeId === "journey_complete") {
+      showCelebrationScreen();
+      return;
+    }
+
     if (nodeId === "main_menu") {
       removeBlackScreen();
       removeJumpScareFlash();
       closeMeldezettelGame();
       closeTicketMachine();
       closeRulesGame();
+      closeAisleGame();
+      closeCashierGame();
+      removeCelebrationScreen();
       removeTagebuchScreen();
       resetGameState();
       showStartMainActions();
@@ -1933,14 +2587,61 @@ let gameState = {
     els.npcContainer.classList.add("is-hidden");
   }
 
+  function loadSavedProgress() {
+    try {
+      const raw = localStorage.getItem(PROGRESS_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (error) {
+      console.warn("Unable to read journey progress:", error);
+      return {};
+    }
+  }
+
+  function getChapterSelectState(chapterNumber, progress) {
+    const lastCompleted = progress.lastCompletedChapter || 0;
+    const isCompleted = Boolean(progress[`chapter${chapterNumber}`]?.completedAt);
+    const isUnlocked = chapterNumber === 1 || chapterNumber <= lastCompleted + 1;
+    const isActive = isUnlocked && !isCompleted && chapterNumber === lastCompleted + 1;
+
+    if (!isUnlocked) return "locked";
+    if (isCompleted) return "completed";
+    if (isActive) return "active";
+    return "unlocked";
+  }
+
+  function refreshChapterSelectUI() {
+    const progress = loadSavedProgress();
+
+    els.chapterCards.forEach((card) => {
+      const chapterNumber = Number(card.dataset.chapter);
+      const state = getChapterSelectState(chapterNumber, progress);
+
+      card.classList.remove("chapter-card--locked", "chapter-card--active", "chapter-card--completed", "chapter-card--unlocked");
+      card.classList.add(`chapter-card--${state}`);
+
+      if (state === "locked") {
+        card.disabled = true;
+        card.setAttribute("aria-disabled", "true");
+      } else {
+        card.disabled = false;
+        card.removeAttribute("aria-disabled");
+      }
+    });
+  }
+
   function showStartMainActions() {
     els.startMainActions.hidden = false;
     els.startChaptersSelection.hidden = true;
+    els.startMenuTitle.hidden = false;
+    els.startMenu.classList.remove("start-menu--chapter-select");
   }
 
   function showStartChaptersSelection() {
+    refreshChapterSelectUI();
     els.startMainActions.hidden = true;
     els.startChaptersSelection.hidden = false;
+    els.startMenuTitle.hidden = true;
+    els.startMenu.classList.add("start-menu--chapter-select");
   }
 
   const CHAPTER_START_NODES = {
@@ -1948,6 +2649,8 @@ let gameState = {
     2: "chapter_2_teaser",
     3: "chapter_3_title",
     4: "chapter_4_title",
+    5: "chapter_5_title",
+    6: "chapter_6_title",
   };
 
   const CHAPTER_LABELS = {
@@ -1955,10 +2658,16 @@ let gameState = {
     2: "Chapter 2 - Check-in",
     3: "Chapter 3 - Unterwegs",
     4: "Chapter 4: Dem Himmel so nah",
+    5: "Chapter 5: Im Supermarkt",
+    6: "Chapter 6: Epilog",
   };
 
   function getCurrentChapterNumber() {
     const nodeId = state.nodeId || "";
+    if (nodeId.startsWith("ch6_") || nodeId === "chapter_6_title" || nodeId === "end_chapter_6" || nodeId === "journey_complete") {
+      return 6;
+    }
+    if (nodeId.startsWith("ch5_") || nodeId === "chapter_5_title" || nodeId === "end_chapter_5") return 5;
     if (nodeId.startsWith("ch4_") || nodeId === "chapter_4_title" || nodeId === "end_chapter_4") return 4;
     if (nodeId.startsWith("ch3_") || nodeId === "chapter_3_title" || nodeId === "end_chapter_3") return 3;
     if (
@@ -1979,9 +2688,12 @@ let gameState = {
     removeBlackScreen();
     removeJumpScareFlash();
     removeTagebuchScreen();
+    removeCelebrationScreen();
     closeMeldezettelGame();
     closeTicketMachine();
     closeRulesGame();
+    closeAisleGame();
+    closeCashierGame();
     resetGameState();
     hideChoices();
 
@@ -1995,9 +2707,12 @@ let gameState = {
     hideStartMenu();
     removeBlackScreen();
     removeTagebuchScreen();
+    removeCelebrationScreen();
     closeMeldezettelGame();
     closeTicketMachine();
     closeRulesGame();
+    closeAisleGame();
+    closeCashierGame();
     resetGameState();
     gameState.hasSeenVokabelTutorial = false;
     state.nodeId = START_NODE;
@@ -2034,18 +2749,18 @@ let gameState = {
 
   function populateVocabList(chapterNumber) {
     els.vocabList.innerHTML = "";
-    (VOCAB_CONTENT[chapterNumber] || VOCAB_CONTENT[1]).forEach((entry) => {
+    (getVocabularyForChapter(chapterNumber)).forEach((entry) => {
       const item = document.createElement("li");
       item.className = "vocab-panel__item";
 
       const german = document.createElement("span");
       german.className = "vocab-panel__german";
-      german.textContent = entry.de;
+      german.textContent = entry.german;
       item.appendChild(german);
 
       const english = document.createElement("span");
       english.className = "vocab-panel__english";
-      english.textContent = entry.en;
+      english.textContent = entry.english;
       item.appendChild(english);
 
       els.vocabList.appendChild(item);
@@ -2086,6 +2801,8 @@ let gameState = {
   function showStartMenuOnly() {
     els.startMainActions.hidden = true;
     els.startChaptersSelection.hidden = true;
+    els.startMenuTitle.hidden = false;
+    els.startMenu.classList.remove("start-menu--chapter-select");
   }
 
   function openOptionsPanel() {
@@ -2098,14 +2815,159 @@ let gameState = {
     showStartMainActions();
   }
 
-  function openCreditsPanel() {
-    showStartMenuOnly();
-    els.creditsPanel.hidden = false;
+  // ── Vokabeltrainer (vocabulary practice mode) ────────────────────────────
+
+  const vokabeltrainer = {
+    active: false,
+    setKey: null,
+    queue: [],
+    index: 0,
+    correctCount: 0,
+    locked: false,
+    advanceTimer: null,
+  };
+
+  function buildTrainerQueue(setKey) {
+    if (setKey === "mixed") {
+      const mixedSize = 12;
+      return shuffleArray(getAllVocabularyEntries()).slice(0, mixedSize);
+    }
+
+    const chapter = Number(setKey);
+    return shuffleArray(getVocabularyForChapter(chapter));
   }
 
-  function closeCreditsPanel() {
-    els.creditsPanel.hidden = true;
+  function clearTrainerAdvanceTimer() {
+    if (vokabeltrainer.advanceTimer) {
+      clearTimeout(vokabeltrainer.advanceTimer);
+      vokabeltrainer.advanceTimer = null;
+    }
+  }
+
+  function showTrainerView(viewName) {
+    els.vtSelect.hidden = viewName !== "select";
+    els.vtQuiz.hidden = viewName !== "quiz";
+    els.vtResults.hidden = viewName !== "results";
+  }
+
+  function openVokabeltrainer() {
+    clearTrainerAdvanceTimer();
+    vokabeltrainer.active = true;
+    vokabeltrainer.setKey = null;
+    vokabeltrainer.queue = [];
+    vokabeltrainer.index = 0;
+    vokabeltrainer.correctCount = 0;
+    vokabeltrainer.locked = false;
+    showStartMenuOnly();
+    els.optionsPanel.hidden = true;
+    els.vokabeltrainer.hidden = false;
+    showTrainerView("select");
+  }
+
+  function closeVokabeltrainerToMenu() {
+    clearTrainerAdvanceTimer();
+    vokabeltrainer.active = false;
+    vokabeltrainer.locked = false;
+    els.vokabeltrainer.hidden = true;
     showStartMainActions();
+  }
+
+  function getTrainerDistractors(correctEntry, count) {
+    const pool = getAllVocabularyEntries().filter((entry) => entry.english !== correctEntry.english);
+    return shuffleArray(pool).slice(0, count).map((entry) => entry.english);
+  }
+
+  function renderTrainerQuestion() {
+    const total = vokabeltrainer.queue.length;
+    const current = vokabeltrainer.queue[vokabeltrainer.index];
+    if (!current || !els.vtOptions) return;
+
+    vokabeltrainer.locked = false;
+    const questionNumber = vokabeltrainer.index + 1;
+    els.vtProgressLabel.textContent = `Question ${questionNumber} / ${total}`;
+    els.vtProgressFill.style.width = `${(questionNumber / total) * 100}%`;
+    els.vtGermanWord.textContent = current.german;
+    els.vtGermanWord.classList.remove("is-pop");
+    void els.vtGermanWord.offsetWidth;
+    els.vtGermanWord.classList.add("is-pop");
+
+    const options = shuffleArray([current.english, ...getTrainerDistractors(current, 3)]);
+    els.vtOptions.innerHTML = "";
+    options.forEach((optionText) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "vokabeltrainer__option";
+      btn.textContent = optionText;
+      btn.addEventListener("click", () => handleTrainerAnswer(btn, optionText === current.english, current.english));
+      els.vtOptions.appendChild(btn);
+    });
+  }
+
+  function startTrainerSession(setKey) {
+    clearTrainerAdvanceTimer();
+    vokabeltrainer.setKey = setKey;
+    vokabeltrainer.queue = buildTrainerQueue(setKey);
+    vokabeltrainer.index = 0;
+    vokabeltrainer.correctCount = 0;
+    vokabeltrainer.locked = false;
+    showTrainerView("quiz");
+    renderTrainerQuestion();
+  }
+
+  function getTrainerEncouragement(correct, total) {
+    const ratio = total === 0 ? 0 : correct / total;
+    if (ratio >= 1) return "Super! Du bist ein Wien-Profi!";
+    if (ratio >= 0.7) return "Sehr gut! Keep practicing and you'll be fluent!";
+    return "Gute Arbeit! Übung macht den Meister!";
+  }
+
+  function showTrainerResults() {
+    const total = vokabeltrainer.queue.length;
+    const correct = vokabeltrainer.correctCount;
+    els.vtScore.textContent = `${correct} / ${total} Correct!`;
+    els.vtMessage.textContent = getTrainerEncouragement(correct, total);
+    showTrainerView("results");
+  }
+
+  function advanceTrainerQuestion() {
+    vokabeltrainer.index += 1;
+    if (vokabeltrainer.index >= vokabeltrainer.queue.length) {
+      showTrainerResults();
+      return;
+    }
+    renderTrainerQuestion();
+  }
+
+  function handleTrainerAnswer(button, isCorrect, correctAnswer) {
+    if (vokabeltrainer.locked) return;
+    vokabeltrainer.locked = true;
+
+    const optionButtons = Array.from(els.vtOptions.querySelectorAll(".vokabeltrainer__option"));
+    optionButtons.forEach((btn) => {
+      btn.disabled = true;
+      if (btn.textContent === correctAnswer) {
+        btn.classList.add("is-correct");
+      }
+    });
+
+    if (isCorrect) {
+      vokabeltrainer.correctCount += 1;
+      button.classList.add("is-correct", "is-pulse");
+      clearTrainerAdvanceTimer();
+      vokabeltrainer.advanceTimer = setTimeout(advanceTrainerQuestion, 1000);
+    } else {
+      button.classList.add("is-incorrect");
+      clearTrainerAdvanceTimer();
+      vokabeltrainer.advanceTimer = setTimeout(advanceTrainerQuestion, 1500);
+    }
+  }
+
+  function retryTrainerSession() {
+    if (!vokabeltrainer.setKey) {
+      showTrainerView("select");
+      return;
+    }
+    startTrainerSession(vokabeltrainer.setKey);
   }
 
   function returnToStartMenu() {
@@ -2117,9 +2979,15 @@ let gameState = {
     removeBlackScreen();
     removeJumpScareFlash();
     removeTagebuchScreen();
+    removeCelebrationScreen();
     closeMeldezettelGame();
     closeTicketMachine();
     closeRulesGame();
+    closeAisleGame();
+    closeCashierGame();
+    clearTrainerAdvanceTimer();
+    vokabeltrainer.active = false;
+    if (els.vokabeltrainer) els.vokabeltrainer.hidden = true;
     hideChoices();
     showStartMainActions();
 
@@ -2145,22 +3013,29 @@ let gameState = {
     removeBlackScreen();
     removeJumpScareFlash();
     removeTagebuchScreen();
+    removeCelebrationScreen();
     closeMeldezettelGame();
     closeTicketMachine();
     closeRulesGame();
+    closeAisleGame();
+    closeCashierGame();
     hideChoices();
     resetGameState();
     els.dialogueText.textContent = "";
     els.speakerName.textContent = "";
 
     if (targetNodeId === "chapter_1_title") {
-      els.chapterLabel.textContent = "Chapter 1 - Ankunft";
+      els.chapterLabel.textContent = CHAPTER_LABELS[1];
     } else if (targetNodeId === "chapter_2_teaser") {
-      els.chapterLabel.textContent = "Chapter 2 - Check-in";
+      els.chapterLabel.textContent = CHAPTER_LABELS[2];
     } else if (targetNodeId === "chapter_3_title") {
-      els.chapterLabel.textContent = "Chapter 3 - Unterwegs";
+      els.chapterLabel.textContent = CHAPTER_LABELS[3];
     } else if (targetNodeId === "chapter_4_title") {
-      els.chapterLabel.textContent = "Chapter 4: Dem Himmel so nah";
+      els.chapterLabel.textContent = CHAPTER_LABELS[4];
+    } else if (targetNodeId === "chapter_5_title") {
+      els.chapterLabel.textContent = CHAPTER_LABELS[5];
+    } else if (targetNodeId === "chapter_6_title") {
+      els.chapterLabel.textContent = CHAPTER_LABELS[6];
     }
 
     goToNode(targetNodeId);
@@ -2173,6 +3048,14 @@ let gameState = {
     });
 
     document.addEventListener("keydown", (event) => {
+      if (!els.vokabeltrainer.hidden) {
+        if (event.code === "Escape") {
+          event.preventDefault();
+          closeVokabeltrainerToMenu();
+        }
+        return;
+      }
+
       if (!els.vocabOverlay.hidden) {
         if (event.code === "Escape") {
           event.preventDefault();
@@ -2199,9 +3082,18 @@ let gameState = {
         return;
       }
 
-      if (rulesGame.active) {
+      if (rulesGame.active || aisleGame.active || cashierGame.active) {
         if (event.code === "Escape") {
           els.menuPanel.hidden ? openMenu() : closeMenu();
+        }
+        return;
+      }
+
+      if (document.getElementById("celebration-screen")) {
+        if (event.code === "Escape") {
+          event.preventDefault();
+          removeCelebrationScreen();
+          returnToStartMenu();
         }
         return;
       }
@@ -2229,16 +3121,23 @@ let gameState = {
     els.startGameBtn.addEventListener("click", startGame);
     els.startChaptersBtn.addEventListener("click", showStartChaptersSelection);
     els.startChaptersBackBtn.addEventListener("click", showStartMainActions);
-    els.startChapterSelectButtons.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        jumpToChapter(btn.dataset.chapterNode);
+    els.chapterCards.forEach((card) => {
+      card.addEventListener("click", () => {
+        if (card.disabled) return;
+        jumpToChapter(card.dataset.chapterNode);
       });
     });
 
     els.startOptionsBtn.addEventListener("click", openOptionsPanel);
     els.optionsBackBtn.addEventListener("click", closeOptionsPanel);
-    els.startCreditsBtn.addEventListener("click", openCreditsPanel);
-    els.creditsBackBtn.addEventListener("click", closeCreditsPanel);
+    els.startVokabeltrainerBtn.addEventListener("click", openVokabeltrainer);
+    els.vtBackMenuBtn.addEventListener("click", closeVokabeltrainerToMenu);
+    els.vtQuizBackBtn.addEventListener("click", closeVokabeltrainerToMenu);
+    els.vtResultsMenuBtn.addEventListener("click", closeVokabeltrainerToMenu);
+    els.vtRetryBtn.addEventListener("click", retryTrainerSession);
+    els.vtSetButtons.forEach((btn) => {
+      btn.addEventListener("click", () => startTrainerSession(btn.dataset.vtSet));
+    });
 
     els.menuBtn.addEventListener("click", openMenu);
     els.closeMenuBtn.addEventListener("click", closeMenu);
