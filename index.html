@@ -31,33 +31,28 @@
 
             <div class="chapter-select__list" id="chapter-select-grid">
               <button type="button" class="chapter-card" data-chapter-node="chapter_1_title" data-chapter="1">
-                <span class="chapter-card__icon" aria-hidden="true">🚆</span>
-                <span class="chapter-card__title">Chapter 1: Ankunft</span>
+                <span class="chapter-card__emoji" aria-hidden="true">📍</span>
+                <span class="chapter-card__title">1. Ankunft</span>
               </button>
 
               <button type="button" class="chapter-card" data-chapter-node="ch2_reception_greet" data-chapter="2">
-                <span class="chapter-card__icon" aria-hidden="true">🏨</span>
-                <span class="chapter-card__title">Chapter 2: Check-in</span>
+                <span class="chapter-card__emoji" aria-hidden="true">🏨</span>
+                <span class="chapter-card__title">2. Check-in</span>
               </button>
 
               <button type="button" class="chapter-card" data-chapter-node="chapter_3_title" data-chapter="3">
-                <span class="chapter-card__icon" aria-hidden="true">🚇</span>
-                <span class="chapter-card__title">Chapter 3: Unterwegs</span>
+                <span class="chapter-card__emoji" aria-hidden="true">🚇</span>
+                <span class="chapter-card__title">3. Unterwegs</span>
               </button>
 
               <button type="button" class="chapter-card" data-chapter-node="chapter_4_title" data-chapter="4">
-                <span class="chapter-card__icon" aria-hidden="true">⛪</span>
-                <span class="chapter-card__title">Chapter 4: Dem Himmel so nah</span>
+                <span class="chapter-card__emoji" aria-hidden="true">⛪</span>
+                <span class="chapter-card__title">4. Dem Himmel so nah</span>
               </button>
 
-              <button type="button" class="chapter-card" data-chapter-node="chapter_5_title" data-chapter="5">
-                <span class="chapter-card__icon" aria-hidden="true">🛒</span>
-                <span class="chapter-card__title">Chapter 5: Im Supermarkt</span>
-              </button>
-
-              <button type="button" class="chapter-card" data-chapter-node="chapter_6_title" data-chapter="6">
-                <span class="chapter-card__icon" aria-hidden="true">☕</span>
-                <span class="chapter-card__title">Chapter 6: Epilog</span>
+              <button type="button" class="chapter-card" data-chapter-node="chapter_6_title" data-chapter="5">
+                <span class="chapter-card__emoji" aria-hidden="true">☕</span>
+                <span class="chapter-card__title">5. Epilog</span>
               </button>
             </div>
           </div>
@@ -85,8 +80,7 @@
             <button type="button" class="vokabeltrainer__set-btn" data-vt-set="2">Kapitel 2: Das Hotel</button>
             <button type="button" class="vokabeltrainer__set-btn" data-vt-set="3">Kapitel 3: Die U-Bahn</button>
             <button type="button" class="vokabeltrainer__set-btn" data-vt-set="4">Kapitel 4: Über den Dächern von Wien</button>
-            <button type="button" class="vokabeltrainer__set-btn" data-vt-set="5">Kapitel 5: Im Supermarkt</button>
-            <button type="button" class="vokabeltrainer__set-btn" data-vt-set="6">Kapitel 6: Epilog</button>
+            <button type="button" class="vokabeltrainer__set-btn" data-vt-set="5">Kapitel 5: Epilog</button>
             <button type="button" class="vokabeltrainer__set-btn vokabeltrainer__set-btn--mixed" data-vt-set="mixed">Alle Kapitel (Mixed Challenge)</button>
           </div>
           <button type="button" id="vt-back-menu-btn" class="start-menu__btn start-menu__btn--secondary">Back to Menu</button>
@@ -141,6 +135,17 @@
         <figcaption class="character__label">Lena</figcaption>
       </figure>
     </main>
+
+    <div id="direction-hint" class="direction-hint" hidden>
+      <button type="button" class="direction-hint__btn" id="direction-hint-btn" aria-expanded="false" aria-controls="direction-hint-panel">
+        Review Directions
+      </button>
+      <div class="direction-hint__panel" id="direction-hint-panel" hidden role="dialog" aria-labelledby="direction-hint-title">
+        <p class="direction-hint__title" id="direction-hint-title">Viennese Man</p>
+        <p class="direction-hint__quote">Guten Tag, kein Problem! Gehen Sie zuerst geradeaus zur U-Bahn. Fahren Sie mit der U3 bis Neubaugasse. Das Hotel ist dort direkt gegenüber von der Station, gleich neben dem Café.</p>
+        <button type="button" class="direction-hint__close" id="direction-hint-close">Close</button>
+      </div>
+    </div>
 
     <footer class="dialogue" id="dialogue-box">
       <div class="dialogue__inner">
@@ -267,16 +272,16 @@
 
     <!-- Vocabulary glossary (Vokabelheft) overlay -->
     <div id="vocab-overlay" class="vocab-overlay" hidden>
-      <div class="vocab-panel" role="dialog" aria-modal="true" aria-labelledby="vocab-title">
+      <div id="vocab-tutorial" class="vocab-tutorial" hidden>
+        <h3 class="vocab-tutorial__title">Welcome to your Vokabelheft!</h3>
+        <p class="vocab-tutorial__text">Here you will find key German words and phrases tailored specifically to the current chapter and its mini-games. Use this tool whenever you feel unsure or want to learn new vocabulary in context! You can access your vocabulary anytime during your journey.</p>
+        <button type="button" class="vocab-tutorial__btn" id="vocab-tutorial-btn">Got it!</button>
+      </div>
+      <div class="vocab-panel" id="vocab-panel" role="dialog" aria-modal="true" aria-labelledby="vocab-title">
         <header class="vocab-panel__head">
           <h2 class="vocab-panel__title" id="vocab-title">Vokabelheft — Kapitel 1</h2>
           <button type="button" class="vocab-panel__close" id="vocab-close-btn" aria-label="Close vocabulary">✕</button>
         </header>
-        <div id="vocab-tutorial" class="vocab-tutorial" hidden>
-          <h3 class="vocab-tutorial__title">Welcome to your Vokabelheft!</h3>
-          <p class="vocab-tutorial__text">Here you will find key German words and phrases tailored specifically to the current chapter and its mini-games. Use this tool whenever you feel unsure or want to learn new vocabulary in context! You can access your vocabulary anytime during your journey.</p>
-          <button type="button" class="vocab-tutorial__btn" id="vocab-tutorial-btn">Got it!</button>
-        </div>
         <ul class="vocab-panel__list" id="vocab-list"></ul>
       </div>
     </div>

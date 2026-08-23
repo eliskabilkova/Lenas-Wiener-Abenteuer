@@ -4,6 +4,12 @@ let gameState = {
   house: null,     // will store 'correct' or 'wrong'
   ch1StationFailed: false,
   ch1LateArrival: false,
+  ch1Strikes: 0,
+  ch1DialogueStrike: false,
+  dialogueStrikes: 0,
+  ch1NavMistakes: 0,
+  navigationMistakes: 0,
+  ch1NavStrikeApplied: false,
   receptionistMistake: false,
   meldezettelMistakes: 0,
   ch3Strikes: 0,
@@ -21,7 +27,7 @@ let gameState = {
 
   const START_NODE = "chapter_1_title";
   const TYPE_SPEED = 24;
-  const TOTAL_CHAPTERS = 6;
+  const TOTAL_CHAPTERS = 5;
   const PROGRESS_STORAGE_KEY = "lenasWienerAbenteuer.progress";
 
   // ── Vocabulary lists (edit words here — glossary & practice mode read from this) ──
@@ -37,6 +43,17 @@ let gameState = {
       { german: "die Entschuldigung", english: "excuse me / apology" },
       { german: "verstehen", english: "to understand" },
       { german: "der Bahnsteig", english: "train platform" },
+      { german: "wie", english: "how (question word)" },
+      { german: "wo", english: "where (location)" },
+      { german: "wohin", english: "where to (direction)" },
+      { german: "wann", english: "when" },
+      { german: "wer", english: "who" },
+      { german: "warum", english: "why" },
+      { german: "geradeaus", english: "straight ahead" },
+      { german: "nach links", english: "to the left" },
+      { german: "nach rechts", english: "to the right" },
+      { german: "an der Kreuzung", english: "at the intersection" },
+      { german: "die U-Bahn-Station", english: "underground / metro station" },
     ],
     chapter2: [
       { german: "die Rezeption", english: "reception desk" },
@@ -75,18 +92,6 @@ let gameState = {
       { german: "eine Kerze anzünden", english: "to light a candle" },
     ],
     chapter5: [
-      { german: "der Supermarkt", english: "supermarket" },
-      { german: "das Regal / die Regale", english: "shelf / shelves" },
-      { german: "Obst & Gemüse", english: "fruit & vegetables (produce)" },
-      { german: "die Bäckerei", english: "bakery" },
-      { german: "das Kühlregal", english: "refrigerated section / dairy aisle" },
-      { german: "die Süßigkeiten", english: "sweets / candy" },
-      { german: "die Getränke", english: "drinks / beverages" },
-      { german: "der Einkaufskorb", english: "shopping basket" },
-      { german: "die Kasse / der Kassierer", english: "checkout / cashier" },
-      { german: "Stimmt so!", english: "Keep the change!" },
-    ],
-    chapter6: [
       { german: "das Kaffeehaus", english: "coffee house / café" },
       { german: "die Melange", english: "Viennese coffee with milk foam" },
       { german: "das Frühstück", english: "breakfast" },
@@ -106,7 +111,6 @@ let gameState = {
     "chapter3",
     "chapter4",
     "chapter5",
-    "chapter6",
   ];
 
   function getVocabularyForChapter(chapterNumber) {
@@ -123,6 +127,12 @@ let gameState = {
     gameState.house = null;
     gameState.ch1StationFailed = false;
     gameState.ch1LateArrival = false;
+    gameState.ch1Strikes = 0;
+    gameState.ch1DialogueStrike = false;
+    gameState.dialogueStrikes = 0;
+    gameState.ch1NavMistakes = 0;
+    gameState.navigationMistakes = 0;
+    gameState.ch1NavStrikeApplied = false;
     gameState.receptionistMistake = false;
     gameState.meldezettelMistakes = 0;
     gameState.ch3Strikes = 0;
@@ -180,11 +190,172 @@ let gameState = {
   const REPLAY_CHOICES_FROM_NODE = {
     wrong_rude: "start_see_man",
     wrong_grammar: "start_see_man",
+    ask_hotel_wrong_wword: "start_ask_hotel",
+    ask_hotel_wrong_order: "start_ask_hotel",
     ch2_greet_wrong_rude: "ch2_reception_greet",
     ch2_greet_wrong_grammar: "ch2_reception_greet",
     ch2_id_wrong_phone: "ch2_reception_id",
     ch2_id_wrong_name: "ch2_reception_id",
   };
+
+  const CH1_PPP_TRIGGER_NODE = "ch1_ppp_practice";
+  const CH1_PPP_SUCCESS_NODE = "start_ask_hotel";
+  const CH1_REVIEW_ROUTE_NODE = "ch1_review_route";
+  const HOTEL_NAV_NODE_IDS = new Set([
+    "start_quiz_transport",
+    "quiz_stop_correct_transport",
+    "quiz_stop_wrong_transport",
+    "quiz_house_correct_transport_correct_stop",
+    "quiz_house_correct_transport_wrong_stop",
+    "quiz_house_wrong_transport_correct_stop",
+    "quiz_house_wrong_transport_wrong_stop",
+  ]);
+  const OLD_MAN_DIRECTIONS =
+    "Guten Tag, kein Problem! Gehen Sie zuerst geradeaus zur U-Bahn. Fahren Sie mit der U3 bis Neubaugasse. Das Hotel ist dort direkt gegenüber von der Station, gleich neben dem Café.";
+  const VOCAB_UNLOCK_STORAGE_KEY = "lenasWienerAbenteuer.unlockedVocab";
+
+  const CHAPTER1_PPP_VOCAB = [
+    { german: "wie", english: "how (question word)" },
+    { german: "wo", english: "where (location)" },
+    { german: "wohin", english: "where to (direction)" },
+    { german: "wann", english: "when" },
+    { german: "wer", english: "who" },
+    { german: "warum", english: "why" },
+    { german: "geradeaus", english: "straight ahead" },
+    { german: "nach links", english: "to the left" },
+    { german: "nach rechts", english: "to the right" },
+    { german: "dort", english: "there" },
+    { german: "neben", english: "next to" },
+    { german: "gegenüber", english: "opposite / across from" },
+    { german: "die U-Bahn-Station", english: "underground / metro station" },
+  ];
+
+  const CH1_PPP_WFRAGEN = [
+    { id: "wo", german: "Wo", english: "Where" },
+    { id: "wohin", german: "Wohin", english: "Where to" },
+    { id: "wie", german: "Wie", english: "How" },
+    { id: "wann", german: "Wann", english: "When" },
+    { id: "wer", german: "Wer", english: "Who" },
+    { id: "warum", german: "Warum", english: "Why" },
+  ];
+
+  const CH1_PPP_SENTENCES = [
+    {
+      type: "order",
+      prompt: "Excuse me, how do I get to the hotel?",
+      tokens: ["Entschuldigung,", "wie", "komme", "ich", "zum", "Hotel?"],
+      distractors: ["geht", "du"],
+      correct: ["Entschuldigung,", "wie", "komme", "ich", "zum", "Hotel?"],
+      wrongRule: "In German questions, the conjugated verb must always be in position 2!",
+    },
+    {
+      type: "order",
+      prompt: "Ask where the underground station is.",
+      tokens: ["Wo", "ist", "die", "U-Bahn-Station?"],
+      distractors: ["Wohin", "komme"],
+      correct: ["Wo", "ist", "die", "U-Bahn-Station?"],
+      wrongRule: "In German questions, the conjugated verb must always be in position 2!",
+    },
+    {
+      type: "order",
+      prompt: "Ask where this train is going.",
+      tokens: ["Wohin", "fährt", "dieser", "Zug?"],
+      distractors: ["Wo", "Wie"],
+      correct: ["Wohin", "fährt", "dieser", "Zug?"],
+      wrongRule: "In German questions, the conjugated verb must always be in position 2!",
+    },
+    {
+      type: "order",
+      prompt: "Ask when the bus arrives.",
+      tokens: ["Wann", "kommt", "der", "Bus", "an?"],
+      distractors: ["Wer", "Wo"],
+      correct: ["Wann", "kommt", "der", "Bus", "an?"],
+      wrongRule: "In German questions, the conjugated verb must always be in position 2!",
+    },
+    {
+      type: "order",
+      prompt: "Ask who can help you.",
+      tokens: ["Wer", "kann", "mir", "helfen?"],
+      distractors: ["Wo", "Wann"],
+      correct: ["Wer", "kann", "mir", "helfen?"],
+      wrongRule: "In German questions, the conjugated verb must always be in position 2!",
+    },
+  ];
+
+  const CH1_PPP_WFRAGEN_BLANKS = [
+    {
+      prompt: "Choose the correct question word.",
+      prefix: "",
+      suffix: "wohnt Lena?",
+      options: ["Wer", "Wo", "Wie"],
+      correct: "Wo",
+    },
+    {
+      prompt: "Choose the correct question word.",
+      prefix: "Entschuldigung,",
+      suffix: "komme ich zum Hotel?",
+      options: ["Wo", "Wie", "Wohin"],
+      correct: "Wie",
+    },
+    {
+      prompt: "Choose the correct question word.",
+      prefix: "",
+      suffix: "fährt dieser Zug?",
+      options: ["Wo", "Wohin", "Wann"],
+      correct: "Wohin",
+    },
+    {
+      prompt: "Choose the correct question word.",
+      prefix: "",
+      suffix: "kann mir helfen?",
+      options: ["Wer", "Warum", "Wann"],
+      correct: "Wer",
+    },
+    {
+      prompt: "Choose the correct question word.",
+      prefix: "",
+      suffix: "kommt der Bus an?",
+      options: ["Wo", "Wer", "Wann"],
+      correct: "Wann",
+    },
+  ];
+
+  const CH1_PPP_DIRECTIONS = [
+    { id: "straight", german: "geradeaus", english: "straight ahead" },
+    { id: "left", german: "nach links", english: "to the left" },
+    { id: "right", german: "nach rechts", english: "to the right" },
+    { id: "there", german: "dort", english: "there" },
+    { id: "next", german: "neben", english: "next to" },
+    { id: "opposite", german: "gegenüber", english: "opposite / across from" },
+  ];
+
+  const CH1_PPP_DIRECTION_SCENARIOS = [
+    {
+      prompt: "The hotel is across from the station. How do you say 'across from the station' in German?",
+      options: ["gegenüber dem Bahnhof", "neben dem Bahnhof", "geradeaus zum Bahnhof"],
+      correct: "gegenüber dem Bahnhof",
+    },
+    {
+      prompt: "The café is next to the hotel. How do you say 'next to the hotel' in German?",
+      options: ["dort das Hotel", "neben dem Hotel", "nach links zum Hotel"],
+      correct: "neben dem Hotel",
+    },
+    {
+      prompt: "You need to keep walking without turning. How do you say 'Go straight ahead'?",
+      options: ["Gehen Sie geradeaus", "Gehen Sie nach rechts", "Das Hotel ist dort"],
+      correct: "Gehen Sie geradeaus",
+    },
+    {
+      prompt: "At the corner you must turn left. How do you say 'to the left'?",
+      options: ["nach rechts", "gegenüber", "nach links"],
+      correct: "nach links",
+    },
+    {
+      prompt: "You can see the hotel over there. How do you say 'The hotel is there'?",
+      options: ["Das Hotel ist dort", "Das Hotel ist neben", "Das Hotel ist geradeaus"],
+      correct: "Das Hotel ist dort",
+    },
+  ];
 
   const MELDEZETTEL_TRIGGER_NODE = "ch2_meldezettel";
   const MELDEZETTEL_SUCCESS_NODE = "ch2_meldezettel_success";
@@ -347,6 +518,16 @@ let gameState = {
       text: "That did not sound right. I need to make the sentence clearer and try again...",
       replayChoicesFrom: "start_see_man",
     },
+    ask_hotel_wrong_wword: {
+      speaker: "Lena",
+      text: "Entschuldigung, ich versuche es nochmal.",
+      replayChoicesFrom: "start_ask_hotel",
+    },
+    ask_hotel_wrong_order: {
+      speaker: "Lena",
+      text: "Entschuldigung, ich versuche es nochmal.",
+      replayChoicesFrom: "start_ask_hotel",
+    },
     ch2_greet_wrong_rude: {
       speaker: "Lena",
       text: "Entschuldigung, ich war unhöflich. Ich versuche es noch einmal...",
@@ -405,11 +586,16 @@ let gameState = {
     menuPanel: document.getElementById("menu-panel"),
     vocabBtn: document.getElementById("vocab-btn"),
     vocabOverlay: document.getElementById("vocab-overlay"),
+    vocabPanel: document.getElementById("vocab-panel"),
     vocabTitle: document.getElementById("vocab-title"),
     vocabList: document.getElementById("vocab-list"),
     vocabCloseBtn: document.getElementById("vocab-close-btn"),
     vocabTutorial: document.getElementById("vocab-tutorial"),
     vocabTutorialBtn: document.getElementById("vocab-tutorial-btn"),
+    directionHint: document.getElementById("direction-hint"),
+    directionHintBtn: document.getElementById("direction-hint-btn"),
+    directionHintPanel: document.getElementById("direction-hint-panel"),
+    directionHintClose: document.getElementById("direction-hint-close"),
     menuMainActions: document.getElementById("menu-main-actions"),
     restartBtn: document.getElementById("restart-btn"),
     startMenuFromGameBtn: document.getElementById("start-menu-from-game-btn"),
@@ -506,6 +692,7 @@ let gameState = {
     els.choicesContainer.hidden = true;
     els.choiceButtons.forEach((btn) => {
       btn.classList.add("is-hidden");
+      btn.classList.remove("choice-btn--practice");
       btn.textContent = "";
       btn.onclick = null;
     });
@@ -519,11 +706,25 @@ let gameState = {
     els.choiceButtons.forEach((btn, index) => {
       const choice = choices[index];
       if (choice) {
-        btn.textContent = choice.text;
         btn.classList.remove("is-hidden");
+        btn.classList.toggle("choice-btn--practice", Boolean(choice.prominent));
+        if (choice.prominent) {
+          const slash = choice.text.indexOf(" / ");
+          const main = slash >= 0 ? choice.text.slice(0, slash) : choice.text;
+          const sub = slash >= 0 ? choice.text.slice(slash + 3) : "";
+          btn.innerHTML = sub
+            ? `<span class="choice-btn__main"></span><span class="choice-btn__sub"></span>`
+            : `<span class="choice-btn__main"></span>`;
+          btn.querySelector(".choice-btn__main").textContent = main;
+          const subEl = btn.querySelector(".choice-btn__sub");
+          if (subEl) subEl.textContent = sub;
+        } else {
+          btn.textContent = choice.text;
+        }
         btn.onclick = () => selectChoice(choice.text, choice.nextNode);
       } else {
         btn.classList.add("is-hidden");
+        btn.classList.remove("choice-btn--practice");
         btn.onclick = null;
       }
     });
@@ -572,9 +773,15 @@ let gameState = {
     const choices = getChoicesForCurrentNode(node);
     if (choices.length) {
       showChoices(choices);
-    } else {
-      els.advanceHint.classList.remove("is-hidden");
+      return;
     }
+
+    if (node.autoAdvance && node.nextNode) {
+      goToNode(node.nextNode);
+      return;
+    }
+
+    els.advanceHint.classList.remove("is-hidden");
   }
 
   function renderFollowUpDialogue(sourceNodeId, followUp) {
@@ -728,63 +935,101 @@ let gameState = {
 
   // ── Black-screen transition ───────────────────────────────────────────────
 
-  function removeBlackScreen() {
+  function hideGameplayScene() {
+    closeCh1ReviewThought();
+    clearTypeTimer();
+    state.typing = false;
+    hideChoices();
+    els.dialogueBox.hidden = true;
+    els.npcContainer.style.display = "none";
+    els.npcContainer.classList.add("is-hidden");
+    els.lenaContainer.classList.add("is-hidden");
+  }
+
+  function closeCh1ReviewThought() {
+    document.getElementById("ch1-review-thought")?.remove();
+  }
+
+  function showCh1ReviewThought(node) {
+    hideGameplayScene();
+    closeHotelNavGame();
+    setBackground(node.background || "vienna_hauptbahnhof.jpg");
+
+    const overlay = document.createElement("div");
+    overlay.id = "ch1-review-thought";
+    overlay.className = "full-black-screen full-black-screen--beat ch1-thought";
+
+    const card = document.createElement("div");
+    card.className = "chapter-transition ch1-thought-card";
+
+    const message = document.createElement("p");
+    message.className = "ch1-thought-card__text";
+    message.textContent = node.text;
+    card.appendChild(message);
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "chapter-transition__btn";
+    btn.textContent = "Check Route to Hotel";
+    btn.addEventListener("click", () => {
+      closeCh1ReviewThought();
+      goToNode("start_quiz_transport");
+    });
+    card.appendChild(btn);
+
+    overlay.appendChild(card);
+    els.game.appendChild(overlay);
+  }
+
+  function removeBlackScreen({ restoreScene = true } = {}) {
     const existing = document.getElementById("black-screen-overlay");
     if (existing) existing.remove();
 
-    // Restore the standard layout.
+    if (!restoreScene) return;
+
     els.dialogueBox.hidden = false;
     els.lenaContainer.classList.remove("is-hidden");
   }
 
   function showBlackScreen(node) {
-    // Hide the normal game UI so nothing bleeds through.
-    clearTypeTimer();
-    state.typing = false;
-    hideChoices();
-    els.dialogueBox.hidden = true;
-    els.npcContainer.classList.add("is-hidden");
-    els.lenaContainer.classList.add("is-hidden");
-
-    // Build the overlay (idempotent — replace if it already exists).
-    removeBlackScreen();
-    els.dialogueBox.hidden = true;
-    els.npcContainer.style.display = "none";
-    els.npcContainer.classList.add("is-hidden");
-    els.lenaContainer.classList.add("is-hidden");
+    hideGameplayScene();
+    closeHotelNavGame();
+    document.getElementById("black-screen-overlay")?.remove();
+    setBackground(node.background || "black");
 
     const overlay = document.createElement("div");
     overlay.id = "black-screen-overlay";
     overlay.className = "full-black-screen";
 
     if (isChapterTitleNode(node)) {
+      overlay.classList.add("full-black-screen--chapter");
       overlay.addEventListener("click", () => {
         advanceBlackScreenChoice(node.choices?.[0]);
       });
+    } else {
+      overlay.classList.add("full-black-screen--beat");
     }
+
+    const card = document.createElement("div");
+    card.className = "chapter-transition";
 
     const message = document.createElement("p");
+    message.className = "chapter-transition__title";
     message.textContent = getBlackScreenTitleText(node);
-    if (isChapterTitleNode(node)) {
-      message.style.fontWeight = "800";
-      message.style.fontSize = "clamp(2rem, 7vw, 4rem)";
-      message.style.letterSpacing = "0.04em";
-      message.style.textTransform = "uppercase";
-      message.style.textAlign = "center";
-    }
-    overlay.appendChild(message);
+    card.appendChild(message);
 
-    // Render each choice as a styled button.
     (node.choices || []).forEach((choice) => {
       const btn = document.createElement("button");
+      btn.className = "chapter-transition__btn";
       btn.textContent = choice.text;
       btn.addEventListener("click", (event) => {
         event.stopPropagation();
         advanceBlackScreenChoice(choice);
       });
-      overlay.appendChild(btn);
+      card.appendChild(btn);
     });
 
+    overlay.appendChild(card);
     els.game.appendChild(overlay);
   }
 
@@ -794,7 +1039,6 @@ let gameState = {
       node?.id === "chapter_2_teaser" ||
       node?.id === "chapter_3_title" ||
       node?.id === "chapter_4_title" ||
-      node?.id === "chapter_5_title" ||
       node?.id === "chapter_6_title"
     );
   }
@@ -805,7 +1049,6 @@ let gameState = {
     "chapter_2_teaser",
     "chapter_3_title",
     "chapter_4_title",
-    "chapter_5_title",
     "chapter_6_title",
     "ch4_time_passes",
     "ch6_morning_title",
@@ -823,7 +1066,10 @@ let gameState = {
     if (!choice) return;
 
     recordAnswer(choice.text, choice.nextNode);
-    removeBlackScreen();
+    hideGameplayScene();
+    const nextNode = storyData[choice.nextNode];
+    if (nextNode?.background) setBackground(nextNode.background);
+    removeBlackScreen({ restoreScene: false });
     routeToNode(choice.nextNode);
   }
 
@@ -833,17 +1079,17 @@ let gameState = {
         photo: "photo-c1-a.png",
         alt: "Lena smiling at Vienna Hauptbahnhof",
         german:
-          "Mein erster Tag in Wien! Die Reise mit dem Zug war sehr schön und bequem. Ich habe ein Busticket auf Deutsch gekauft und eine nette Frau hat mir geholfen. Ich fühle mich glücklich und bereit für mein Abenteuer!",
+          "Mein erster Tag in Wien! Die Zugfahrt war super und am Bahnhof habe ich mich gut zurechtgefunden. Ich habe sogar schon mit einem Mann Deutsch gesprochen und nach dem Weg gefragt. Ich bin so gespannt auf mein Abenteuer!",
         english:
-          "My first day in Vienna! The train journey was very nice and comfortable. I bought a bus ticket in German and a friendly woman helped me. I feel happy and ready for my adventure!",
+          "My first day in Vienna! The train ride was smooth and I navigated the station well. I even spoke German with a local to ask for directions. I'm so excited for this adventure!",
       },
       challenge: {
         photo: "photo-c1-b.png",
         alt: "Lena looking lost near the station",
         german:
-          "Uff, was für ein Tag! Die Ankunft in Wien war etwas stressig. Der Fahrkartenautomat war kompliziert und ich war sehr nervös beim Deutschsprechen. Aber ich bin hier und morgen wird es sicher besser!",
+          "Die Ankunft in Wien war etwas stressig. Der Bahnhof ist riesig und mein Deutsch ist noch nicht perfekt. Der Mann hat mich nicht sofort verstanden, aber ich gebe nicht auf. Morgen wird es besser!",
         english:
-          "Phew, what a day! Arriving in Vienna was a bit stressful. The ticket machine was complicated and I was very nervous speaking German. But I am here and tomorrow will surely be better!",
+          "Arriving in Vienna was a bit overwhelming. The station is huge and my German isn't perfect yet. The local didn't understand me right away, but I won't give up. Tomorrow will be better!",
       },
     },
     2: {
@@ -902,24 +1148,6 @@ let gameState = {
     },
     5: {
       success: {
-        photo: "photo-c5-a.png",
-        alt: "Lena shopping happily at a Viennese supermarket",
-        german:
-          "Im Supermarkt habe ich alles gefunden! Obst, Brot und Käse — und an der Kasse habe ich auf Deutsch bezahlt. 'Stimmt so!' fühlt sich schon ganz natürlich an.",
-        english:
-          "At the supermarket I found everything! Fruit, bread and cheese — and at the checkout I paid in German. 'Keep the change!' already feels completely natural.",
-      },
-      challenge: {
-        photo: "photo-c5-b.png",
-        alt: "Lena looking unsure at a supermarket checkout",
-        german:
-          "Einkaufen auf Deutsch war spannend, aber auch ein bisschen stressig. An der Kasse war ich kurz verwirrt. Trotzdem habe ich meine Sachen bekommen — Übung macht den Meister!",
-        english:
-          "Shopping in German was exciting, but also a bit stressful. At the checkout I was briefly confused. Still, I got my groceries — practice makes perfect!",
-      },
-    },
-    6: {
-      success: {
         photo: "photo-c6-a.png",
         alt: "Lena enjoying a Melange in a Viennese café",
         german:
@@ -943,8 +1171,7 @@ let gameState = {
     2: "Check-in",
     3: "Unterwegs",
     4: "Dem Himmel so nah",
-    5: "Im Supermarkt",
-    6: "Epilog",
+    5: "Epilog",
   };
 
   function removeTagebuchScreen() {
@@ -984,14 +1211,20 @@ let gameState = {
     }
 
     if (chapterNumber === 5) {
-      return Math.min(gameState.ch5Strikes, 2);
-    }
-
-    if (chapterNumber === 6) {
       return 0;
     }
 
-    return [gameState.ch1StationFailed, gameState.ch1LateArrival].filter(Boolean).length;
+    const dialogueStrikes = Math.max(
+      gameState.dialogueStrikes || 0,
+      gameState.ch1DialogueStrike ? 1 : 0
+    );
+    const navigationMistakes = Math.max(
+      gameState.navigationMistakes || 0,
+      gameState.ch1NavMistakes || 0
+    );
+    const dialogueStrike = dialogueStrikes > 0 ? 1 : 0;
+    const navigationStrike = navigationMistakes >= 2 ? 1 : 0;
+    return Math.min(dialogueStrike + navigationStrike, 2);
   }
 
   function getTotalJourneyStrikes() {
@@ -1011,10 +1244,24 @@ let gameState = {
     }
   }
 
+  function getChapter1TagebuchIsChallenge() {
+    const dialogueStrikes = Math.max(
+      Number(gameState.dialogueStrikes) || 0,
+      gameState.ch1DialogueStrike ? 1 : 0
+    );
+    const navigationMistakes = Math.max(
+      Number(gameState.navigationMistakes) || 0,
+      Number(gameState.ch1NavMistakes) || 0
+    );
+    gameState.dialogueStrikes = dialogueStrikes;
+    gameState.navigationMistakes = navigationMistakes;
+    return dialogueStrikes > 0 || navigationMistakes >= 2;
+  }
+
   function getTagebuchVariant(chapterNumber, strikes) {
     const content = TAGEBUCH_CONTENT[chapterNumber] || TAGEBUCH_CONTENT[1];
-    // Variant A (success): 0-1 strikes. Variant B (challenge): 2+ strikes.
-    const isChallenging = strikes >= 2;
+    const isChallenging =
+      chapterNumber === 1 ? getChapter1TagebuchIsChallenge() : strikes >= 2;
     const variant = isChallenging ? content.challenge : content.success;
 
     return {
@@ -1042,8 +1289,7 @@ let gameState = {
     1: { label: "Chapter 2 - Check-in", nodeId: "chapter_2_teaser" },
     2: { label: "Chapter 3 - Unterwegs", nodeId: "chapter_3_title" },
     3: { label: "Chapter 4: Dem Himmel so nah", nodeId: "chapter_4_title" },
-    4: { label: "Chapter 5: Im Supermarkt", nodeId: "chapter_5_title" },
-    5: { label: "Chapter 6: Epilog", nodeId: "chapter_6_title" },
+    4: { label: "Chapter 5: Epilog", nodeId: "chapter_6_title" },
   };
 
   function goToNextChapterOrMenu(completedChapter) {
@@ -1052,6 +1298,8 @@ let gameState = {
 
     const next = NEXT_CHAPTER_MAP[completedChapter];
     if (next) {
+      hideGameplayScene();
+      setBackground("black");
       els.chapterLabel.textContent = next.label;
       goToNode(next.nodeId);
       return;
@@ -1075,6 +1323,9 @@ let gameState = {
     closeRulesGame();
     closeAisleGame();
     closeCashierGame();
+    closeCh1PppPractice();
+    closeHotelNavGame();
+    closeCh1ReviewThought();
     removeCelebrationScreen();
     removeTagebuchScreen();
 
@@ -1084,7 +1335,10 @@ let gameState = {
     els.lenaContainer.classList.add("is-hidden");
 
     const strikes = getChapterStrikeCount(chapterNumber);
-    const variant = getTagebuchVariant(chapterNumber, strikes);
+    const variant =
+      chapterNumber === 1
+        ? getTagebuchVariant(1, strikes)
+        : getTagebuchVariant(chapterNumber, strikes);
 
     const overlay = document.createElement("div");
     overlay.id = "tagebuch-screen";
@@ -1133,7 +1387,7 @@ let gameState = {
     btn.type = "button";
     btn.className = "tagebuch-card__button";
 
-    if (chapterNumber === 6) {
+    if (chapterNumber === 5) {
       btn.textContent = "Continue";
       btn.addEventListener("click", () => {
         saveChapterProgress(chapterNumber, strikes);
@@ -2273,6 +2527,830 @@ let gameState = {
     els.game.appendChild(overlay);
   }
 
+  // ── Chapter 1 PPP grammar practice ───────────────────────────────────────
+  // Practice mini-game mistakes never increment strikes. Wrong spoken W-Fragen
+  // after practice (hotel / U-Bahn) do add a strike, then replay the choices.
+
+  const ch1Ppp = {
+    active: false,
+    step: 1,
+    sentenceIndex: 0,
+    blankIndex: 0,
+    scenarioIndex: 0,
+    selected: [],
+    matchedCount: 0,
+    selectedPairId: null,
+    locked: false,
+    pendingAdvance: null,
+    matchTimer: null,
+  };
+
+  const hotelNav = {
+    active: false,
+    locked: false,
+    hintOpen: false,
+  };
+
+  function tokensMatch(a, b) {
+    return a.length === b.length && a.every((token, index) => token === b[index]);
+  }
+
+  function shuffledUntilDifferent(items) {
+    if (items.length < 2) return items.slice();
+    let shuffled = shuffleArray(items);
+    let guard = 0;
+    while (tokensMatch(shuffled, items) && guard < 12) {
+      shuffled = shuffleArray(items);
+      guard += 1;
+    }
+    return shuffled;
+  }
+
+  function saveChapter1PppVocab() {
+    CHAPTER1_PPP_VOCAB.forEach((entry) => {
+      const exists = VOCABULARY_DATA.chapter1.some((item) => item.german === entry.german);
+      if (!exists) VOCABULARY_DATA.chapter1.push(entry);
+    });
+
+    gameState.ch1PppVocabUnlocked = true;
+    try {
+      const raw = localStorage.getItem(VOCAB_UNLOCK_STORAGE_KEY);
+      const stored = raw ? JSON.parse(raw) : {};
+      stored.chapter1Ppp = true;
+      localStorage.setItem(VOCAB_UNLOCK_STORAGE_KEY, JSON.stringify(stored));
+    } catch (error) {
+      console.warn("Unable to save practice vocabulary:", error);
+    }
+  }
+
+  function closeCh1PppPractice() {
+    ch1Ppp.active = false;
+    ch1Ppp.locked = false;
+    ch1Ppp.pendingAdvance = null;
+    if (ch1Ppp.matchTimer) {
+      window.clearTimeout(ch1Ppp.matchTimer);
+      ch1Ppp.matchTimer = null;
+    }
+    document.getElementById("ch1-ppp")?.remove();
+  }
+
+  function setCh1PppInstruction(overlay, text) {
+    const instruction = overlay.querySelector("#ch1-ppp-instruction");
+    if (!instruction) return;
+    instruction.textContent = text || "";
+    instruction.hidden = !text;
+  }
+
+  function getCh1PppShell(overlay) {
+    return {
+      title: overlay.querySelector("#ch1-ppp-title"),
+      progress: overlay.querySelector("#ch1-ppp-progress"),
+      subprogress: overlay.querySelector("#ch1-ppp-subprogress"),
+      instruction: overlay.querySelector("#ch1-ppp-instruction"),
+      body: overlay.querySelector("#ch1-ppp-body"),
+      result: overlay.querySelector("#ch1-ppp-result"),
+      resultLabel: overlay.querySelector("#ch1-ppp-result-label"),
+      resultText: overlay.querySelector("#ch1-ppp-result-text"),
+      continueBtn: overlay.querySelector("#ch1-ppp-continue"),
+      checkBtn: overlay.querySelector("#ch1-ppp-check"),
+    };
+  }
+
+  function updateCh1PppProgress(overlay) {
+    const { progress } = getCh1PppShell(overlay);
+    if (!progress) return;
+    const current = Math.min(Math.max(ch1Ppp.step, 1), 5);
+    progress.textContent = `${current}/5`;
+  }
+
+  function updateCh1PppSubprogress(overlay, current, total) {
+    const { subprogress } = getCh1PppShell(overlay);
+    if (!subprogress) return;
+    if (!total || current < 1) {
+      subprogress.hidden = true;
+      subprogress.textContent = "";
+      return;
+    }
+    subprogress.hidden = false;
+    subprogress.textContent = `${current} / ${total}`;
+  }
+
+  function hideCh1PppResult(overlay) {
+    const ui = getCh1PppShell(overlay);
+    ui.result.hidden = true;
+    ui.body.hidden = false;
+    ch1Ppp.locked = false;
+  }
+
+  function showCh1PppResult(overlay, { correct, title, text, onContinue }) {
+    const ui = getCh1PppShell(overlay);
+    ch1Ppp.locked = true;
+    ui.body.hidden = false;
+    ui.checkBtn.hidden = true;
+    ui.result.hidden = false;
+    ui.result.className = `ch1-ppp__result ${correct ? "is-correct" : "is-wrong"}`;
+    ui.resultLabel.textContent = title;
+    ui.resultText.textContent = text;
+    ui.continueBtn.textContent = correct ? "Continue" : "Retry";
+    ui.continueBtn.onclick = () => {
+      hideCh1PppResult(overlay);
+      onContinue();
+    };
+  }
+
+  function finishCh1PppPractice() {
+    saveChapter1PppVocab();
+    closeCh1PppPractice();
+    closeHotelNavGame();
+    goToNode(CH1_PPP_SUCCESS_NODE);
+    pulseVocabButton();
+  }
+
+  function showCh1PppSuccess(overlay) {
+    const ui = getCh1PppShell(overlay);
+    ch1Ppp.step = 5;
+    updateCh1PppProgress(overlay);
+    updateCh1PppSubprogress(overlay, 0, 0);
+    ui.title.textContent = "";
+    setCh1PppInstruction(overlay, "");
+    ui.body.hidden = false;
+    ui.body.innerHTML = "";
+    ui.result.hidden = true;
+    ui.checkBtn.hidden = true;
+
+    const card = document.createElement("div");
+    card.className = "ch1-ppp__done";
+    card.innerHTML = `
+      <p class="ch1-ppp__done-title">Lena feels confident now!</p>
+    `;
+    ui.body.appendChild(card);
+
+    ui.checkBtn.hidden = false;
+    ui.checkBtn.disabled = false;
+    ui.checkBtn.className = "ch1-ppp__primary";
+    ui.checkBtn.textContent = "Approach the man";
+    ui.checkBtn.onclick = finishCh1PppPractice;
+    const dev = overlay.querySelector(".ch1-ppp__dev");
+    if (dev) dev.hidden = true;
+  }
+
+  function renderCh1PppMatching(overlay, pairs, { title, instruction, wrongText, onComplete }) {
+    const ui = getCh1PppShell(overlay);
+    ch1Ppp.matchedCount = 0;
+    ch1Ppp.selectedPairId = null;
+    ch1Ppp.locked = false;
+    updateCh1PppProgress(overlay);
+    updateCh1PppSubprogress(overlay, 1, pairs.length);
+
+    ui.title.textContent = title;
+    setCh1PppInstruction(overlay, instruction);
+    ui.body.hidden = false;
+    ui.body.innerHTML = "";
+    ui.result.hidden = true;
+    ui.checkBtn.hidden = true;
+
+    const grid = document.createElement("div");
+    grid.className = "ch1-ppp__match-grid";
+
+    const left = document.createElement("div");
+    left.className = "ch1-ppp__match-col";
+    pairs.forEach((pair) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "ch1-ppp__pair ch1-ppp__pair--de";
+      btn.dataset.pairId = pair.id;
+      btn.textContent = pair.german;
+      btn.addEventListener("click", () => {
+        if (ch1Ppp.locked || btn.classList.contains("is-matched")) return;
+        left.querySelectorAll(".is-selected").forEach((el) => el.classList.remove("is-selected"));
+        btn.classList.add("is-selected");
+        ch1Ppp.selectedPairId = pair.id;
+      });
+      left.appendChild(btn);
+    });
+
+    const right = document.createElement("div");
+    right.className = "ch1-ppp__match-col";
+    shuffleArray(pairs).forEach((pair) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "ch1-ppp__pair ch1-ppp__pair--en";
+      btn.dataset.pairId = pair.id;
+      btn.textContent = pair.english;
+      btn.addEventListener("click", () => {
+        if (ch1Ppp.locked || btn.classList.contains("is-matched")) return;
+        const selected = left.querySelector(".ch1-ppp__pair--de.is-selected");
+        if (!selected) return;
+
+        if (btn.dataset.pairId === selected.dataset.pairId) {
+          selected.classList.remove("is-selected");
+          selected.classList.add("is-matched");
+          selected.disabled = true;
+          btn.classList.add("is-matched");
+          btn.disabled = true;
+          ch1Ppp.selectedPairId = null;
+          ch1Ppp.matchedCount += 1;
+          updateCh1PppSubprogress(
+            overlay,
+            Math.min(ch1Ppp.matchedCount + 1, pairs.length),
+            pairs.length
+          );
+          if (ch1Ppp.matchedCount === pairs.length) {
+            ch1Ppp.locked = true;
+            if (ch1Ppp.matchTimer) window.clearTimeout(ch1Ppp.matchTimer);
+            ch1Ppp.matchTimer = window.setTimeout(() => {
+              ch1Ppp.matchTimer = null;
+              onComplete();
+            }, 450);
+          }
+          return;
+        }
+
+        ch1Ppp.locked = true;
+        selected.classList.add("is-wrong");
+        btn.classList.add("is-wrong");
+        window.setTimeout(() => {
+          selected.classList.remove("is-wrong", "is-selected");
+          btn.classList.remove("is-wrong");
+          ch1Ppp.selectedPairId = null;
+          ch1Ppp.locked = false;
+        }, 450);
+      });
+      right.appendChild(btn);
+    });
+
+    grid.appendChild(left);
+    grid.appendChild(right);
+    ui.body.appendChild(grid);
+  }
+
+  function skipCh1PppCurrentStep(overlay) {
+    hideCh1PppResult(overlay);
+    if (ch1Ppp.matchTimer) {
+      window.clearTimeout(ch1Ppp.matchTimer);
+      ch1Ppp.matchTimer = null;
+    }
+    ch1Ppp.locked = false;
+    ch1Ppp.selected = [];
+    ch1Ppp.matchedCount = 0;
+    ch1Ppp.selectedPairId = null;
+
+    if (ch1Ppp.step <= 1) {
+      renderCh1PppStep2(overlay);
+      return;
+    }
+
+    if (ch1Ppp.step === 2) {
+      ch1Ppp.sentenceIndex = CH1_PPP_SENTENCES.length;
+      renderCh1PppStep2(overlay);
+      return;
+    }
+
+    if (ch1Ppp.step === 3) {
+      ch1Ppp.blankIndex = CH1_PPP_WFRAGEN_BLANKS.length;
+      renderCh1PppStep3(overlay);
+      return;
+    }
+
+    if (ch1Ppp.step === 4) {
+      ch1Ppp.scenarioIndex = 0;
+      renderCh1PppStep5(overlay);
+      return;
+    }
+
+    if (ch1Ppp.step === 5) {
+      showCh1PppSuccess(overlay);
+      return;
+    }
+
+    finishCh1PppPractice();
+  }
+
+  function renderCh1PppStep1(overlay) {
+    ch1Ppp.step = 1;
+    renderCh1PppMatching(overlay, CH1_PPP_WFRAGEN, {
+      title: "W-Fragen",
+      instruction: "Match the German question words with their English meanings.",
+      wrongText: "Wo = where · Wohin = where to · Wie = how · Wann = when · Wer = who · Warum = why",
+      onComplete: () => renderCh1PppStep2(overlay),
+    });
+  }
+
+  function renderCh1PppStep2(overlay) {
+    ch1Ppp.step = 2;
+    if (ch1Ppp.sentenceIndex >= CH1_PPP_SENTENCES.length) {
+      ch1Ppp.sentenceIndex = 0;
+      renderCh1PppStep3(overlay);
+      return;
+    }
+    renderCh1PppSentence(overlay);
+  }
+
+  function renderCh1PppSentence(overlay) {
+    const task = CH1_PPP_SENTENCES[ch1Ppp.sentenceIndex];
+    const ui = getCh1PppShell(overlay);
+    ch1Ppp.selected = [];
+    ch1Ppp.locked = false;
+    updateCh1PppProgress(overlay);
+    updateCh1PppSubprogress(overlay, ch1Ppp.sentenceIndex + 1, CH1_PPP_SENTENCES.length);
+
+    ui.title.textContent = "";
+    setCh1PppInstruction(overlay, "Form the correct German question using proper word order.");
+    ui.body.hidden = false;
+    ui.body.innerHTML = "";
+    ui.result.hidden = true;
+    ui.checkBtn.hidden = false;
+    ui.checkBtn.disabled = true;
+    ui.checkBtn.className = "ch1-ppp__primary";
+    ui.checkBtn.textContent = "Check";
+    ui.checkBtn.onclick = () => handleCh1PppOrderCheck(overlay);
+
+    const card = document.createElement("div");
+    card.className = "ch1-ppp__card";
+
+    const prompt = document.createElement("p");
+    prompt.className = "ch1-ppp__prompt ch1-ppp__prompt--target";
+    prompt.textContent = task.prompt;
+    card.appendChild(prompt);
+
+    const built = document.createElement("div");
+    built.className = "ch1-ppp__built";
+    built.id = "ch1-ppp-built";
+    card.appendChild(built);
+
+    const bank = document.createElement("div");
+    bank.className = "ch1-ppp__chips";
+    shuffledUntilDifferent([...task.tokens, ...task.distractors]).forEach((token) => {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "ch1-ppp__chip";
+      chip.textContent = token;
+      chip.addEventListener("click", () => handleCh1PppTokenPick(overlay, chip, token));
+      bank.appendChild(chip);
+    });
+    card.appendChild(bank);
+    ui.body.appendChild(card);
+  }
+
+  function handleCh1PppTokenPick(overlay, chip, token) {
+    if (ch1Ppp.locked || chip.disabled) return;
+
+    ch1Ppp.selected.push(token);
+    chip.disabled = true;
+    chip.classList.add("is-used");
+
+    const built = overlay.querySelector("#ch1-ppp-built");
+    const placed = document.createElement("button");
+    placed.type = "button";
+    placed.className = "ch1-ppp__chip ch1-ppp__chip--placed";
+    placed.textContent = token;
+    placed.addEventListener("click", () => {
+      if (ch1Ppp.locked) return;
+      const index = ch1Ppp.selected.indexOf(token);
+      if (index >= 0) ch1Ppp.selected.splice(index, 1);
+      placed.remove();
+      chip.disabled = false;
+      chip.classList.remove("is-used");
+      overlay.querySelector("#ch1-ppp-check").disabled = ch1Ppp.selected.length === 0;
+    });
+    built.appendChild(placed);
+    overlay.querySelector("#ch1-ppp-check").disabled = ch1Ppp.selected.length === 0;
+  }
+
+  function scheduleCh1PppAdvance(overlay, advance) {
+    if (ch1Ppp.matchTimer) window.clearTimeout(ch1Ppp.matchTimer);
+    ch1Ppp.matchTimer = window.setTimeout(() => {
+      ch1Ppp.matchTimer = null;
+      advance();
+    }, 450);
+  }
+
+  function handleCh1PppOrderCheck(overlay) {
+    if (ch1Ppp.locked) return;
+    const task = CH1_PPP_SENTENCES[ch1Ppp.sentenceIndex];
+    if (tokensMatch(ch1Ppp.selected, task.correct)) {
+      ch1Ppp.locked = true;
+      overlay.querySelector("#ch1-ppp-check").hidden = true;
+      overlay.querySelectorAll(".ch1-ppp__chip--placed").forEach((chip) => {
+        chip.classList.add("is-correct");
+        chip.disabled = true;
+      });
+      overlay.querySelector("#ch1-ppp-built")?.classList.add("is-correct");
+      scheduleCh1PppAdvance(overlay, () => advanceCh1PppSentence(overlay));
+      return;
+    }
+
+    const built = overlay.querySelector("#ch1-ppp-built");
+    built.classList.add("is-wrong");
+    window.setTimeout(() => built.classList.remove("is-wrong"), 400);
+    showCh1PppResult(overlay, {
+      correct: false,
+      title: "Incorrect",
+      text: task.wrongRule,
+      onContinue: () => renderCh1PppSentence(overlay),
+    });
+  }
+
+  function advanceCh1PppSentence(overlay) {
+    ch1Ppp.sentenceIndex += 1;
+    renderCh1PppStep2(overlay);
+  }
+
+  function renderCh1PppStep3(overlay) {
+    ch1Ppp.step = 3;
+    if (ch1Ppp.blankIndex >= CH1_PPP_WFRAGEN_BLANKS.length) {
+      ch1Ppp.blankIndex = 0;
+      renderCh1PppStep4(overlay);
+      return;
+    }
+    renderCh1PppWBlank(overlay);
+  }
+
+  function isCh1PppWBlankSentenceStart(task) {
+    return !String(task?.prefix || "").trim();
+  }
+
+  function formatCh1PppWWord(word, sentenceStart) {
+    const lower = String(word || "").trim().toLocaleLowerCase("de");
+    if (!lower) return "";
+    if (!sentenceStart) return lower;
+    return lower.charAt(0).toLocaleUpperCase("de") + lower.slice(1);
+  }
+
+  function renderCh1PppWBlank(overlay) {
+    const task = CH1_PPP_WFRAGEN_BLANKS[ch1Ppp.blankIndex];
+    const ui = getCh1PppShell(overlay);
+    ch1Ppp.locked = false;
+    updateCh1PppProgress(overlay);
+    updateCh1PppSubprogress(overlay, ch1Ppp.blankIndex + 1, CH1_PPP_WFRAGEN_BLANKS.length);
+
+    ui.title.textContent = "Choose the correct question word for the gap.";
+    setCh1PppInstruction(overlay, "");
+    ui.body.hidden = false;
+    ui.body.innerHTML = "";
+    ui.result.hidden = true;
+    ui.checkBtn.hidden = true;
+
+    const card = document.createElement("div");
+    card.className = "ch1-ppp__card";
+
+    const sentence = document.createElement("p");
+    sentence.className = "ch1-ppp__sentence";
+    sentence.id = "ch1-ppp-wblank-sentence";
+    const sentenceStart = isCh1PppWBlankSentenceStart(task);
+    const prefix = task.prefix ? `${task.prefix} ` : "";
+    sentence.innerHTML = `${prefix}<span class="ch1-ppp__gap">?</span> ${task.suffix}`;
+    card.appendChild(sentence);
+
+    const options = document.createElement("div");
+    options.className = "ch1-ppp__chips";
+    task.options.forEach((option) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "ch1-ppp__chip";
+      btn.textContent = formatCh1PppWWord(option, sentenceStart);
+      btn.addEventListener("click", () => handleCh1PppWBlank(overlay, option, btn));
+      options.appendChild(btn);
+    });
+    card.appendChild(options);
+    ui.body.appendChild(card);
+  }
+
+  function handleCh1PppWBlank(overlay, option, btn) {
+    if (ch1Ppp.locked) return;
+    const task = CH1_PPP_WFRAGEN_BLANKS[ch1Ppp.blankIndex];
+    const sentence = overlay.querySelector("#ch1-ppp-wblank-sentence");
+    const sentenceStart = isCh1PppWBlankSentenceStart(task);
+    const display = formatCh1PppWWord(option, sentenceStart);
+    const prefix = task.prefix ? `${task.prefix} ` : "";
+
+    if (formatCh1PppWWord(option, false) === formatCh1PppWWord(task.correct, false)) {
+      ch1Ppp.locked = true;
+      btn.classList.add("is-correct");
+      overlay.querySelectorAll(".ch1-ppp__chip").forEach((chip) => {
+        chip.disabled = true;
+      });
+      sentence.innerHTML = `${prefix}<span class="ch1-ppp__gap is-filled is-correct">${display}</span> ${task.suffix}`;
+      scheduleCh1PppAdvance(overlay, () => {
+        ch1Ppp.blankIndex += 1;
+        renderCh1PppStep3(overlay);
+      });
+      return;
+    }
+
+    btn.classList.add("is-wrong");
+    sentence.querySelector(".ch1-ppp__gap")?.classList.add("is-wrong");
+    window.setTimeout(() => {
+      btn.classList.remove("is-wrong");
+      sentence.querySelector(".ch1-ppp__gap")?.classList.remove("is-wrong");
+    }, 450);
+  }
+
+  function renderCh1PppStep4(overlay) {
+    ch1Ppp.step = 4;
+    renderCh1PppMatching(overlay, CH1_PPP_DIRECTIONS, {
+      title: "Directions",
+      instruction: "Match the German direction phrases with their English meanings.",
+      onComplete: () => {
+        ch1Ppp.scenarioIndex = 0;
+        renderCh1PppStep5(overlay);
+      },
+    });
+  }
+
+  function renderCh1PppStep5(overlay) {
+    ch1Ppp.step = 5;
+    if (ch1Ppp.scenarioIndex >= CH1_PPP_DIRECTION_SCENARIOS.length) {
+      ch1Ppp.scenarioIndex = 0;
+      showCh1PppSuccess(overlay);
+      return;
+    }
+    renderCh1PppScenario(overlay);
+  }
+
+  function renderCh1PppScenario(overlay) {
+    const task = CH1_PPP_DIRECTION_SCENARIOS[ch1Ppp.scenarioIndex];
+    const ui = getCh1PppShell(overlay);
+    ch1Ppp.locked = false;
+    updateCh1PppProgress(overlay);
+    updateCh1PppSubprogress(overlay, ch1Ppp.scenarioIndex + 1, CH1_PPP_DIRECTION_SCENARIOS.length);
+
+    ui.title.textContent = "Directions in context";
+    setCh1PppInstruction(overlay, "Choose the German phrase that fits the situation.");
+    ui.body.hidden = false;
+    ui.body.innerHTML = "";
+    ui.result.hidden = true;
+    ui.checkBtn.hidden = true;
+
+    const card = document.createElement("div");
+    card.className = "ch1-ppp__card";
+
+    const prompt = document.createElement("p");
+    prompt.className = "ch1-ppp__prompt ch1-ppp__prompt--target";
+    prompt.textContent = task.prompt;
+    card.appendChild(prompt);
+
+    const options = document.createElement("div");
+    options.className = "ch1-ppp__scenario-options";
+    shuffledUntilDifferent(task.options).forEach((option) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "ch1-ppp__scenario-btn";
+      btn.textContent = option;
+      btn.addEventListener("click", () => handleCh1PppScenario(overlay, btn, option));
+      options.appendChild(btn);
+    });
+    card.appendChild(options);
+    ui.body.appendChild(card);
+  }
+
+  function handleCh1PppScenario(overlay, btn, option) {
+    if (ch1Ppp.locked) return;
+    const task = CH1_PPP_DIRECTION_SCENARIOS[ch1Ppp.scenarioIndex];
+
+    if (option === task.correct) {
+      ch1Ppp.locked = true;
+      btn.classList.add("is-correct");
+      overlay.querySelectorAll(".ch1-ppp__scenario-btn").forEach((chip) => {
+        chip.disabled = true;
+      });
+      const ui = getCh1PppShell(overlay);
+      ui.checkBtn.hidden = false;
+      ui.checkBtn.disabled = false;
+      ui.checkBtn.className = "ch1-ppp__primary";
+      ui.checkBtn.textContent = "Continue";
+      ui.checkBtn.onclick = () => {
+        ch1Ppp.scenarioIndex += 1;
+        renderCh1PppStep5(overlay);
+      };
+      return;
+    }
+
+    btn.classList.add("is-wrong");
+    window.setTimeout(() => btn.classList.remove("is-wrong"), 450);
+  }
+
+  function openCh1PppPractice() {
+    closeCh1PppPractice();
+    closeHotelNavGame();
+    ch1Ppp.active = true;
+    ch1Ppp.step = 1;
+    ch1Ppp.sentenceIndex = 0;
+    ch1Ppp.blankIndex = 0;
+    ch1Ppp.scenarioIndex = 0;
+    ch1Ppp.selected = [];
+    ch1Ppp.matchedCount = 0;
+    ch1Ppp.selectedPairId = null;
+    ch1Ppp.locked = false;
+    ch1Ppp.pendingAdvance = null;
+
+    clearTypeTimer();
+    state.typing = false;
+    hideChoices();
+    els.dialogueBox.hidden = true;
+    els.npcContainer.style.display = "none";
+    els.npcContainer.classList.add("is-hidden");
+    els.lenaContainer.classList.add("is-hidden");
+
+    const overlay = document.createElement("div");
+    overlay.id = "ch1-ppp";
+    overlay.className = "ch1-ppp";
+
+    const panel = document.createElement("section");
+    panel.className = "ch1-ppp__panel";
+    panel.setAttribute("aria-labelledby", "ch1-ppp-title");
+
+    const progressRow = document.createElement("div");
+    progressRow.className = "ch1-ppp__progress-row";
+
+    const progress = document.createElement("p");
+    progress.id = "ch1-ppp-progress";
+    progress.className = "ch1-ppp__progress";
+    progressRow.appendChild(progress);
+
+    const subprogress = document.createElement("p");
+    subprogress.id = "ch1-ppp-subprogress";
+    subprogress.className = "ch1-ppp__subprogress";
+    subprogress.hidden = true;
+    progressRow.appendChild(subprogress);
+    panel.appendChild(progressRow);
+
+    const title = document.createElement("h2");
+    title.id = "ch1-ppp-title";
+    title.className = "ch1-ppp__title";
+    panel.appendChild(title);
+
+    const instruction = document.createElement("p");
+    instruction.id = "ch1-ppp-instruction";
+    instruction.className = "ch1-ppp__instruction";
+    panel.appendChild(instruction);
+
+    const body = document.createElement("div");
+    body.id = "ch1-ppp-body";
+    body.className = "ch1-ppp__body";
+    panel.appendChild(body);
+
+    const result = document.createElement("div");
+    result.id = "ch1-ppp-result";
+    result.className = "ch1-ppp__result";
+    result.hidden = true;
+    result.innerHTML = `
+      <p class="ch1-ppp__result-label" id="ch1-ppp-result-label"></p>
+      <p class="ch1-ppp__result-text" id="ch1-ppp-result-text"></p>
+      <button type="button" class="ch1-ppp__primary" id="ch1-ppp-continue">Continue</button>
+    `;
+    panel.appendChild(result);
+
+    const checkBtn = document.createElement("button");
+    checkBtn.type = "button";
+    checkBtn.id = "ch1-ppp-check";
+    checkBtn.className = "ch1-ppp__primary";
+    checkBtn.hidden = true;
+    panel.appendChild(checkBtn);
+
+    const devControls = document.createElement("div");
+    devControls.className = "ch1-ppp__dev";
+    const devSkip = document.createElement("button");
+    devSkip.type = "button";
+    devSkip.textContent = "Dev Skip";
+    devSkip.addEventListener("click", () => {
+      skipCh1PppCurrentStep(overlay);
+    });
+    devControls.appendChild(devSkip);
+    panel.appendChild(devControls);
+
+    overlay.appendChild(panel);
+    els.game.appendChild(overlay);
+    renderCh1PppStep1(overlay);
+  }
+
+  function getHotelNavStepMeta(nodeId) {
+    if (nodeId === "start_quiz_transport") {
+      return { step: 1, title: "How do you reach the metro from here?" };
+    }
+    if (nodeId.startsWith("quiz_stop_")) {
+      return { step: 2, title: "Which line and stop do you take?" };
+    }
+    return { step: 3, title: "Where is the hotel when you exit at Neubaugasse?" };
+  }
+
+  function closeHotelNavGame() {
+    hotelNav.active = false;
+    hotelNav.locked = false;
+    document.getElementById("hotel-nav")?.remove();
+  }
+
+  function hideHotelNavStage() {
+    els.dialogueBox.hidden = true;
+    hideChoices();
+    els.npcContainer.style.display = "none";
+    els.npcContainer.classList.add("is-hidden");
+    els.lenaContainer.classList.add("is-hidden");
+    hideDirectionHint();
+  }
+
+  function setHotelNavHintOpen(overlay, open) {
+    hotelNav.hintOpen = open;
+    const btn = overlay.querySelector("#hotel-nav-hint-btn");
+    const pop = overlay.querySelector("#hotel-nav-hint-pop");
+    if (!btn || !pop) return;
+    pop.hidden = !open;
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+
+  function fillHotelNavStep(overlay, node) {
+    const meta = getHotelNavStepMeta(node.id);
+    hotelNav.locked = false;
+    overlay.querySelector("#hotel-nav-progress").textContent = `${meta.step} / 3`;
+    overlay.querySelector("#hotel-nav-title").textContent = meta.title;
+    const prompt = overlay.querySelector("#hotel-nav-prompt");
+    prompt.textContent = "";
+    prompt.hidden = true;
+
+    const list = overlay.querySelector("#hotel-nav-choices");
+    list.innerHTML = "";
+    (node.choices || []).forEach((choice) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "hotel-nav__choice";
+      btn.textContent = choice.text;
+      btn.addEventListener("click", () => {
+        if (hotelNav.locked) return;
+        hotelNav.locked = true;
+        selectChoice(choice.text, choice.nextNode);
+      });
+      list.appendChild(btn);
+    });
+
+    setHotelNavHintOpen(overlay, hotelNav.hintOpen);
+  }
+
+  function openHotelNavGame(node) {
+    closeCh1ReviewThought();
+    hotelNav.active = true;
+    hideHotelNavStage();
+    stopVocabButtonPulse();
+
+    let overlay = document.getElementById("hotel-nav");
+    if (!overlay) {
+      hotelNav.hintOpen = false;
+      overlay = document.createElement("div");
+      overlay.id = "hotel-nav";
+      overlay.className = "hotel-nav";
+
+      const layout = document.createElement("div");
+      layout.className = "hotel-nav__layout";
+
+      const hintCol = document.createElement("div");
+      hintCol.className = "hotel-nav__hint-col";
+
+      const hintBtn = document.createElement("button");
+      hintBtn.type = "button";
+      hintBtn.id = "hotel-nav-hint-btn";
+      hintBtn.className = "hotel-nav__hint-btn";
+      hintBtn.setAttribute("aria-expanded", "false");
+      hintBtn.setAttribute("aria-controls", "hotel-nav-hint-pop");
+      hintBtn.innerHTML = '<span aria-hidden="true">💡</span> Hint';
+      hintBtn.addEventListener("click", (event) => {
+        event.stopPropagation();
+        setHotelNavHintOpen(overlay, !hotelNav.hintOpen);
+      });
+      hintCol.appendChild(hintBtn);
+
+      const hintPop = document.createElement("div");
+      hintPop.id = "hotel-nav-hint-pop";
+      hintPop.className = "hotel-nav__hint-pop";
+      hintPop.hidden = true;
+      hintPop.setAttribute("role", "tooltip");
+      const quote =
+        els.directionHintPanel?.querySelector(".direction-hint__quote")?.textContent?.trim() ||
+        OLD_MAN_DIRECTIONS;
+      hintPop.innerHTML = `
+        <p class="hotel-nav__hint-kicker">Viennese Man</p>
+        <p class="hotel-nav__hint-quote"></p>
+      `;
+      hintPop.querySelector(".hotel-nav__hint-quote").textContent = quote;
+      hintCol.appendChild(hintPop);
+
+      const panel = document.createElement("section");
+      panel.className = "hotel-nav__panel";
+      panel.setAttribute("aria-labelledby", "hotel-nav-title");
+      panel.innerHTML = `
+        <p class="hotel-nav__progress" id="hotel-nav-progress"></p>
+        <h2 class="hotel-nav__title" id="hotel-nav-title"></h2>
+        <p class="hotel-nav__prompt" id="hotel-nav-prompt"></p>
+        <div class="hotel-nav__choices" id="hotel-nav-choices"></div>
+      `;
+
+      layout.appendChild(hintCol);
+      layout.appendChild(panel);
+      overlay.appendChild(layout);
+      els.game.appendChild(overlay);
+    }
+
+    fillHotelNavStep(overlay, node);
+  }
+
   // ── Journey completion celebration ───────────────────────────────────────
 
   function removeCelebrationScreen() {
@@ -2289,6 +3367,8 @@ let gameState = {
     closeRulesGame();
     closeAisleGame();
     closeCashierGame();
+    closeCh1PppPractice();
+    closeHotelNavGame();
     removeTagebuchScreen();
     removeCelebrationScreen();
 
@@ -2358,9 +3438,37 @@ let gameState = {
 
   // ── Core render ──────────────────────────────────────────────────────────
 
+  function closeDirectionHintPopup() {
+    if (!els.directionHintPanel || !els.directionHintBtn) return;
+    els.directionHintPanel.hidden = true;
+    els.directionHintBtn.setAttribute("aria-expanded", "false");
+  }
+
+  function hideDirectionHint() {
+    closeDirectionHintPopup();
+    if (els.directionHint) els.directionHint.hidden = true;
+  }
+
+  function toggleDirectionHintPopup() {
+    if (!els.directionHintPanel || !els.directionHintBtn) return;
+    const open = Boolean(els.directionHintPanel.hidden);
+    els.directionHintPanel.hidden = !open;
+    els.directionHintBtn.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+
+  function syncDirectionHint(node) {
+    if (!els.directionHint) return;
+    if (node?.reviewDirections && !HOTEL_NAV_NODE_IDS.has(node.id)) {
+      els.directionHint.hidden = false;
+      return;
+    }
+    hideDirectionHint();
+  }
+
   function renderNode() {
     const node = getNode();
     if (!node) return;
+    syncDirectionHint(node);
 
     if (BLACK_SCREEN_NODE_IDS.has(node.id)) {
       showBlackScreen(node);
@@ -2374,6 +3482,27 @@ let gameState = {
 
     if (node.id === TICKET_MACHINE_TRIGGER_NODE) {
       openTicketMachine(TICKET_MACHINE_NEXT_NODE);
+      return;
+    }
+
+    if (node.id === CH1_PPP_TRIGGER_NODE) {
+      removeBlackScreen();
+      removeJumpScareFlash();
+      setBackground(node.background);
+      openCh1PppPractice();
+      return;
+    }
+
+    if (node.id === CH1_REVIEW_ROUTE_NODE) {
+      showCh1ReviewThought(node);
+      return;
+    }
+
+    if (HOTEL_NAV_NODE_IDS.has(node.id)) {
+      removeBlackScreen();
+      removeJumpScareFlash();
+      setBackground(node.background);
+      openHotelNavGame(node);
       return;
     }
 
@@ -2413,6 +3542,8 @@ let gameState = {
     closeRulesGame();
     closeAisleGame();
     closeCashierGame();
+    closeCh1PppPractice();
+    closeHotelNavGame();
     removeCelebrationScreen();
 
     setBackground(node.background);
@@ -2453,7 +3584,20 @@ let gameState = {
 
     if (state.waitingForChoice) return;
 
+    const current = getNode();
+    if (current?.nextNode && !(getChoicesForCurrentNode(current) || []).length) {
+      goToNode(current.nextNode);
+      return;
+    }
+
     els.advanceHint.classList.add("is-hidden");
+  }
+
+  function applyChapter1NavigationStrike() {
+    if ((gameState.ch1NavMistakes || 0) >= 2 && !gameState.ch1NavStrikeApplied) {
+      gameState.ch1NavStrikeApplied = true;
+      gameState.ch1Strikes = Math.min((gameState.ch1Strikes || 0) + 1, 2);
+    }
   }
 
   function getQuizResultNodeId() {
@@ -2463,6 +3607,7 @@ let gameState = {
       gameState.house === "correct";
 
     gameState.ch1LateArrival = !allCorrect;
+    applyChapter1NavigationStrike();
     return allCorrect ? "arrival_success" : "arrival_failure";
   }
 
@@ -2492,13 +3637,8 @@ let gameState = {
       return;
     }
 
-    if (nodeId === "end_chapter_5") {
-      showTagebuchScreen(5);
-      return;
-    }
-
     if (nodeId === "end_chapter_6") {
-      showTagebuchScreen(6);
+      showTagebuchScreen(5);
       return;
     }
 
@@ -2515,6 +3655,8 @@ let gameState = {
       closeRulesGame();
       closeAisleGame();
       closeCashierGame();
+      closeCh1PppPractice();
+    closeHotelNavGame();
       removeCelebrationScreen();
       removeTagebuchScreen();
       resetGameState();
@@ -2551,19 +3693,42 @@ let gameState = {
     if (currentNode === "start_see_man" && (nextNodeId === "wrong_rude" || nextNodeId === "wrong_grammar")) {
       gameState.ch1StationFailed = true;
     } else if (
+      (currentNode === "start_ask_hotel" ||
+        currentNode === "ask_hotel_wrong_wword" ||
+        currentNode === "ask_hotel_wrong_order") &&
+      nextNodeId !== "correct_ask"
+    ) {
+      if (!gameState.ch1DialogueStrike) {
+        gameState.ch1DialogueStrike = true;
+        gameState.dialogueStrikes = 1;
+        gameState.ch1Strikes = Math.min((gameState.ch1Strikes || 0) + 1, 2);
+      }
+    } else if (
       (currentNode === "ch2_reception_greet" && nextNodeId !== "ch2_reception_id") ||
       (currentNode === "ch2_reception_id" && nextNodeId !== "ch2_id_correct")
     ) {
       gameState.receptionistMistake = true;
     } else if (currentNode === "start_quiz_transport") {
-      gameState.transport = choiceText === "Mit der U-Bahn U3" ? "correct" : "wrong";
+      gameState.transport = choiceText === "Geradeaus zur U-Bahn gehen" ? "correct" : "wrong";
+      if (gameState.transport === "wrong") {
+        gameState.ch1NavMistakes += 1;
+        gameState.navigationMistakes = gameState.ch1NavMistakes;
+      }
     } else if (
       currentNode === "quiz_stop_correct_transport" ||
       currentNode === "quiz_stop_wrong_transport"
     ) {
-      gameState.stop = choiceText === "Station 'Neubaugasse'" ? "correct" : "wrong";
+      gameState.stop = choiceText === "Mit der U3 bis Neubaugasse fahren" ? "correct" : "wrong";
+      if (gameState.stop === "wrong") {
+        gameState.ch1NavMistakes += 1;
+        gameState.navigationMistakes = gameState.ch1NavMistakes;
+      }
     } else if (currentNode.startsWith("quiz_house")) {
-      gameState.house = choiceText === "In der Mitte der Straße" ? "correct" : "wrong";
+      gameState.house = choiceText === "Gegenüber von der Station, neben dem Café" ? "correct" : "wrong";
+      if (gameState.house === "wrong") {
+        gameState.ch1NavMistakes += 1;
+        gameState.navigationMistakes = gameState.ch1NavMistakes;
+      }
     } else if (currentNode === "ch3_platform_deduction" && nextNodeId !== "ch3_platform_correct") {
       gameState.ch3Strikes += 1;
     } else if (currentNode === "ch3_ubahn_thought" && nextNodeId !== "ch3_ubahn_polite") {
@@ -2600,32 +3765,18 @@ let gameState = {
   function getChapterSelectState(chapterNumber, progress) {
     const lastCompleted = progress.lastCompletedChapter || 0;
     const isCompleted = Boolean(progress[`chapter${chapterNumber}`]?.completedAt);
-    const isUnlocked = chapterNumber === 1 || chapterNumber <= lastCompleted + 1;
-    const isActive = isUnlocked && !isCompleted && chapterNumber === lastCompleted + 1;
+    const isActive = !isCompleted && chapterNumber === lastCompleted + 1;
 
-    if (!isUnlocked) return "locked";
     if (isCompleted) return "completed";
     if (isActive) return "active";
     return "unlocked";
   }
 
   function refreshChapterSelectUI() {
-    const progress = loadSavedProgress();
-
     els.chapterCards.forEach((card) => {
-      const chapterNumber = Number(card.dataset.chapter);
-      const state = getChapterSelectState(chapterNumber, progress);
-
       card.classList.remove("chapter-card--locked", "chapter-card--active", "chapter-card--completed", "chapter-card--unlocked");
-      card.classList.add(`chapter-card--${state}`);
-
-      if (state === "locked") {
-        card.disabled = true;
-        card.setAttribute("aria-disabled", "true");
-      } else {
-        card.disabled = false;
-        card.removeAttribute("aria-disabled");
-      }
+      card.disabled = false;
+      card.removeAttribute("aria-disabled");
     });
   }
 
@@ -2649,8 +3800,7 @@ let gameState = {
     2: "chapter_2_teaser",
     3: "chapter_3_title",
     4: "chapter_4_title",
-    5: "chapter_5_title",
-    6: "chapter_6_title",
+    5: "chapter_6_title",
   };
 
   const CHAPTER_LABELS = {
@@ -2658,16 +3808,14 @@ let gameState = {
     2: "Chapter 2 - Check-in",
     3: "Chapter 3 - Unterwegs",
     4: "Chapter 4: Dem Himmel so nah",
-    5: "Chapter 5: Im Supermarkt",
-    6: "Chapter 6: Epilog",
+    5: "Chapter 5: Epilog",
   };
 
   function getCurrentChapterNumber() {
     const nodeId = state.nodeId || "";
     if (nodeId.startsWith("ch6_") || nodeId === "chapter_6_title" || nodeId === "end_chapter_6" || nodeId === "journey_complete") {
-      return 6;
+      return 5;
     }
-    if (nodeId.startsWith("ch5_") || nodeId === "chapter_5_title" || nodeId === "end_chapter_5") return 5;
     if (nodeId.startsWith("ch4_") || nodeId === "chapter_4_title" || nodeId === "end_chapter_4") return 4;
     if (nodeId.startsWith("ch3_") || nodeId === "chapter_3_title" || nodeId === "end_chapter_3") return 3;
     if (
@@ -2682,10 +3830,9 @@ let gameState = {
   }
 
   function restartCurrentChapter() {
-    clearTypeTimer();
-    state.typing = false;
+    hideGameplayScene();
     closeMenu();
-    removeBlackScreen();
+    removeBlackScreen({ restoreScene: false });
     removeJumpScareFlash();
     removeTagebuchScreen();
     removeCelebrationScreen();
@@ -2694,8 +3841,10 @@ let gameState = {
     closeRulesGame();
     closeAisleGame();
     closeCashierGame();
+    closeCh1PppPractice();
+    closeHotelNavGame();
     resetGameState();
-    hideChoices();
+    setBackground("black");
 
     const chapterNumber = getCurrentChapterNumber();
     const startNodeId = CHAPTER_START_NODES[chapterNumber] || CHAPTER_START_NODES[1];
@@ -2704,8 +3853,9 @@ let gameState = {
   }
 
   function startGame() {
-    hideStartMenu();
-    removeBlackScreen();
+    hideGameplayScene();
+    setBackground("black");
+    removeBlackScreen({ restoreScene: false });
     removeTagebuchScreen();
     removeCelebrationScreen();
     closeMeldezettelGame();
@@ -2713,12 +3863,14 @@ let gameState = {
     closeRulesGame();
     closeAisleGame();
     closeCashierGame();
+    closeCh1PppPractice();
+    closeHotelNavGame();
     resetGameState();
     gameState.hasSeenVokabelTutorial = false;
     state.nodeId = START_NODE;
     els.chapterLabel.textContent = "Chapter 1 - Ankunft";
-    hideChoices();
     goToNode(START_NODE);
+    hideStartMenu();
   }
 
   function openMenu() {
@@ -2744,7 +3896,6 @@ let gameState = {
     stopVocabButtonPulse();
     void els.vocabBtn.offsetWidth;
     els.vocabBtn.classList.add("is-pulsing");
-    window.setTimeout(stopVocabButtonPulse, 4200);
   }
 
   function populateVocabList(chapterNumber) {
@@ -2769,6 +3920,7 @@ let gameState = {
 
   function revealVocabList() {
     if (els.vocabTutorial) els.vocabTutorial.hidden = true;
+    if (els.vocabPanel) els.vocabPanel.hidden = false;
     els.vocabList.hidden = false;
   }
 
@@ -2785,6 +3937,7 @@ let gameState = {
 
     const showTutorial = !gameState.hasSeenVokabelTutorial;
     if (els.vocabTutorial) els.vocabTutorial.hidden = !showTutorial;
+    if (els.vocabPanel) els.vocabPanel.hidden = showTutorial;
     els.vocabList.hidden = showTutorial;
 
     els.vocabOverlay.hidden = false;
@@ -2985,10 +4138,14 @@ let gameState = {
     closeRulesGame();
     closeAisleGame();
     closeCashierGame();
+    closeCh1PppPractice();
+    closeHotelNavGame();
     clearTrainerAdvanceTimer();
     vokabeltrainer.active = false;
     if (els.vokabeltrainer) els.vokabeltrainer.hidden = true;
     hideChoices();
+    hideDirectionHint();
+    stopVocabButtonPulse();
     showStartMainActions();
 
     state.nodeId = START_NODE;
@@ -3005,12 +4162,11 @@ let gameState = {
   function jumpToChapter(nodeId) {
     const targetNodeId = nodeId === "ch2_reception_greet" ? "chapter_2_teaser" : nodeId;
 
-    clearTypeTimer();
-    state.typing = false;
+    hideGameplayScene();
+    setBackground("black");
     closeMenu();
-    els.startMenu.hidden = true;
     showStartMainActions();
-    removeBlackScreen();
+    removeBlackScreen({ restoreScene: false });
     removeJumpScareFlash();
     removeTagebuchScreen();
     removeCelebrationScreen();
@@ -3019,7 +4175,9 @@ let gameState = {
     closeRulesGame();
     closeAisleGame();
     closeCashierGame();
-    hideChoices();
+    closeCh1PppPractice();
+    closeHotelNavGame();
+    hideDirectionHint();
     resetGameState();
     els.dialogueText.textContent = "";
     els.speakerName.textContent = "";
@@ -3032,16 +4190,23 @@ let gameState = {
       els.chapterLabel.textContent = CHAPTER_LABELS[3];
     } else if (targetNodeId === "chapter_4_title") {
       els.chapterLabel.textContent = CHAPTER_LABELS[4];
-    } else if (targetNodeId === "chapter_5_title") {
-      els.chapterLabel.textContent = CHAPTER_LABELS[5];
     } else if (targetNodeId === "chapter_6_title") {
-      els.chapterLabel.textContent = CHAPTER_LABELS[6];
+      els.chapterLabel.textContent = CHAPTER_LABELS[5];
     }
 
     goToNode(targetNodeId);
+    hideStartMenu();
   }
 
   function bindEvents() {
+    try {
+      const raw = localStorage.getItem(VOCAB_UNLOCK_STORAGE_KEY);
+      const stored = raw ? JSON.parse(raw) : {};
+      if (stored.chapter1Ppp) saveChapter1PppVocab();
+    } catch (error) {
+      console.warn("Unable to restore practice vocabulary:", error);
+    }
+
     els.dialogueBox.addEventListener("click", (event) => {
       if (event.target.closest(".choice-btn")) return;
       advanceBeat();
@@ -3082,7 +4247,14 @@ let gameState = {
         return;
       }
 
-      if (rulesGame.active || aisleGame.active || cashierGame.active) {
+      if (hotelNav.active && hotelNav.hintOpen && event.code === "Escape") {
+        event.preventDefault();
+        const overlay = document.getElementById("hotel-nav");
+        if (overlay) setHotelNavHintOpen(overlay, false);
+        return;
+      }
+
+      if (rulesGame.active || aisleGame.active || cashierGame.active || ch1Ppp.active || hotelNav.active) {
         if (event.code === "Escape") {
           els.menuPanel.hidden ? openMenu() : closeMenu();
         }
@@ -3094,6 +4266,14 @@ let gameState = {
           event.preventDefault();
           removeCelebrationScreen();
           returnToStartMenu();
+        }
+        return;
+      }
+
+      if (!els.directionHintPanel?.hidden) {
+        if (event.code === "Escape") {
+          event.preventDefault();
+          closeDirectionHintPopup();
         }
         return;
       }
@@ -3146,8 +4326,12 @@ let gameState = {
     els.vocabCloseBtn.addEventListener("click", closeVocabPanel);
     els.vocabTutorialBtn?.addEventListener("click", dismissVocabTutorial);
     els.vocabOverlay.addEventListener("click", (event) => {
-      if (event.target === els.vocabOverlay) closeVocabPanel();
+      if (event.target !== els.vocabOverlay) return;
+      if (els.vocabTutorial && !els.vocabTutorial.hidden) return;
+      closeVocabPanel();
     });
+    els.directionHintBtn?.addEventListener("click", toggleDirectionHintPopup);
+    els.directionHintClose?.addEventListener("click", closeDirectionHintPopup);
     els.startMenuFromGameBtn.addEventListener("click", returnToStartMenu);
 
     els.restartBtn.addEventListener("click", () => {

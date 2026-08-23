@@ -61,7 +61,7 @@ const storyData = {
     id: "start_vocab_intro",
     background: "vienna_hauptbahnhof.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "To help me along the way, I brought my trusty Vocabulary Notebook (Vokabeln). Whenever I see unfamiliar German words, I can check it in the top corner of the screen!",
+    text: "To help me along the way, I brought my trusty Vokabelheft! Whenever I see unfamiliar German words, I can check it in the top corner of the screen!",
     lenaMood: "thoughtful",
     npcImage: "none",
     highlightVocab: true,
@@ -104,27 +104,66 @@ const storyData = {
     lenaMood: "normal",
     npcImage: "old_man_neutral.png",
     choices: [
-      { text: "Entschuldigung, wie komme ich zum Hotel 'Wiener Traum'?", nextNode: "correct_ask" },
-      { text: "Hey du! Wo ist mein Hotel?", nextNode: "wrong_rude" },
-      { text: "Ich suchen nach ein Hotel hier...", nextNode: "wrong_grammar" },
+      { text: "Continue", nextNode: "start_practice_prompt" },
     ],
   },
 
-  wrong_rude: {
-    id: "wrong_rude",
+  start_practice_prompt: {
+    id: "start_practice_prompt",
+    background: "vienna_hauptbahnhof.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Wait, let's practice what to say first so I get it right!",
+    lenaMood: "thoughtful",
+    npcImage: "old_man_neutral.png",
+    choices: [
+      {
+        text: "Start Practice / Üben",
+        nextNode: "ch1_ppp_practice",
+        prominent: true,
+      },
+    ],
+  },
+
+  ch1_ppp_practice: {
+    id: "ch1_ppp_practice",
+    background: "vienna_hauptbahnhof.jpg",
+    speaker: "Lena",
+    text: "",
+    lenaMood: "thoughtful",
+    npcImage: "old_man_neutral.png",
+    choices: [],
+  },
+
+  start_ask_hotel: {
+    id: "start_ask_hotel",
+    background: "vienna_hauptbahnhof.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Alright — I practiced this. Time to ask how to get to the hotel.",
+    lenaMood: "normal",
+    npcImage: "old_man_neutral.png",
+    highlightVocab: true,
+    choices: [
+      { text: "Entschuldigung, wo komme ich zum Hotel 'Wiener Traum'?", nextNode: "ask_hotel_wrong_wword" },
+      { text: "Entschuldigung, wie komme ich zum Hotel 'Wiener Traum'?", nextNode: "correct_ask" },
+      { text: "Entschuldigung, ich komme wie zum Hotel 'Wiener Traum'?", nextNode: "ask_hotel_wrong_order" },
+    ],
+  },
+
+  ask_hotel_wrong_wword: {
+    id: "ask_hotel_wrong_wword",
     background: "vienna_hauptbahnhof.jpg",
     speaker: "Viennese Man",
-    text: "Na bumm... Ein bisschen höflicher bitte, junge Dame! Wie kann ich helfen?",
+    text: "Wie bitte?",
     lenaMood: "unsure",
     npcImage: "old_man_confused.png",
     choices: [],
   },
 
-  wrong_grammar: {
-    id: "wrong_grammar",
+  ask_hotel_wrong_order: {
+    id: "ask_hotel_wrong_order",
     background: "vienna_hauptbahnhof.jpg",
     speaker: "Viennese Man",
-    text: "Wie bitte? Ich habe dich nicht ganz verstanden. Was suchst du?",
+    text: "Wie bitte?",
     lenaMood: "unsure",
     npcImage: "old_man_confused.png",
     choices: [],
@@ -134,43 +173,59 @@ const storyData = {
     id: "correct_ask",
     background: "vienna_hauptbahnhof.jpg",
     speaker: "Viennese Man",
-    text: "Servus! Kein Problem. Fahr mit der U-Bahn U3 bis zur Station 'Neubaugasse'. Das Hotel ist direkt in der Mitte der Straße. Alles klar?",
+    text: "Guten Tag, kein Problem! Gehen Sie zuerst geradeaus zur U-Bahn. Fahren Sie mit der U3 bis Neubaugasse. Das Hotel ist dort direkt gegenüber von der Station, gleich neben dem Café.",
     lenaMood: "normal",
     npcImage: "old_man_friendly.png",
     choices: [
-      { text: "Vielen Dank für die Hilfe! Auf Wiedersehen!", nextNode: "start_quiz_transport" },
+      {
+        text: "Vielen Dank für die Hilfe! Tschüss!",
+        nextNode: "ch1_review_route",
+        prominent: true,
+      },
     ],
   },
 
-  // ── Quiz 1: Which transport? ──────────────────────────────────────────────
+  ch1_review_route: {
+    id: "ch1_review_route",
+    background: "vienna_hauptbahnhof.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Wait, let me double-check his directions in my head so I don't get lost!",
+    lenaMood: "thoughtful",
+    npcImage: "none",
+    choices: [],
+  },
+
+  // ── Quiz 1: How do you reach the metro? ──────────────────────────────────
 
   start_quiz_transport: {
     id: "start_quiz_transport",
     background: "vienna_street.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "The man was very nice! But wait... what exactly did he say? My German is still a bit shaky. Which means of transport should I take?",
+    text: "How do you reach the metro from here?",
     lenaMood: "normal",
     npcImage: "none",
+    reviewDirections: true,
     choices: [
-      { text: "Mit dem Bus", nextNode: "quiz_stop_wrong_transport" },
-      { text: "Mit der Straßenbahn", nextNode: "quiz_stop_wrong_transport" },
-      { text: "Mit der U-Bahn U3", nextNode: "quiz_stop_correct_transport" },
+      { text: "Nach links zum Bus laufen", nextNode: "quiz_stop_wrong_transport" },
+      { text: "Geradeaus zur U-Bahn gehen", nextNode: "quiz_stop_correct_transport" },
+      { text: "Gleich nach rechts abbiegen", nextNode: "quiz_stop_wrong_transport" },
     ],
   },
 
-  // ── Quiz 2: Which station? ────────────────────────────────────────────────
+  // ── Quiz 2: Which line and stop? ─────────────────────────────────────────
 
   quiz_stop_correct_transport: {
     id: "quiz_stop_correct_transport",
     background: "vienna_street.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "Okay, I feel good about the U-Bahn U3. That sounded right. Now I need to remember the station. He said a name very clearly...",
+    text: "Which line and stop do you take?",
     lenaMood: "normal",
     npcImage: "none",
+    reviewDirections: true,
     choices: [
-      { text: "Station 'Karlsplatz'", nextNode: "quiz_house_correct_transport_wrong_stop" },
-      { text: "Station 'Neubaugasse'", nextNode: "quiz_house_correct_transport_correct_stop" },
-      { text: "Station 'Stephansplatz'", nextNode: "quiz_house_correct_transport_wrong_stop" },
+      { text: "Mit der U1 bis Stephansplatz fahren", nextNode: "quiz_house_correct_transport_wrong_stop" },
+      { text: "Mit der U3 bis Neubaugasse fahren", nextNode: "quiz_house_correct_transport_correct_stop" },
+      { text: "Zu Fuß weitergehen", nextNode: "quiz_house_correct_transport_wrong_stop" },
     ],
   },
 
@@ -178,29 +233,31 @@ const storyData = {
     id: "quiz_stop_wrong_transport",
     background: "vienna_street.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "Oh no... the moment I chose that, I started doubting myself. Did he really say that transport? I can't go back now. I still need to remember the station.",
+    text: "Which line and stop do you take?",
     lenaMood: "unsure",
     npcImage: "none",
+    reviewDirections: true,
     choices: [
-      { text: "Station 'Karlsplatz'", nextNode: "quiz_house_wrong_transport_wrong_stop" },
-      { text: "Station 'Neubaugasse'", nextNode: "quiz_house_wrong_transport_correct_stop" },
-      { text: "Station 'Stephansplatz'", nextNode: "quiz_house_wrong_transport_wrong_stop" },
+      { text: "Mit der U1 bis Stephansplatz fahren", nextNode: "quiz_house_wrong_transport_wrong_stop" },
+      { text: "Mit der U3 bis Neubaugasse fahren", nextNode: "quiz_house_wrong_transport_correct_stop" },
+      { text: "Zu Fuß weitergehen", nextNode: "quiz_house_wrong_transport_wrong_stop" },
     ],
   },
 
-  // ── Quiz 3: Where exactly is the hotel? ──────────────────────────────────
+  // ── Quiz 3: Where is the hotel? ──────────────────────────────────────────
 
   quiz_house_correct_transport_correct_stop: {
     id: "quiz_house_correct_transport_correct_stop",
     background: "vienna_street.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "U-Bahn U3 and Neubaugasse. Yes, that feels right! I am almost there. One last detail: where exactly did he say the hotel is on the street?",
+    text: "Where is the hotel when you exit at Neubaugasse?",
     lenaMood: "normal",
     npcImage: "none",
+    reviewDirections: true,
     choices: [
-      { text: "In der Mitte der Straße", nextNode: "black_screen" },
-      { text: "Am Ende der Straße", nextNode: "black_screen" },
+      { text: "Gegenüber von der Station, neben dem Café", nextNode: "black_screen" },
       { text: "Hinter dem Bahnhof", nextNode: "black_screen" },
+      { text: "Weit weg im Park", nextNode: "black_screen" },
     ],
   },
 
@@ -208,13 +265,14 @@ const storyData = {
     id: "quiz_house_correct_transport_wrong_stop",
     background: "vienna_street.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "I think I chose the right transport, but that station answer felt shaky. Still, I need to keep going. Where did he say the hotel is on the street?",
+    text: "Where is the hotel when you exit at Neubaugasse?",
     lenaMood: "unsure",
     npcImage: "none",
+    reviewDirections: true,
     choices: [
-      { text: "In der Mitte der Straße", nextNode: "black_screen" },
       { text: "Hinter dem Bahnhof", nextNode: "black_screen" },
-      { text: "Am Ende der Straße", nextNode: "black_screen" },
+      { text: "Gegenüber von der Station, neben dem Café", nextNode: "black_screen" },
+      { text: "Weit weg im Park", nextNode: "black_screen" },
     ],
   },
 
@@ -222,12 +280,13 @@ const storyData = {
     id: "quiz_house_wrong_transport_correct_stop",
     background: "vienna_street.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "At least Neubaugasse sounds familiar. But I still feel nervous about the transport. Focus, Lena. What did he say about the hotel location?",
+    text: "Where is the hotel when you exit at Neubaugasse?",
     lenaMood: "unsure",
     npcImage: "none",
+    reviewDirections: true,
     choices: [
-      { text: "In der Mitte der Straße", nextNode: "black_screen" },
-      { text: "Am Ende der Straße", nextNode: "black_screen" },
+      { text: "Weit weg im Park", nextNode: "black_screen" },
+      { text: "Gegenüber von der Station, neben dem Café", nextNode: "black_screen" },
       { text: "Hinter dem Bahnhof", nextNode: "black_screen" },
     ],
   },
@@ -236,13 +295,14 @@ const storyData = {
     id: "quiz_house_wrong_transport_wrong_stop",
     background: "vienna_street.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "This is bad... I am not confident about the transport or the station anymore. But I have to make one last decision. Where did he say the hotel is?",
+    text: "Where is the hotel when you exit at Neubaugasse?",
     lenaMood: "unsure",
     npcImage: "none",
+    reviewDirections: true,
     choices: [
-      { text: "In der Mitte der Straße", nextNode: "black_screen" },
-      { text: "Am Ende der Straße", nextNode: "black_screen" },
       { text: "Hinter dem Bahnhof", nextNode: "black_screen" },
+      { text: "Weit weg im Park", nextNode: "black_screen" },
+      { text: "Gegenüber von der Station, neben dem Café", nextNode: "black_screen" },
     ],
   },
 
@@ -264,7 +324,7 @@ const storyData = {
     id: "arrival_success",
     background: "vienna_street.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "I made it! I understood every direction: U-Bahn U3, Neubaugasse, and the hotel in the middle of the street. Maybe my German is better than I thought.",
+    text: "I made it! I understood every direction: geradeaus to the U-Bahn, U3 to Neubaugasse, and the hotel opposite the station next to the café. Maybe my German is better than I thought.",
     lenaMood: "normal",
     npcImage: "none",
     choices: [
@@ -1135,83 +1195,13 @@ const storyData = {
     ],
   },
 
-  // ── Kapitel 5: Im Supermarkt ────────────────────────────────────────────
-
-  chapter_5_title: {
-    id: "chapter_5_title",
-    background: "black",
-    speaker: "System",
-    text: "Chapter 5: Im Supermarkt",
-    lenaMood: "none",
-    npcImage: "none",
-    choices: [
-      { text: "Start Chapter", nextNode: "ch5_outside_intro" },
-    ],
-  },
-
-  ch5_outside_intro: {
-    id: "ch5_outside_intro",
-    background: "supermarket_exterior.jpg",
-    speaker: "Lena (Internal Monologue)",
-    text: "Phew, that was a long climb up Stephansdom! I'm really hungry now. Let's step into this supermarket to grab some dinner and snacks for tomorrow. I need to find the right aisles and then pay at the cashier in German!",
-    lenaMood: "tired",
-    npcImage: "none",
-    choices: [
-      { text: "Enter Supermarket", nextNode: "ch5_aisles_game" },
-    ],
-  },
-
-  ch5_aisles_game: {
-    id: "ch5_aisles_game",
-    background: "supermarket_interior.jpg",
-    speaker: "System",
-    text: "",
-    lenaMood: "none",
-    npcImage: "none",
-    choices: [],
-  },
-
-  ch5_basket_done: {
-    id: "ch5_basket_done",
-    background: "supermarket_interior.jpg",
-    speaker: "Lena (Internal Monologue)",
-    text: "Awesome, I got everything I needed in my basket! Now off to the cashier to pay.",
-    lenaMood: "happy",
-    npcImage: "none",
-    choices: [
-      { text: "Go to the cashier", nextNode: "ch5_cashier_game" },
-    ],
-  },
-
-  ch5_cashier_game: {
-    id: "ch5_cashier_game",
-    background: "supermarket_cashier.jpg",
-    speaker: "System",
-    text: "",
-    lenaMood: "none",
-    npcImage: "none",
-    choices: [],
-  },
-
-  ch5_paid_thought: {
-    id: "ch5_paid_thought",
-    background: "supermarket_cashier.jpg",
-    speaker: "Lena (Internal Monologue)",
-    text: "Phew, I paid in German without any hesitation! Time to head to my room and rest.",
-    lenaMood: "happy",
-    npcImage: "none",
-    choices: [
-      { text: "Head back to the hotel", nextNode: "end_chapter_5" },
-    ],
-  },
-
-  // ── Kapitel 6: Epilog ───────────────────────────────────────────────────
+  // ── Kapitel 5: Epilog ───────────────────────────────────────────────────
 
   chapter_6_title: {
     id: "chapter_6_title",
     background: "black",
     speaker: "System",
-    text: "Chapter 6: Epilog — Das Ende einer tollen Reise",
+    text: "Chapter 5: Epilog — Das Ende einer tollen Reise",
     lenaMood: "none",
     npcImage: "none",
     choices: [
@@ -1235,7 +1225,7 @@ const storyData = {
     id: "ch6_cafe_scene",
     background: "kaffeehaus.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "I'm sitting in this beautiful Viennese café, enjoying my last Melange before my train back to Prague. Looking back at this week, I'm so proud of myself! From buying train tickets to finding my way through the U-Bahn, visiting Stephansdom, and buying groceries... I actually spoke German every day!",
+    text: "I'm sitting in this beautiful Viennese café, enjoying my last Melange before my train back to Prague. Looking back at this week, I'm so proud of myself! From asking for directions to finding my way through the U-Bahn and visiting Stephansdom... I actually spoke German every day!",
     lenaMood: "happy",
     npcImage: "none",
     choices: [
