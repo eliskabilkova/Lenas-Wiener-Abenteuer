@@ -156,7 +156,9 @@ const storyData = {
     text: "Wie bitte?",
     lenaMood: "unsure",
     npcImage: "old_man_confused.png",
-    choices: [],
+    choices: [
+      { text: "Respond to the man", nextNode: "ch1_hotel_apology" },
+    ],
   },
 
   ask_hotel_wrong_order: {
@@ -166,7 +168,22 @@ const storyData = {
     text: "Wie bitte?",
     lenaMood: "unsure",
     npcImage: "old_man_confused.png",
-    choices: [],
+    choices: [
+      { text: "Respond to the man", nextNode: "ch1_hotel_apology" },
+    ],
+  },
+
+  ch1_hotel_apology: {
+    id: "ch1_hotel_apology",
+    background: "vienna_hauptbahnhof.jpg",
+    speaker: "Lena",
+    text: "Entschuldigung, ich versuche es nochmal.",
+    thought: "Come on Lena, you've got this!",
+    lenaMood: "unsure",
+    npcImage: "old_man_confused.png",
+    choices: [
+      { text: "Try again", nextNode: "start_ask_hotel" },
+    ],
   },
 
   correct_ask: {
@@ -177,11 +194,19 @@ const storyData = {
     lenaMood: "normal",
     npcImage: "old_man_friendly.png",
     choices: [
-      {
-        text: "Vielen Dank für die Hilfe! Tschüss!",
-        nextNode: "ch1_review_route",
-        prominent: true,
-      },
+      { text: "Vielen Dank für die Hilfe! Tschüss!", nextNode: "ch1_phew" },
+    ],
+  },
+
+  ch1_phew: {
+    id: "ch1_phew",
+    background: "vienna_hauptbahnhof.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Phew, I managed that!",
+    lenaMood: "happy",
+    npcImage: "none",
+    choices: [
+      { text: "Double-check the directions", nextNode: "ch1_review_route" },
     ],
   },
 
@@ -189,7 +214,7 @@ const storyData = {
     id: "ch1_review_route",
     background: "vienna_hauptbahnhof.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "Wait, let me double-check his directions in my head so I don't get lost!",
+    text: "Let me double-check his directions in my head so I don't get lost!",
     lenaMood: "thoughtful",
     npcImage: "none",
     choices: [],
@@ -206,9 +231,9 @@ const storyData = {
     npcImage: "none",
     reviewDirections: true,
     choices: [
-      { text: "Nach links zum Bus laufen", nextNode: "quiz_stop_wrong_transport" },
-      { text: "Geradeaus zur U-Bahn gehen", nextNode: "quiz_stop_correct_transport" },
-      { text: "Gleich nach rechts abbiegen", nextNode: "quiz_stop_wrong_transport" },
+      { text: "Nach links gehen", nextNode: "quiz_stop_wrong_transport" },
+      { text: "Geradeaus gehen", nextNode: "quiz_stop_correct_transport" },
+      { text: "Nach rechts gehen", nextNode: "quiz_stop_wrong_transport" },
     ],
   },
 
@@ -223,9 +248,9 @@ const storyData = {
     npcImage: "none",
     reviewDirections: true,
     choices: [
-      { text: "Mit der U1 bis Stephansplatz fahren", nextNode: "quiz_house_correct_transport_wrong_stop" },
-      { text: "Mit der U3 bis Neubaugasse fahren", nextNode: "quiz_house_correct_transport_correct_stop" },
-      { text: "Zu Fuß weitergehen", nextNode: "quiz_house_correct_transport_wrong_stop" },
+      { text: "U1 bis Stephansplatz", nextNode: "quiz_house_correct_transport_wrong_stop" },
+      { text: "zu Fuß weitergehen", nextNode: "quiz_house_correct_transport_wrong_stop" },
+      { text: "U3 bis Neubaugasse", nextNode: "quiz_house_correct_transport_correct_stop" },
     ],
   },
 
@@ -238,9 +263,9 @@ const storyData = {
     npcImage: "none",
     reviewDirections: true,
     choices: [
-      { text: "Mit der U1 bis Stephansplatz fahren", nextNode: "quiz_house_wrong_transport_wrong_stop" },
-      { text: "Mit der U3 bis Neubaugasse fahren", nextNode: "quiz_house_wrong_transport_correct_stop" },
-      { text: "Zu Fuß weitergehen", nextNode: "quiz_house_wrong_transport_wrong_stop" },
+      { text: "U1 bis Stephansplatz", nextNode: "quiz_house_wrong_transport_wrong_stop" },
+      { text: "zu Fuß weitergehen", nextNode: "quiz_house_wrong_transport_wrong_stop" },
+      { text: "U3 bis Neubaugasse", nextNode: "quiz_house_wrong_transport_correct_stop" },
     ],
   },
 
@@ -250,14 +275,14 @@ const storyData = {
     id: "quiz_house_correct_transport_correct_stop",
     background: "vienna_street.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "Where is the hotel when you exit at Neubaugasse?",
+    text: "Where is the hotel when you exit the metro station?",
     lenaMood: "normal",
     npcImage: "none",
     reviewDirections: true,
     choices: [
-      { text: "Gegenüber von der Station, neben dem Café", nextNode: "black_screen" },
-      { text: "Hinter dem Bahnhof", nextNode: "black_screen" },
-      { text: "Weit weg im Park", nextNode: "black_screen" },
+      { text: "Gegenüber von der Station, neben dem Café", nextNode: "ch1_nav_reaction" },
+      { text: "Hinter dem Bahnhof", nextNode: "ch1_nav_reaction" },
+      { text: "Gegenüber dem Café, neben der Station", nextNode: "ch1_nav_reaction" },
     ],
   },
 
@@ -265,14 +290,14 @@ const storyData = {
     id: "quiz_house_correct_transport_wrong_stop",
     background: "vienna_street.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "Where is the hotel when you exit at Neubaugasse?",
+    text: "Where is the hotel when you exit the metro station?",
     lenaMood: "unsure",
     npcImage: "none",
     reviewDirections: true,
     choices: [
-      { text: "Hinter dem Bahnhof", nextNode: "black_screen" },
-      { text: "Gegenüber von der Station, neben dem Café", nextNode: "black_screen" },
-      { text: "Weit weg im Park", nextNode: "black_screen" },
+      { text: "Gegenüber von der Station, neben dem Café", nextNode: "ch1_nav_reaction" },
+      { text: "Hinter dem Bahnhof", nextNode: "ch1_nav_reaction" },
+      { text: "Gegenüber dem Café, neben der Station", nextNode: "ch1_nav_reaction" },
     ],
   },
 
@@ -280,14 +305,14 @@ const storyData = {
     id: "quiz_house_wrong_transport_correct_stop",
     background: "vienna_street.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "Where is the hotel when you exit at Neubaugasse?",
+    text: "Where is the hotel when you exit the metro station?",
     lenaMood: "unsure",
     npcImage: "none",
     reviewDirections: true,
     choices: [
-      { text: "Weit weg im Park", nextNode: "black_screen" },
-      { text: "Gegenüber von der Station, neben dem Café", nextNode: "black_screen" },
-      { text: "Hinter dem Bahnhof", nextNode: "black_screen" },
+      { text: "Gegenüber von der Station, neben dem Café", nextNode: "ch1_nav_reaction" },
+      { text: "Hinter dem Bahnhof", nextNode: "ch1_nav_reaction" },
+      { text: "Gegenüber dem Café, neben der Station", nextNode: "ch1_nav_reaction" },
     ],
   },
 
@@ -295,14 +320,26 @@ const storyData = {
     id: "quiz_house_wrong_transport_wrong_stop",
     background: "vienna_street.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "Where is the hotel when you exit at Neubaugasse?",
+    text: "Where is the hotel when you exit the metro station?",
     lenaMood: "unsure",
     npcImage: "none",
     reviewDirections: true,
     choices: [
-      { text: "Hinter dem Bahnhof", nextNode: "black_screen" },
-      { text: "Weit weg im Park", nextNode: "black_screen" },
-      { text: "Gegenüber von der Station, neben dem Café", nextNode: "black_screen" },
+      { text: "Gegenüber von der Station, neben dem Café", nextNode: "ch1_nav_reaction" },
+      { text: "Hinter dem Bahnhof", nextNode: "ch1_nav_reaction" },
+      { text: "Gegenüber dem Café, neben der Station", nextNode: "ch1_nav_reaction" },
+    ],
+  },
+
+  ch1_nav_reaction: {
+    id: "ch1_nav_reaction",
+    background: "vienna_street.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "So, that's done! Hopefully I'll find my way correctly...",
+    lenaMood: "thoughtful",
+    npcImage: "none",
+    choices: [
+      { text: "Head to the hotel", nextNode: "black_screen" },
     ],
   },
 
@@ -336,7 +373,7 @@ const storyData = {
     id: "arrival_failure",
     background: "vienna_street.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "Oh my god, I am exhausted... I got completely lost and took so many wrong turns. It's already completely dark outside, and the street lamps are the only things lighting my way. I finally found the hotel, but it's so late now! My head hurts...",
+    text: "Oh my god, I am exhausted... I must have taken a wrong turn somewhere along the way! I got completely lost. It's already completely dark outside, and the street lamps are the only things lighting my way. I finally found the hotel, but it's so late now! My head hurts...",
     lenaMood: "unsure",
     npcImage: "none",
     choices: [
@@ -352,8 +389,34 @@ const storyData = {
     lenaMood: "normal",
     npcImage: "none",
     choices: [
-      { text: "Approach the reception desk", nextNode: "ch2_reception_greet" },
+      { text: "Continue", nextNode: "ch2_practice_prompt" },
     ],
+  },
+
+  ch2_practice_prompt: {
+    id: "ch2_practice_prompt",
+    background: "hotel_lobby.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "But first, let's practice what I'm going to say!",
+    lenaMood: "thoughtful",
+    npcImage: "none",
+    choices: [
+      {
+        text: "Start Practice / Üben",
+        nextNode: "ch2_ppp_practice",
+        prominent: true,
+      },
+    ],
+  },
+
+  ch2_ppp_practice: {
+    id: "ch2_ppp_practice",
+    background: "hotel_lobby.jpg",
+    speaker: "Lena",
+    text: "",
+    lenaMood: "thoughtful",
+    npcImage: "none",
+    choices: [],
   },
 
   chapter_2_teaser: {
@@ -377,6 +440,7 @@ const storyData = {
     text: "Guten Tag! Herzlich willkommen im Hotel Kaiser. Haben Sie eine Reservierung?",
     lenaMood: "normal",
     npcImage: "receptionist_neutral.png",
+    highlightVocab: true,
     choices: [
       { text: "Hallo! Ich bin Lena. Ich brauche jetzt meinen Zimmerschlüssel.", nextNode: "ch2_greet_wrong_rude" },
       { text: "Guten Tag. Ja, ich habe eine Reservierung, weil ich möchte hier schlafen.", nextNode: "ch2_greet_wrong_grammar" },

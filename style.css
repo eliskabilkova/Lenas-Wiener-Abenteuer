@@ -845,6 +845,17 @@ button {
   font-weight: 500;
 }
 
+.dialogue__speech {
+  font-style: normal;
+  font-weight: 600;
+}
+
+.dialogue__thought {
+  font-style: italic;
+  font-weight: 500;
+  color: #e0e0e0;
+}
+
 .dialogue__text.sensory-text {
   font-style: italic;
   color: #ffe8a8;
@@ -3165,11 +3176,12 @@ button {
 }
 
 .tagebuch-card__text--german {
-  font-style: italic;
+  font-style: normal;
   color: #ece6ff;
 }
 
 .tagebuch-card__text--english {
+  font-style: italic;
   color: rgba(255, 255, 255, 0.72);
   font-size: clamp(0.95rem, 2.3vw, 1.05rem);
 }
@@ -3860,6 +3872,30 @@ button {
   background: rgba(255, 255, 255, 0.03);
 }
 
+.ch1-ppp__built-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  width: 100%;
+}
+
+.ch1-ppp__built-row .ch1-ppp__built {
+  flex: 1;
+}
+
+.ch1-ppp__end-punct {
+  flex-shrink: 0;
+  font-size: 1.55rem;
+  font-weight: 800;
+  line-height: 1;
+  color: #f7f3ff;
+}
+
+.ch1-ppp__built.is-correct + .ch1-ppp__end-punct {
+  color: #c9f4da;
+}
+
 .ch1-ppp__built.is-wrong {
   animation: rulesShake 0.4s ease;
   border-color: rgba(239, 99, 99, 0.7);
@@ -4034,6 +4070,11 @@ button {
   background: #1f8a4d;
   color: #f3fff7;
   opacity: 1;
+}
+
+.ch1-ppp__pair.is-cleared {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .ch1-ppp__pair.is-wrong {
