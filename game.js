@@ -11,11 +11,20 @@ let gameState = {
   navigationMistakes: 0,
   ch1NavStrikeApplied: false,
   receptionistMistake: false,
+  dialogueMistakeQ1: false,
+  dialogueMistakeQ2: false,
+  dialogueStrike: 0,
   meldezettelMistakes: 0,
+  meldezettelErrors: 0,
+  meldezettelStrike: 0,
   ch3Strikes: 0,
   ch4Strikes: 0,
   ch5Strikes: 0,
-  hasSeenVokabelTutorial: false
+  hasSeenVokabelTutorial: false,
+  characters: {
+    lena: { mood: "neutral" },
+    npc: { character: "elder", mood: "neutral", name: "", visible: false },
+  },
 };
 
 /**
@@ -138,10 +147,19 @@ let gameState = {
     gameState.navigationMistakes = 0;
     gameState.ch1NavStrikeApplied = false;
     gameState.receptionistMistake = false;
+    gameState.dialogueMistakeQ1 = false;
+    gameState.dialogueMistakeQ2 = false;
+    gameState.dialogueStrike = 0;
     gameState.meldezettelMistakes = 0;
+    gameState.meldezettelErrors = 0;
+    gameState.meldezettelStrike = 0;
     gameState.ch3Strikes = 0;
     gameState.ch4Strikes = 0;
     gameState.ch5Strikes = 0;
+    gameState.characters = {
+      lena: { mood: "neutral" },
+      npc: { character: "elder", mood: "neutral", name: "", visible: false },
+    };
   }
 
   const BACKGROUND_MAP = {
@@ -165,10 +183,10 @@ let gameState = {
   const NPC_MAP = {
     none: { visible: false, character: "elder", name: "Viennese Man", mood: "neutral" },
     "old_man_neutral.png": { visible: true, character: "elder", name: "Viennese Man", mood: "neutral" },
-    "old_man_confused.png": { visible: true, character: "elder", name: "Viennese Man", mood: "neutral" },
+    "old_man_confused.png": { visible: true, character: "elder", name: "Viennese Man", mood: "uncertain" },
     "old_man_friendly.png": { visible: true, character: "elder", name: "Viennese Man", mood: "happy" },
     "receptionist_neutral.png": { visible: true, character: "mira", name: "Rezeptionistin", mood: "neutral" },
-    "receptionist_confused.png": { visible: true, character: "mira", name: "Rezeptionistin", mood: "neutral" },
+    "receptionist_confused.png": { visible: true, character: "mira", name: "Rezeptionistin", mood: "uncertain" },
     "commuter_man_neutral.png": { visible: true, character: "elder", name: "Wiener Mann", mood: "neutral" },
     "commuter_man_annoyed.png": { visible: true, character: "elder", name: "Wiener Mann", mood: "neutral" },
     "mozart_seller_neutral.png": { visible: true, character: "mozart_seller", name: "Straßenverkäufer", mood: "neutral" },
@@ -177,17 +195,34 @@ let gameState = {
     "cashier_friendly.png": { visible: true, character: "mira", name: "Kassiererin", mood: "happy" },
   };
 
+  // Sprite-ready mood values written to gameState.characters and data-mood:
+  // lena: "neutral" | "happy" | "confident" | "uncertain" | "surprised" | "thoughtful" | "tired" | "exhausted"
+  // npc:  "neutral" | "happy" | "uncertain" | "pushy" | "stern" (+ optional node.npcMood override)
   const LENA_MOOD_MAP = {
     normal: "neutral",
+    neutral: "neutral",
     happy: "happy",
-    unsure: "thoughtful",
+    confident: "confident",
+    unsure: "uncertain",
+    uncertain: "uncertain",
     surprised: "surprised",
     thoughtful: "thoughtful",
-    // Distinct mood values so tired/exhausted Lena artwork can be swapped in later.
     tired: "tired",
     exhausted: "exhausted",
     none: "neutral",
   };
+
+  function resolveLenaMood(node) {
+    return LENA_MOOD_MAP[node?.lenaMood] || "neutral";
+  }
+
+  function resolveNpc(node) {
+    const npc = { ...(NPC_MAP[node?.npcImage] || NPC_MAP.none) };
+    if (node?.npcMood) {
+      npc.mood = LENA_MOOD_MAP[node.npcMood] || node.npcMood;
+    }
+    return npc;
+  }
 
   const JUMP_SCARE_NODE_IDS = new Set(["ch4_mozart_surprise"]);
 
@@ -253,7 +288,7 @@ let gameState = {
     },
     {
       type: "order",
-      prompt: "Ask where the underground station is.",
+      prompt: "Where is the train station?",
       tokens: ["Wo", "ist", "die", "U-Bahn-Station?"],
       distractors: ["Wohin", "komme"],
       correct: ["Wo", "ist", "die", "U-Bahn-Station?"],
@@ -261,7 +296,7 @@ let gameState = {
     },
     {
       type: "order",
-      prompt: "Ask where this train is going.",
+      prompt: "Where is this train going?",
       tokens: ["Wohin", "fährt", "dieser", "Zug?"],
       distractors: ["Wo", "Wie"],
       correct: ["Wohin", "fährt", "dieser", "Zug?"],
@@ -269,7 +304,7 @@ let gameState = {
     },
     {
       type: "order",
-      prompt: "Ask when the bus arrives.",
+      prompt: "When does the bus arrive?",
       tokens: ["Wann", "kommt", "der", "Bus", "an?"],
       distractors: ["Wer", "Wo"],
       correct: ["Wann", "kommt", "der", "Bus", "an?"],
@@ -277,7 +312,7 @@ let gameState = {
     },
     {
       type: "order",
-      prompt: "Ask who can help you.",
+      prompt: "Who can help me?",
       tokens: ["Wer", "kann", "mir", "helfen?"],
       distractors: ["Wo", "Wann"],
       correct: ["Wer", "kann", "mir", "helfen?"],
@@ -287,35 +322,35 @@ let gameState = {
 
   const CH1_PPP_WFRAGEN_BLANKS = [
     {
-      prompt: "Choose the correct question word.",
+      prompt: "Where does Lena live?",
       prefix: "",
       suffix: "wohnt Lena?",
       options: ["Wer", "Wo", "Wie"],
       correct: "Wo",
     },
     {
-      prompt: "Choose the correct question word.",
+      prompt: "Excuse me, how do I get to the hotel?",
       prefix: "Entschuldigung,",
       suffix: "komme ich zum Hotel?",
       options: ["Wo", "Wie", "Wohin"],
       correct: "Wie",
     },
     {
-      prompt: "Choose the correct question word.",
+      prompt: "Where is this train going?",
       prefix: "",
       suffix: "fährt dieser Zug?",
       options: ["Wo", "Wohin", "Wann"],
       correct: "Wohin",
     },
     {
-      prompt: "Choose the correct question word.",
+      prompt: "Who can help me?",
       prefix: "",
       suffix: "kann mir helfen?",
       options: ["Wer", "Warum", "Wann"],
       correct: "Wer",
     },
     {
-      prompt: "Choose the correct question word.",
+      prompt: "When does the bus arrive?",
       prefix: "",
       suffix: "kommt der Bus an?",
       options: ["Wo", "Wer", "Wann"],
@@ -334,29 +369,34 @@ let gameState = {
 
   const CH1_PPP_DIRECTION_SCENARIOS = [
     {
-      prompt: "The hotel is across from the station. How do you say 'across from the station' in German?",
+      prompt: "The hotel is across from the station.",
+      sentence: "Das Hotel ist ______ .",
       options: ["gegenüber dem Bahnhof", "neben dem Bahnhof", "geradeaus zum Bahnhof"],
       correct: "gegenüber dem Bahnhof",
     },
     {
-      prompt: "The café is next to the hotel. How do you say 'next to the hotel' in German?",
-      options: ["dort das Hotel", "neben dem Hotel", "nach links zum Hotel"],
+      prompt: "The café is next to the hotel.",
+      sentence: "Das Café ist ______ .",
+      options: ["neben dem Hotel", "gegenüber dem Hotel", "geradeaus zum Hotel"],
       correct: "neben dem Hotel",
     },
     {
-      prompt: "You need to keep walking without turning. How do you say 'Go straight ahead'?",
-      options: ["Gehen Sie geradeaus", "Gehen Sie nach rechts", "Das Hotel ist dort"],
-      correct: "Gehen Sie geradeaus",
+      prompt: "Go straight ahead.",
+      sentence: "Gehen Sie ______ .",
+      options: ["geradeaus", "nach rechts", "nach links"],
+      correct: "geradeaus",
     },
     {
-      prompt: "At the corner you must turn left. How do you say 'to the left'?",
-      options: ["nach rechts", "gegenüber", "nach links"],
+      prompt: "Go to the left.",
+      sentence: "Gehen Sie ______ .",
+      options: ["nach links", "nach rechts", "gegenüber"],
       correct: "nach links",
     },
     {
-      prompt: "You can see the hotel over there. How do you say 'The hotel is there'?",
-      options: ["Das Hotel ist dort", "Das Hotel ist neben", "Das Hotel ist geradeaus"],
-      correct: "Das Hotel ist dort",
+      prompt: "The hotel is there.",
+      sentence: "Das Hotel ist ______ .",
+      options: ["dort", "neben", "geradeaus"],
+      correct: "dort",
     },
   ];
 
@@ -392,10 +432,43 @@ let gameState = {
     english: pair.english,
   }));
 
+  const CH2_PPP_MODAL_BLANKS = [
+    {
+      prompt: "Am I allowed to park here?",
+      sentence: "______ ich hier parken?",
+      options: ["Darf", "Muss", "Will"],
+      correct: "Darf",
+    },
+    {
+      prompt: "I would like to pay now, please.",
+      sentence: "Ich ______ bitte jetzt bezahlen.",
+      options: ["möchte", "muss", "kann"],
+      correct: "möchte",
+    },
+    {
+      prompt: "Can you please help me?",
+      sentence: "______ Sie mir bitte helfen?",
+      options: ["Können", "Müssen", "Dürfen"],
+      correct: "Können",
+    },
+    {
+      prompt: "Do I have to fill out the form?",
+      sentence: "______ ich das Formular ausfüllen?",
+      options: ["Muss", "Kann", "Soll"],
+      correct: "Muss",
+    },
+    {
+      prompt: "Should I leave the key here?",
+      sentence: "______ ich den Schlüssel hier lassen?",
+      options: ["Soll", "Darf", "Kann"],
+      correct: "Soll",
+    },
+  ];
+
   const CH2_PPP_SENTENCES = [
     {
       type: "order",
-      prompt: "Greet the receptionist politely.",
+      prompt: "Good day.",
       tokens: ["Guten", "Tag"],
       distractors: ["Tschüss", "Hallo"],
       chips: ["Tag", "Tschüss", "Guten", "Hallo"],
@@ -405,7 +478,7 @@ let gameState = {
     },
     {
       type: "order",
-      prompt: "Say that you have a reservation.",
+      prompt: "I have a reservation.",
       tokens: ["Ich", "habe", "eine", "Reservierung"],
       distractors: ["hat", "Meldezettel"],
       chips: ["hat", "Ich", "Reservierung", "Meldezettel", "habe", "eine"],
@@ -415,7 +488,7 @@ let gameState = {
     },
     {
       type: "order",
-      prompt: "Hand over your ID.",
+      prompt: "Here is my ID.",
       tokens: ["Hier", "ist", "mein", "Ausweis"],
       distractors: ["dein", "Schlüssel"],
       chips: ["Ausweis", "dein", "Hier", "Schlüssel", "ist", "mein"],
@@ -425,7 +498,7 @@ let gameState = {
     },
     {
       type: "order",
-      prompt: "Ask where your room is.",
+      prompt: "Where is my room?",
       tokens: ["Wo", "ist", "mein", "Zimmer"],
       distractors: ["Wie", "dein"],
       chips: ["Zimmer", "Wo", "mein", "ist", "Wie", "dein"],
@@ -435,7 +508,7 @@ let gameState = {
     },
     {
       type: "order",
-      prompt: "Ask if you can pay with a card.",
+      prompt: "Can I pay with a card?",
       tokens: ["Kann", "ich", "mit", "Karte", "bezahlen"],
       distractors: ["soll", "ohne"],
       chips: ["bezahlen", "mit", "Kann", "Karte", "ich", "soll", "ohne"],
@@ -445,7 +518,7 @@ let gameState = {
     },
     {
       type: "order",
-      prompt: "Ask when check-out time is.",
+      prompt: "When is check-out?",
       tokens: ["Wann", "ist", "der", "Check-out"],
       distractors: ["Wo", "Wer"],
       chips: ["Check-out", "Wann", "der", "ist", "Wo", "Wer"],
@@ -560,12 +633,14 @@ let gameState = {
       step1Instruction: "Match the German question words with their English meanings.",
       step1Wrong: "Wo = where · Wohin = where to · Wie = how · Wann = when · Wer = who · Warum = why",
       sentences: CH1_PPP_SENTENCES,
+      step2Title: "Sentence Building",
       blanks: CH1_PPP_WFRAGEN_BLANKS,
+      step3Title: "W-Fragen in Context",
       matching2: CH1_PPP_DIRECTIONS,
       step4Title: "Directions",
       step4Instruction: "Match the German direction phrases with their English meanings.",
       scenarios: CH1_PPP_DIRECTION_SCENARIOS,
-      step5Title: "Directions in context",
+      step5Title: "Directions in Context",
       step5Instruction: "Choose the German phrase that fits the situation.",
     },
     ch2_ppp_practice: {
@@ -576,24 +651,45 @@ let gameState = {
       vocabChapter: "chapter2",
       vocabFlag: "chapter2Ppp",
       matching1: CH2_PPP_VOCAB_SETS,
-      step1Title: "Check-in words",
-      step1Instruction: "Match the German hotel words with their English meanings.",
-      step1Wrong: "Match each German term with its English meaning.",
-      sentences: CH2_PPP_SENTENCES,
-      matching3: CH2_PPP_MODALS,
-      step3Title: "Modal verbs",
-      step3Instruction: "Match each German modal verb with its English translation.",
-      matching2: CH2_PPP_PHRASES,
-      step4Title: "Hotel phrases",
-      step4Instruction: "Match the German hotel phrases with their English meanings.",
-      scenarios: CH2_PPP_SCENARIOS,
-      step5Title: "At reception",
-      step5Instruction: "Choose the phrase that fits the check-in situation.",
+      flow: [
+        {
+          type: "matching",
+          title: "Check-in words",
+          instruction: "Match the German hotel words with their English meanings.",
+          pairs: CH2_PPP_VOCAB_SETS[0],
+        },
+        {
+          type: "matching",
+          title: "Check-in words",
+          instruction: "Match the German hotel words with their English meanings.",
+          pairs: CH2_PPP_VOCAB_SETS[1],
+        },
+        {
+          type: "matching",
+          title: "Modal verbs",
+          instruction: "Match each German modal verb with its English translation.",
+          pairs: CH2_PPP_MODALS,
+          shuffleLeft: true,
+        },
+        {
+          type: "blanks",
+          title: "Modal Verbs in Context",
+          instruction: "Choose the modal verb that fits the sentence.",
+          tasks: CH2_PPP_MODAL_BLANKS,
+        },
+        {
+          type: "sentences",
+          title: "Sentence Building",
+          instruction: "Form the correct German sentence using proper word order.",
+          tasks: CH2_PPP_SENTENCES,
+        },
+      ],
     },
   };
 
   const MELDEZETTEL_TRIGGER_NODE = "ch2_meldezettel";
   const MELDEZETTEL_SUCCESS_NODE = "ch2_meldezettel_success";
+  const MELDEZETTEL_UNCERTAIN_NODE = "ch2_meldezettel_uncertain";
 
   const TICKET_MACHINE_TRIGGER_NODE = "ch3_ticket_machine";
   const TICKET_MACHINE_NEXT_NODE = "ch3_boarding";
@@ -709,12 +805,11 @@ let gameState = {
     { id: "vorname", label: "Vorname", answer: "Lena" },
     { id: "nachname", label: "Nachname", answer: "Majerová" },
     { id: "geburtsdatum", label: "Geburtsdatum", answer: "12. 04. 2008" },
-    { id: "strasse", label: "Strasse/Hnr", answer: "Na Cikorce 2166/2b" },
+    { id: "strasse", label: "Strasse", answer: "Na Cikorce 2166/2b" },
     { id: "plz_ort", label: "PLZ / Ort", answer: "143 00 Praha 12" },
     { id: "staatsangehoerigkeit", label: "Staatsangehörigkeit", answer: "tschechisch" },
-    { id: "ausweisnummer", label: "Ausweisnummer", answer: "L03X9921B" },
     { id: "ankunftsdatum", label: "Ankunftsdatum", answer: "15. 07. 2027" },
-    { id: "abreisedatum", label: "Abreisedatum", answer: "20. 07. 2027" },
+    { id: "abreisedatum", label: "Abreisedatum", answer: "16. 07. 2027" },
     { id: "zimmertyp", label: "Zimmertyp", answer: "Einzelzimmer" },
     { id: "zahlungsart", label: "Zahlungsart", answer: "Kreditkarte" },
   ];
@@ -724,6 +819,8 @@ let gameState = {
     cards: [],
     fieldStatus: {},
     selectedCardId: null,
+    dragCardId: null,
+    suppressClick: false,
     onSuccessNodeId: null,
     message: "",
     messageType: "info",
@@ -755,7 +852,7 @@ let gameState = {
     },
     ch2_greet_wrong_rude: {
       speaker: "Lena",
-      text: "Entschuldigung, ich war unhöflich. Ich versuche es noch einmal...",
+      text: "Entschuldigung! Ich versuche es noch einmal.",
       replayChoicesFrom: "ch2_reception_greet",
     },
     ch2_greet_wrong_grammar: {
@@ -884,8 +981,17 @@ let gameState = {
   }
 
   function updateCharacters(node) {
-    const npc = NPC_MAP[node.npcImage] || NPC_MAP.none;
-    const lenaMood = LENA_MOOD_MAP[node.lenaMood] || "neutral";
+    const npc = resolveNpc(node);
+    const lenaMood = resolveLenaMood(node);
+    gameState.characters = {
+      lena: { mood: lenaMood },
+      npc: {
+        character: npc.character,
+        mood: npc.mood,
+        name: npc.name,
+        visible: npc.visible,
+      },
+    };
 
     if (npc.visible) {
       els.npcContainer.style.display = "";
@@ -1093,6 +1199,7 @@ let gameState = {
       speaker: followUp.speaker || "Lena",
       lenaMood: followUp.lenaMood || sourceNode.lenaMood,
       npcImage: followUp.npcImage !== undefined ? followUp.npcImage : sourceNode.npcImage,
+      npcMood: followUp.npcMood || sourceNode.npcMood,
     });
 
     const speaker = followUp.speaker || "Lena";
@@ -1213,7 +1320,7 @@ let gameState = {
 
     window.setTimeout(() => {
       const node = getNode();
-      const npc = NPC_MAP[node.npcImage] || NPC_MAP.none;
+      const npc = resolveNpc(node);
       if (npc.visible) {
         els.npcContainer.style.display = "";
         els.npcContainer.classList.remove("is-hidden");
@@ -1240,7 +1347,11 @@ let gameState = {
     setBackground(node.background);
     els.lenaContainer.classList.remove("is-hidden", "is-dimmed", "is-speaking");
     els.lenaSprite.dataset.character = "lena";
-    els.lenaSprite.dataset.mood = LENA_MOOD_MAP[node.lenaMood] || "surprised";
+    els.lenaSprite.dataset.mood = resolveLenaMood({ lenaMood: node.lenaMood || "surprised" });
+    gameState.characters = {
+      lena: { mood: els.lenaSprite.dataset.mood },
+      npc: { character: "elder", mood: "neutral", name: "", visible: false },
+    };
 
     els.npcContainer.classList.remove("is-jumpscare-pop", "is-speaking", "is-dimmed");
     els.npcContainer.style.display = "none";
@@ -1415,17 +1526,17 @@ let gameState = {
         photo: "photo-c2-a.png",
         alt: "Lena smiling at the hotel reception",
         german:
-          "Das Hotel ist sehr schön! Das Einchecken an der Rezeption hat super geklappt. Ich habe auf Deutsch nach dem Frühstück und dem WLAN-Passwort gefragt. Der Rezeptionist war sehr nett. Jetzt kann ich mich ausruhen.",
+          "Das Hotel ist sehr schön! Das Einchecken hat super geklappt. Ich habe an der Rezeption Deutsch gesprochen, den Meldezettel ausgefüllt, und jetzt habe ich meinen Zimmerschlüssel. Ich fühle mich wirklich sicher.",
         english:
-          "The hotel is very nice! Checking in at reception went great. I asked about breakfast and the Wi-Fi password in German. The receptionist was very kind. Now I can rest.",
+          "The hotel is very nice! Check-in went so smoothly. I spoke German at reception, filled out the Meldezettel, and now I have my room key. I feel really confident.",
       },
       challenge: {
         photo: "photo-c2-b.png",
         alt: "Lena looking overwhelmed at the hotel reception",
         german:
-          "Ein schwieriger Abend. An der Rezeption habe ich ein paar Fehler gemacht und der Rezeptionist hat mich nicht sofort verstanden. Es war ein bisschen peinlich, aber ich habe mein Zimmer bekommen. Ich muss mehr lernen.",
+          "An der Rezeption habe ich ein paar Fehler gemacht und war ein bisschen unsicher. Aber ich habe endlich meinen Zimmerschlüssel, und ich bin erleichtert, dass das Einchecken hinter mir liegt.",
         english:
-          "A difficult evening. I made a few mistakes at reception and the receptionist didn't understand me right away. It was a bit embarrassing, but I got my room. I need to study more.",
+          "I made a few mistakes at reception and felt a bit self-conscious. But I finally have my room key, and I'm relieved that check-in is over.",
       },
     },
     3: {
@@ -1515,9 +1626,20 @@ let gameState = {
     }
   }
 
+  function getChapter2TotalStrikes() {
+    gameState.dialogueStrike =
+      gameState.dialogueMistakeQ1 && gameState.dialogueMistakeQ2 ? 1 : 0;
+    gameState.meldezettelStrike =
+      (gameState.meldezettelErrors || 0) >= MELDEZETTEL_MISTAKE_THRESHOLD ? 1 : 0;
+    return Math.min(
+      (gameState.dialogueStrike ? 1 : 0) + (gameState.meldezettelStrike ? 1 : 0),
+      2
+    );
+  }
+
   function getChapterStrikeCount(chapterNumber) {
     if (chapterNumber === 2) {
-      return [gameState.receptionistMistake, gameState.meldezettelMistakes >= MELDEZETTEL_MISTAKE_THRESHOLD].filter(Boolean).length;
+      return getChapter2TotalStrikes();
     }
 
     if (chapterNumber === 3) {
@@ -1579,7 +1701,11 @@ let gameState = {
   function getTagebuchVariant(chapterNumber, strikes) {
     const content = TAGEBUCH_CONTENT[chapterNumber] || TAGEBUCH_CONTENT[1];
     const isChallenging =
-      chapterNumber === 1 ? getChapter1TagebuchIsChallenge() : strikes >= 2;
+      chapterNumber === 1
+        ? getChapter1TagebuchIsChallenge()
+        : chapterNumber === 2
+          ? strikes > 0
+          : strikes >= 2;
     const variant = isChallenging ? content.challenge : content.success;
 
     return {
@@ -1815,13 +1941,33 @@ let gameState = {
     }
 
     const inField = isFieldId(card.location);
+    cardEl.draggable = true;
+
+    cardEl.addEventListener("dragstart", (event) => {
+      if (meldezettel.tutorialOpen) {
+        event.preventDefault();
+        return;
+      }
+      meldezettel.dragCardId = card.id;
+      meldezettel.suppressClick = true;
+      event.dataTransfer.setData("text/plain", card.id);
+      event.dataTransfer.effectAllowed = "move";
+      cardEl.classList.add("is-dragging");
+    });
+
+    cardEl.addEventListener("dragend", () => {
+      cardEl.classList.remove("is-dragging");
+      meldezettel.dragCardId = null;
+      window.setTimeout(() => {
+        meldezettel.suppressClick = false;
+      }, 0);
+    });
 
     cardEl.addEventListener("click", (event) => {
       event.stopPropagation();
-      if (meldezettel.tutorialOpen) return;
+      if (meldezettel.tutorialOpen || meldezettel.suppressClick) return;
 
       if (inField) {
-        // A placed card: either swap in the currently selected card, or send this one back to the pool.
         if (meldezettel.selectedCardId && meldezettel.selectedCardId !== card.id) {
           placeCard(meldezettel.selectedCardId, card.location);
         } else {
@@ -1830,7 +1976,6 @@ let gameState = {
         return;
       }
 
-      // A pooled card: toggle its selection.
       meldezettel.selectedCardId = meldezettel.selectedCardId === card.id ? null : card.id;
       renderMeldezettel();
     });
@@ -1875,10 +2020,27 @@ let gameState = {
         fieldEl.classList.add("is-droppable");
       }
 
+      fieldEl.addEventListener("dragover", (event) => {
+        if (meldezettel.tutorialOpen || card?.locked) return;
+        event.preventDefault();
+        fieldEl.classList.add("is-droppable");
+      });
+
+      fieldEl.addEventListener("dragleave", () => {
+        if (!meldezettel.selectedCardId) fieldEl.classList.remove("is-droppable");
+      });
+
+      fieldEl.addEventListener("drop", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (meldezettel.tutorialOpen || card?.locked) return;
+        const cardId = event.dataTransfer.getData("text/plain") || meldezettel.dragCardId;
+        if (cardId) placeCard(cardId, field.id);
+      });
+
       fieldEl.addEventListener("click", () => {
-        if (meldezettel.tutorialOpen) return;
+        if (meldezettel.tutorialOpen || meldezettel.suppressClick) return;
         if (card?.locked) return;
-        // Clicking an empty (or filled) field while a card is selected assigns it here.
         if (meldezettel.selectedCardId) {
           placeCard(meldezettel.selectedCardId, field.id);
         }
@@ -1905,6 +2067,16 @@ let gameState = {
     if (!els.meldezettelPool || !els.meldezettelSubmitBtn) return;
 
     // Clicking the empty area of the pool clears the current selection.
+    els.meldezettelPool.addEventListener("dragover", (event) => {
+      if (meldezettel.tutorialOpen) return;
+      event.preventDefault();
+    });
+    els.meldezettelPool.addEventListener("drop", (event) => {
+      event.preventDefault();
+      if (meldezettel.tutorialOpen) return;
+      const cardId = event.dataTransfer.getData("text/plain") || meldezettel.dragCardId;
+      if (cardId) returnCardToPool(cardId);
+    });
     els.meldezettelPool.addEventListener("click", (event) => {
       if (meldezettel.tutorialOpen) return;
       if (event.target !== els.meldezettelPool) return;
@@ -1950,13 +2122,17 @@ let gameState = {
       renderMeldezettel();
       els.meldezettelSubmitBtn.disabled = true;
 
-      const nextNodeId = meldezettel.onSuccessNodeId;
+      const nextNodeId = getMeldezettelOutcomeNode();
       setTimeout(() => {
         closeMeldezettelGame();
         goToNode(nextNodeId);
       }, 1500);
     } else {
-      gameState.meldezettelMistakes += incorrectCount;
+      gameState.meldezettelErrors += incorrectCount;
+      gameState.meldezettelMistakes = gameState.meldezettelErrors;
+      if (gameState.meldezettelErrors >= MELDEZETTEL_MISTAKE_THRESHOLD) {
+        gameState.meldezettelStrike = 1;
+      }
       meldezettel.cards = shuffleArray(meldezettel.cards);
       meldezettel.message = "Entschuldigung, aber ich glaube, da ist ein Fehler im Formular. Bitte prüfen Sie das noch einmal.";
       meldezettel.messageType = "error";
@@ -1967,12 +2143,20 @@ let gameState = {
   function skipMeldezettelForDev(mistakeCount) {
     if (!meldezettel.active) return;
 
+    gameState.meldezettelErrors = mistakeCount;
     gameState.meldezettelMistakes = mistakeCount;
+    gameState.meldezettelStrike = mistakeCount >= MELDEZETTEL_MISTAKE_THRESHOLD ? 1 : 0;
     meldezettel.tutorialOpen = false;
 
-    const nextNodeId = meldezettel.onSuccessNodeId || MELDEZETTEL_SUCCESS_NODE;
     closeMeldezettelGame();
-    goToNode(nextNodeId);
+    goToNode(getMeldezettelOutcomeNode());
+  }
+
+  function getMeldezettelOutcomeNode() {
+    if (gameState.meldezettelStrike === 1) {
+      return MELDEZETTEL_UNCERTAIN_NODE;
+    }
+    return meldezettel.onSuccessNodeId || MELDEZETTEL_SUCCESS_NODE;
   }
 
   function openMeldezettelGame(onSuccessNodeId) {
@@ -2044,32 +2228,20 @@ let gameState = {
     const title = document.createElement("h3");
     title.id = "meldezettel-tutorial-title";
     title.className = "meldezettel-tutorial__title";
-    title.textContent = "How to Play: Registration Form";
+    title.textContent = "Meldezettel";
     panel.appendChild(title);
 
     const intro = document.createElement("p");
     intro.className = "meldezettel-tutorial__text";
-    intro.textContent = "Help Lena fill out the hotel registration form (Meldezettel) using her details.";
+    intro.textContent = "Fill out the registration form with Lena's personal details.";
     panel.appendChild(intro);
 
-    const controlsTitle = document.createElement("p");
-    controlsTitle.className = "meldezettel-tutorial__controls-title";
-    controlsTitle.textContent = "Controls:";
-    panel.appendChild(controlsTitle);
-
-    const controls = document.createElement("ul");
-    controls.className = "meldezettel-tutorial__list";
-    [
-      "Click on a card from the 'Available Information' pool at the bottom to select it.",
-      "Click on the correct empty field in the form above to place it.",
-      "Click a placed card inside the form if you want to remove it.",
-      "Click 'Formular abgeben' when you are done!",
-    ].forEach((itemText) => {
-      const item = document.createElement("li");
-      item.textContent = itemText;
-      controls.appendChild(item);
-    });
-    panel.appendChild(controls);
+    const startBtn = document.createElement("button");
+    startBtn.type = "button";
+    startBtn.className = "meldezettel-tutorial__start";
+    startBtn.textContent = "Start";
+    startBtn.addEventListener("click", closeMeldezettelTutorial);
+    panel.appendChild(startBtn);
 
     tutorial.appendChild(panel);
     els.meldezettelOverlay.appendChild(tutorial);
@@ -2865,6 +3037,7 @@ let gameState = {
     matchTimer: null,
     triggerNode: CH1_PPP_TRIGGER_NODE,
     matchSetIndex: 0,
+    flowIndex: 0,
   };
 
   const hotelNav = {
@@ -2914,6 +3087,96 @@ let gameState = {
 
   function getPppPack() {
     return PPP_PACKS[ch1Ppp.triggerNode] || PPP_PACKS.ch1_ppp_practice;
+  }
+
+  function getPppFlow() {
+    const flow = getPppPack().flow;
+    return Array.isArray(flow) ? flow : null;
+  }
+
+  function getPppFlowItem() {
+    const flow = getPppFlow();
+    if (!flow) return null;
+    return flow[ch1Ppp.flowIndex] || null;
+  }
+
+  function getPppStepCount() {
+    return getPppFlow()?.length || 5;
+  }
+
+  function getPppExerciseTitle() {
+    const item = getPppFlowItem();
+    if (item?.title) return item.title;
+    const pack = getPppPack();
+    if (ch1Ppp.step === 1) return pack.step1Title || "";
+    if (ch1Ppp.step === 2) return pack.step2Title || "";
+    if (ch1Ppp.step === 3) return pack.step3Title || "";
+    if (ch1Ppp.step === 4) return pack.step4Title || "";
+    if (ch1Ppp.step === 5) return pack.step5Title || "";
+    return "";
+  }
+
+  function getPppSentenceTasks() {
+    const item = getPppFlowItem();
+    if (item?.type === "sentences") return item.tasks || [];
+    return getPppPack().sentences || [];
+  }
+
+  function startPppPractice(overlay) {
+    if (getPppFlow()) {
+      renderPppFlow(overlay);
+      return;
+    }
+    renderCh1PppStep1(overlay);
+  }
+
+  function renderPppFlow(overlay) {
+    const flow = getPppFlow();
+    if (!flow) {
+      renderCh1PppStep1(overlay);
+      return;
+    }
+    if (ch1Ppp.flowIndex >= flow.length) {
+      showCh1PppSuccess(overlay);
+      return;
+    }
+    const item = flow[ch1Ppp.flowIndex];
+    ch1Ppp.step = ch1Ppp.flowIndex + 1;
+
+    if (item.type === "matching") {
+      renderCh1PppMatching(overlay, item.pairs, {
+        title: item.title || "",
+        instruction: item.instruction || "",
+        shuffleLeft: !!item.shuffleLeft,
+        onComplete: () => {
+          ch1Ppp.flowIndex += 1;
+          ch1Ppp.sentenceIndex = 0;
+          renderPppFlow(overlay);
+        },
+      });
+      return;
+    }
+
+    if (item.type === "blanks") {
+      if (ch1Ppp.sentenceIndex >= (item.tasks || []).length) {
+        ch1Ppp.sentenceIndex = 0;
+        ch1Ppp.flowIndex += 1;
+        renderPppFlow(overlay);
+        return;
+      }
+      renderCh1PppStep2Blank(overlay);
+      return;
+    }
+
+    if (item.type === "sentences") {
+      if (ch1Ppp.sentenceIndex >= (item.tasks || []).length) {
+        ch1Ppp.sentenceIndex = 0;
+        ch1Ppp.flowIndex += 1;
+        renderPppFlow(overlay);
+        return;
+      }
+      renderCh1PppSentence(overlay);
+    }
   }
 
   function saveChapter1PppVocab() {
@@ -2971,20 +3234,16 @@ let gameState = {
   function updateCh1PppProgress(overlay) {
     const { progress } = getCh1PppShell(overlay);
     if (!progress) return;
-    const current = Math.min(Math.max(ch1Ppp.step, 1), 5);
-    progress.textContent = `${current}/5`;
+    const total = getPppStepCount();
+    const current = Math.min(Math.max(ch1Ppp.step, 1), total);
+    progress.textContent = `EXERCISE ${current} / ${total}`;
   }
 
-  function updateCh1PppSubprogress(overlay, current, total) {
+  function updateCh1PppSubprogress(overlay) {
     const { subprogress } = getCh1PppShell(overlay);
     if (!subprogress) return;
-    if (!total || current < 1) {
-      subprogress.hidden = true;
-      subprogress.textContent = "";
-      return;
-    }
-    subprogress.hidden = false;
-    subprogress.textContent = `${current} / ${total}`;
+    subprogress.hidden = true;
+    subprogress.textContent = "";
   }
 
   function hideCh1PppResult(overlay) {
@@ -3021,7 +3280,7 @@ let gameState = {
 
   function showCh1PppSuccess(overlay) {
     const ui = getCh1PppShell(overlay);
-    ch1Ppp.step = 5;
+    ch1Ppp.step = getPppStepCount();
     updateCh1PppProgress(overlay);
     updateCh1PppSubprogress(overlay, 0, 0);
     ui.title.textContent = "";
@@ -3176,6 +3435,13 @@ let gameState = {
     ch1Ppp.matchedCount = 0;
     ch1Ppp.selectedPairId = null;
 
+    if (getPppFlow()) {
+      ch1Ppp.flowIndex += 1;
+      ch1Ppp.sentenceIndex = 0;
+      renderPppFlow(overlay);
+      return;
+    }
+
     if (ch1Ppp.step <= 1) {
       ch1Ppp.matchSetIndex = getPppMatching1Sets().length;
       renderCh1PppStep1(overlay);
@@ -3183,7 +3449,7 @@ let gameState = {
     }
 
     if (ch1Ppp.step === 2) {
-      ch1Ppp.sentenceIndex = getPppPack().sentences.length;
+      ch1Ppp.sentenceIndex = getPppStep2Tasks().length;
       renderCh1PppStep2(overlay);
       return;
     }
@@ -3237,26 +3503,131 @@ let gameState = {
     }
   }
 
+  function getPppStep2Tasks() {
+    const item = getPppFlowItem();
+    if (item?.type === "blanks") return item.tasks || [];
+    const pack = getPppPack();
+    if (Array.isArray(pack.step2Blanks) && pack.step2Blanks.length) return pack.step2Blanks;
+    return pack.sentences || [];
+  }
+
   function renderCh1PppStep2(overlay) {
+    const pack = getPppPack();
+    const tasks = getPppStep2Tasks();
     ch1Ppp.step = 2;
-    if (ch1Ppp.sentenceIndex >= getPppPack().sentences.length) {
+    if (ch1Ppp.sentenceIndex >= tasks.length) {
       ch1Ppp.sentenceIndex = 0;
       renderCh1PppStep3(overlay);
+      return;
+    }
+    if (pack.step2Blanks?.length) {
+      renderCh1PppStep2Blank(overlay);
       return;
     }
     renderCh1PppSentence(overlay);
   }
 
+  function splitPppBlankSentence(sentence) {
+    const parts = String(sentence || "").split("______");
+    return { prefix: parts[0] || "", suffix: parts[1] || "" };
+  }
+
+  function renderCh1PppStep2Blank(overlay) {
+    const task = getPppStep2Tasks()[ch1Ppp.sentenceIndex];
+    const ui = getCh1PppShell(overlay);
+    const { prefix, suffix } = splitPppBlankSentence(task.sentence);
+    ch1Ppp.locked = false;
+    updateCh1PppProgress(overlay);
+    updateCh1PppSubprogress(overlay, ch1Ppp.sentenceIndex + 1, getPppStep2Tasks().length);
+
+    ui.title.textContent = getPppExerciseTitle();
+    setCh1PppInstruction(overlay, getPppFlowItem()?.instruction || "Choose the modal verb that fits the sentence.");
+    ui.body.hidden = false;
+    ui.body.innerHTML = "";
+    ui.result.hidden = true;
+    ui.checkBtn.hidden = true;
+
+    const card = document.createElement("div");
+    card.className = "ch1-ppp__card";
+
+    const prompt = document.createElement("p");
+    prompt.className = "ch1-ppp__prompt ch1-ppp__prompt--target";
+    prompt.textContent = task.prompt;
+    card.appendChild(prompt);
+
+    const sentence = document.createElement("p");
+    sentence.className = "ch1-ppp__sentence";
+    sentence.id = "ch1-ppp-step2-blank";
+    sentence.append(prefix);
+    const gap = document.createElement("span");
+    gap.className = "ch1-ppp__gap";
+    gap.textContent = "______";
+    sentence.appendChild(gap);
+    sentence.append(suffix);
+    card.appendChild(sentence);
+
+    const options = document.createElement("div");
+    options.className = "ch1-ppp__chips";
+    task.options.forEach((option) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "ch1-ppp__chip";
+      btn.textContent = option;
+      btn.addEventListener("click", () => handleCh1PppStep2Blank(overlay, option, btn));
+      options.appendChild(btn);
+    });
+    card.appendChild(options);
+    ui.body.appendChild(card);
+  }
+
+  function handleCh1PppStep2Blank(overlay, option, btn) {
+    if (ch1Ppp.locked) return;
+    const task = getPppStep2Tasks()[ch1Ppp.sentenceIndex];
+    const sentence = overlay.querySelector("#ch1-ppp-step2-blank");
+    const { prefix, suffix } = splitPppBlankSentence(task.sentence);
+
+    if (option === task.correct) {
+      ch1Ppp.locked = true;
+      btn.classList.add("is-correct");
+      overlay.querySelectorAll(".ch1-ppp__chip").forEach((chip) => {
+        chip.disabled = true;
+      });
+      sentence.replaceChildren();
+      sentence.append(prefix);
+      const gap = document.createElement("span");
+      gap.className = "ch1-ppp__gap is-filled is-correct";
+      gap.textContent = option;
+      sentence.appendChild(gap);
+      sentence.append(suffix);
+      scheduleCh1PppAdvance(overlay, () => {
+        ch1Ppp.sentenceIndex += 1;
+        if (getPppFlow()) renderPppFlow(overlay);
+        else renderCh1PppStep2(overlay);
+      });
+      return;
+    }
+
+    btn.classList.add("is-wrong");
+    sentence.querySelector(".ch1-ppp__gap")?.classList.add("is-wrong");
+    showCh1PppResult(overlay, {
+      correct: false,
+      title: "Incorrect",
+      text: "",
+      onContinue: () => renderCh1PppStep2Blank(overlay),
+    });
+  }
+
   function renderCh1PppSentence(overlay) {
-    const task = getPppPack().sentences[ch1Ppp.sentenceIndex];
+    const tasks = getPppSentenceTasks();
+    const task = tasks[ch1Ppp.sentenceIndex];
     const ui = getCh1PppShell(overlay);
     ch1Ppp.selected = [];
     ch1Ppp.locked = false;
     updateCh1PppProgress(overlay);
-    updateCh1PppSubprogress(overlay, ch1Ppp.sentenceIndex + 1, getPppPack().sentences.length);
+    updateCh1PppSubprogress(overlay, ch1Ppp.sentenceIndex + 1, tasks.length);
 
-    ui.title.textContent = "";
-    setCh1PppInstruction(overlay, "Form the correct German sentence using proper word order.");
+    ui.title.textContent = getPppExerciseTitle();
+    setCh1PppInstruction(overlay, getPppFlowItem()?.instruction || "Form the correct German sentence using proper word order.");
     ui.body.hidden = false;
     ui.body.innerHTML = "";
     ui.result.hidden = true;
@@ -3343,7 +3714,7 @@ let gameState = {
 
   function handleCh1PppOrderCheck(overlay) {
     if (ch1Ppp.locked) return;
-    const task = getPppPack().sentences[ch1Ppp.sentenceIndex];
+    const task = getPppSentenceTasks()[ch1Ppp.sentenceIndex];
     if (sentenceTokensMatch(ch1Ppp.selected, task.correct)) {
       ch1Ppp.locked = true;
       overlay.querySelector("#ch1-ppp-check").hidden = true;
@@ -3369,7 +3740,8 @@ let gameState = {
 
   function advanceCh1PppSentence(overlay) {
     ch1Ppp.sentenceIndex += 1;
-    renderCh1PppStep2(overlay);
+    if (getPppFlow()) renderPppFlow(overlay);
+    else renderCh1PppStep2(overlay);
   }
 
   function renderCh1PppStep3(overlay) {
@@ -3410,7 +3782,7 @@ let gameState = {
     updateCh1PppProgress(overlay);
     updateCh1PppSubprogress(overlay, ch1Ppp.blankIndex + 1, getPppPack().blanks.length);
 
-    ui.title.textContent = "Choose the correct word for the gap.";
+    ui.title.textContent = getPppExerciseTitle();
     setCh1PppInstruction(overlay, "");
     ui.body.hidden = false;
     ui.body.innerHTML = "";
@@ -3419,6 +3791,13 @@ let gameState = {
 
     const card = document.createElement("div");
     card.className = "ch1-ppp__card";
+
+    if (task.prompt) {
+      const prompt = document.createElement("p");
+      prompt.className = "ch1-ppp__prompt ch1-ppp__prompt--target";
+      prompt.textContent = task.prompt;
+      card.appendChild(prompt);
+    }
 
     const sentence = document.createElement("p");
     sentence.className = "ch1-ppp__sentence";
@@ -3501,10 +3880,10 @@ let gameState = {
     const ui = getCh1PppShell(overlay);
     ch1Ppp.locked = false;
     updateCh1PppProgress(overlay);
-    updateCh1PppSubprogress(overlay, ch1Ppp.scenarioIndex + 1, pack.scenarios.length);
+    updateCh1PppSubprogress(overlay);
 
-    ui.title.textContent = pack.step5Title;
-    setCh1PppInstruction(overlay, pack.step5Instruction);
+    ui.title.textContent = getPppExerciseTitle();
+    setCh1PppInstruction(overlay, pack.step5Instruction || "");
     ui.body.hidden = false;
     ui.body.innerHTML = "";
     ui.result.hidden = true;
@@ -3517,6 +3896,20 @@ let gameState = {
     prompt.className = "ch1-ppp__prompt ch1-ppp__prompt--target";
     prompt.textContent = task.prompt;
     card.appendChild(prompt);
+
+    if (task.sentence) {
+      const { prefix, suffix } = splitPppBlankSentence(task.sentence);
+      const sentence = document.createElement("p");
+      sentence.className = "ch1-ppp__sentence";
+      sentence.id = "ch1-ppp-scenario-sentence";
+      sentence.append(prefix);
+      const gap = document.createElement("span");
+      gap.className = "ch1-ppp__gap";
+      gap.textContent = "______";
+      sentence.appendChild(gap);
+      sentence.append(suffix);
+      card.appendChild(sentence);
+    }
 
     const options = document.createElement("div");
     options.className = "ch1-ppp__scenario-options";
@@ -3535,6 +3928,7 @@ let gameState = {
   function handleCh1PppScenario(overlay, btn, option) {
     if (ch1Ppp.locked) return;
     const task = getPppPack().scenarios[ch1Ppp.scenarioIndex];
+    const sentence = overlay.querySelector("#ch1-ppp-scenario-sentence");
 
     if (option === task.correct) {
       ch1Ppp.locked = true;
@@ -3542,6 +3936,16 @@ let gameState = {
       overlay.querySelectorAll(".ch1-ppp__scenario-btn").forEach((chip) => {
         chip.disabled = true;
       });
+      if (task.sentence && sentence) {
+        const { prefix, suffix } = splitPppBlankSentence(task.sentence);
+        sentence.replaceChildren();
+        sentence.append(prefix);
+        const gap = document.createElement("span");
+        gap.className = "ch1-ppp__gap is-filled is-correct";
+        gap.textContent = option;
+        sentence.appendChild(gap);
+        sentence.append(suffix);
+      }
       const ui = getCh1PppShell(overlay);
       ui.checkBtn.hidden = false;
       ui.checkBtn.disabled = false;
@@ -3555,7 +3959,11 @@ let gameState = {
     }
 
     btn.classList.add("is-wrong");
-    window.setTimeout(() => btn.classList.remove("is-wrong"), 450);
+    sentence?.querySelector(".ch1-ppp__gap")?.classList.add("is-wrong");
+    window.setTimeout(() => {
+      btn.classList.remove("is-wrong");
+      sentence?.querySelector(".ch1-ppp__gap")?.classList.remove("is-wrong");
+    }, 450);
   }
 
   function openCh1PppPractice() {
@@ -3568,6 +3976,7 @@ let gameState = {
     ch1Ppp.blankIndex = 0;
     ch1Ppp.scenarioIndex = 0;
     ch1Ppp.matchSetIndex = 0;
+    ch1Ppp.flowIndex = 0;
     ch1Ppp.selected = [];
     ch1Ppp.matchedCount = 0;
     ch1Ppp.selectedPairId = null;
@@ -3597,12 +4006,6 @@ let gameState = {
     progress.id = "ch1-ppp-progress";
     progress.className = "ch1-ppp__progress";
     progressRow.appendChild(progress);
-
-    const subprogress = document.createElement("p");
-    subprogress.id = "ch1-ppp-subprogress";
-    subprogress.className = "ch1-ppp__subprogress";
-    subprogress.hidden = true;
-    progressRow.appendChild(subprogress);
     panel.appendChild(progressRow);
 
     const title = document.createElement("h2");
@@ -3651,7 +4054,7 @@ let gameState = {
 
     overlay.appendChild(panel);
     els.game.appendChild(overlay);
-    renderCh1PppStep1(overlay);
+    startPppPractice(overlay);
   }
 
   function getHotelNavStepMeta(nodeId) {
@@ -4138,9 +4541,16 @@ let gameState = {
         gameState.ch1Strikes = Math.min((gameState.ch1Strikes || 0) + 1, 2);
       }
     } else if (
-      (currentNode === "ch2_reception_greet" && nextNodeId !== "ch2_reception_id") ||
-      (currentNode === "ch2_reception_id" && nextNodeId !== "ch2_id_correct")
+      currentNode === "ch2_reception_greet" &&
+      nextNodeId !== "ch2_reception_id"
     ) {
+      gameState.dialogueMistakeQ1 = true;
+      gameState.receptionistMistake = true;
+    } else if (
+      currentNode === "ch2_reception_id" &&
+      nextNodeId !== "ch2_id_correct"
+    ) {
+      gameState.dialogueMistakeQ2 = true;
       gameState.receptionistMistake = true;
     } else if (currentNode === "start_quiz_transport") {
       gameState.transport = choiceText === "Geradeaus gehen" ? "correct" : "wrong";
