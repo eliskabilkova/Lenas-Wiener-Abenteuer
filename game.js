@@ -18,6 +18,7 @@ let gameState = {
   meldezettelErrors: 0,
   meldezettelStrike: 0,
   ch3Strikes: 0,
+  chapter3Strikes: 0,
   ch4Strikes: 0,
   ch5Strikes: 0,
   hasSeenVokabelTutorial: false,
@@ -154,6 +155,7 @@ let gameState = {
     gameState.meldezettelErrors = 0;
     gameState.meldezettelStrike = 0;
     gameState.ch3Strikes = 0;
+    gameState.chapter3Strikes = 0;
     gameState.ch4Strikes = 0;
     gameState.ch5Strikes = 0;
     gameState.characters = {
@@ -237,6 +239,7 @@ let gameState = {
 
   const CH1_PPP_TRIGGER_NODE = "ch1_ppp_practice";
   const CH2_PPP_TRIGGER_NODE = "ch2_ppp_practice";
+  const CH3_PPP_TRIGGER_NODE = "ch3_ppp_practice";
   const CH1_PPP_SUCCESS_NODE = "start_ask_hotel";
   const CH1_REVIEW_ROUTE_NODE = "ch1_review_route";
   const HOTEL_NAV_NODE_IDS = new Set([
@@ -566,6 +569,38 @@ let gameState = {
     },
   ];
 
+  const CH3_PPP_VOCAB_SETS = [
+    [
+      { id: "fahrkarte", german: "die Fahrkarte", english: "Ticket" },
+      { id: "einzelfahrt", german: "die Einzelfahrt", english: "Single ride" },
+      { id: "tageskarte", german: "die Tageskarte", english: "Day pass" },
+      { id: "ermaessigt", german: "ermäßigt", english: "Discounted" },
+      { id: "ubahn", german: "Die U-Bahn", english: "Subway" },
+      { id: "waehlen", german: "wählen", english: "Select / Choose" },
+    ],
+    [
+      { id: "erwachsene", german: "der Erwachsene", english: "Adult" },
+      { id: "kind", german: "das Kind", english: "Child" },
+      { id: "wochenkarte", german: "die Wochenkarte", english: "Weekly ticket" },
+      { id: "stundenkarte", german: "die 24-Stunden-Karte", english: "24-hour pass" },
+      { id: "vollpreis", german: "der Vollpreis", english: "Full price" },
+      { id: "schueler", german: "der Schüler", english: "Student" },
+    ],
+    [
+      { id: "richtung", german: "die Richtung", english: "Direction" },
+      { id: "einsteigen", german: "einsteigen", english: "Get on (train)" },
+      { id: "station", german: "die Station", english: "Station" },
+      { id: "zug", german: "der Zug", english: "Train" },
+      { id: "linie", german: "die Linie", english: "Line" },
+      { id: "aussteigen", german: "aussteigen", english: "Get off / Exit (train)" },
+    ],
+  ];
+
+  const CHAPTER3_PPP_VOCAB = CH3_PPP_VOCAB_SETS.flat().map((pair) => ({
+    german: pair.german,
+    english: pair.english,
+  }));
+
   const CH2_PPP_MODALS = [
     { id: "koennen", german: "können", english: "can" },
     { id: "muessen", german: "müssen", english: "must" },
@@ -685,6 +720,37 @@ let gameState = {
         },
       ],
     },
+    ch3_ppp_practice: {
+      successNode: "ch3_morning_intro_transport",
+      doneButton: "Lena is ready for the adventure!",
+      vocab: CHAPTER3_PPP_VOCAB,
+      vocabChapter: "chapter3",
+      vocabFlag: "chapter3Ppp",
+      matching1: CH3_PPP_VOCAB_SETS,
+      flow: [
+        {
+          type: "matching",
+          title: "Transport Vocabulary",
+          instruction: "Match the German terms with their English meanings.",
+          pairs: CH3_PPP_VOCAB_SETS[0],
+          shuffleLeft: true,
+        },
+        {
+          type: "matching",
+          title: "Transport Vocabulary",
+          instruction: "Match the German terms with their English meanings.",
+          pairs: CH3_PPP_VOCAB_SETS[1],
+          shuffleLeft: true,
+        },
+        {
+          type: "matching",
+          title: "Transport Vocabulary",
+          instruction: "Match the German terms with their English meanings.",
+          pairs: CH3_PPP_VOCAB_SETS[2],
+          shuffleLeft: true,
+        },
+      ],
+    },
   };
 
   const MELDEZETTEL_TRIGGER_NODE = "ch2_meldezettel";
@@ -696,29 +762,27 @@ let gameState = {
   const TICKET_MACHINE_SUCCESS_NODE = "ch3_ticket_success";
   const TICKET_MACHINE_FAIL_NODE = "ch3_ticket_fail";
 
-  const METRO_SIGN_BOARD_HTML = `
-    <div class="metro-sign-board" role="img" aria-label="U3 line direction board at Neubaugasse station">
-      <header class="metro-sign-board__head">
-        <span class="metro-sign-board__badge">U3</span>
-        <span class="metro-sign-board__headline">Line Directions</span>
-        <span class="metro-sign-board__station">Neubaugasse</span>
-      </header>
-      <div class="metro-sign-board__columns">
-        <section class="metro-sign-board__direction">
-          <div class="metro-sign-board__arrow" aria-hidden="true">⬅</div>
-          <h3 class="metro-sign-board__heading">Richtung: Ottakring</h3>
-          <p class="metro-sign-board__stations">Zieglergasse · Westbahnhof · …</p>
-        </section>
-        <section class="metro-sign-board__direction">
-          <div class="metro-sign-board__arrow" aria-hidden="true">➡</div>
-          <h3 class="metro-sign-board__heading">Richtung: Simmering</h3>
-          <p class="metro-sign-board__stations">Volkstheater · Herrengasse · Stephansplatz · Stubentor · …</p>
-        </section>
-      </div>
-    </div>
-  `;
+  const U3_LINE_STATIONS = [
+    { name: "Ottakring", end: true },
+    { name: "Hütteldorfer Straße" },
+    { name: "Westbahnhof" },
+    { name: "Zieglergasse" },
+    { name: "Neubaugasse", here: true, tag: "STANDORT" },
+    { name: "Volkstheater" },
+    { name: "Herrengasse" },
+    { name: "Stephansplatz", dest: true, tag: "ZIEL" },
+    { name: "Landstraße" },
+    { name: "Simmering", end: true },
+  ];
+
+  const u3Direction = {
+    mapOpen: false,
+    platformOpen: false,
+  };
+  const u3RailObservers = new WeakMap();
 
   const TICKET_MACHINE_MISTAKE_THRESHOLD = 3;
+  const CHAPTER3_MAX_STRIKES = 3;
   const MELDEZETTEL_MISTAKE_THRESHOLD = 3;
 
   const RULES_GAME_TRIGGER_NODE = "ch4_rules_game";
@@ -798,8 +862,33 @@ let gameState = {
   ];
   const TICKET_QUANTITIES = ["1 Ticket", "3 Tickets", "5 Tickets"];
   const TICKET_GOAL = { type: "Einzelfahrt (€ 2,40)", category: "Vollpreis" };
-  const TICKET_MACHINE_HELP_TEXT =
-    "I need to go to Stephansdom now, then to a museum, and later back to the hotel. That's at least 3 metro trips today. A single ticket (Einzelfahrt) costs €2.40. Let me check the ticket machine. I should buy whatever is cheaper for today: either individual tickets or a 24-hour pass. Also, since I'm a tourist and don't have an Austrian school ID, I must buy a standard adult fare.";
+  const TICKET_MACHINE_HINT_ROWS = [
+    {
+      icon: "📍",
+      label: "Plan",
+      segments: [
+        { text: "3 metro trips", strong: true },
+        { text: " today (Stephansdom ➔ Park ➔ Hotel)" },
+      ],
+    },
+    {
+      icon: "💶",
+      label: "Rule",
+      segments: [
+        { text: "Buy " },
+        { text: "whatever is cheaper", strong: true },
+        { text: " (Individual tickets vs. 24-hour pass)" },
+      ],
+    },
+    {
+      icon: "👤",
+      label: "Fare",
+      segments: [
+        { text: "Standard Adult fare", strong: true },
+        { text: " (Tourist, no Austrian school ID)" },
+      ],
+    },
+  ];
 
   const MELDEZETTEL_FIELDS = [
     { id: "vorname", label: "Vorname", answer: "Lena" },
@@ -837,6 +926,8 @@ let gameState = {
     onCompleteNodeId: null,
     helpOpen: false,
     errorOpen: false,
+    pendingHint: false,
+    chapterStrikeApplied: false,
   };
 
   const FOLLOW_UP_BEFORE_REPLAY = {
@@ -1242,9 +1333,296 @@ let gameState = {
     }, TYPE_SPEED);
   }
 
-  function renderMetroSignBoard() {
-    els.dialogueText.innerHTML = METRO_SIGN_BOARD_HTML;
-    state.fullText = els.dialogueText.textContent.trim();
+  function createU3LineMap(variant = "inline") {
+    const stationNames = U3_LINE_STATIONS.map((station) => station.name).join(", ");
+    const map = document.createElement("div");
+    map.className = "u3-line-map";
+    if (variant === "overlay") map.classList.add("u3-line-map--overlay");
+    map.setAttribute("role", "img");
+    map.setAttribute(
+      "aria-label",
+      `U3 line from Ottakring to Simmering: ${stationNames}. Neubaugasse is the current station. Stephansplatz is the destination.`
+    );
+
+    const head = document.createElement("header");
+    head.className = "u3-line-map__head";
+
+    const identity = document.createElement("div");
+    identity.className = "u3-line-map__identity";
+    const badge = document.createElement("span");
+    badge.className = "u3-line-map__badge";
+    badge.textContent = "U3";
+    const title = document.createElement("span");
+    title.className = "u3-line-map__title";
+    title.textContent = "Ottakring — Simmering";
+    identity.appendChild(badge);
+    identity.appendChild(title);
+
+    const legend = document.createElement("div");
+    legend.className = "u3-line-map__legend";
+    legend.innerHTML = `
+      <span class="u3-line-map__legend-item is-here">Standort · Current Station</span>
+      <span class="u3-line-map__legend-item is-dest">Ziel · Destination</span>
+    `;
+
+    head.appendChild(identity);
+    head.appendChild(legend);
+    map.appendChild(head);
+
+    const track = document.createElement("div");
+    track.className = "u3-line-map__track";
+    const rail = document.createElement("div");
+    rail.className = "u3-line-map__rail";
+    rail.setAttribute("aria-hidden", "true");
+    track.appendChild(rail);
+
+    const row = document.createElement("div");
+    row.className = "u3-line-map__row";
+
+    U3_LINE_STATIONS.forEach((station) => {
+      const item = document.createElement("div");
+      item.className = "u3-line-map__station";
+      if (station.end) item.classList.add("is-end");
+      if (station.here) item.classList.add("is-here");
+      if (station.dest) item.classList.add("is-dest");
+
+      const tag = document.createElement("span");
+      tag.className = "u3-line-map__tag";
+      if (station.tag) {
+        tag.title = station.tag;
+        const label = document.createElement("span");
+        label.className = "u3-line-map__tag-de";
+        label.textContent = station.tag;
+        tag.appendChild(label);
+      }
+
+      const mark = document.createElement("span");
+      mark.className = "u3-line-map__mark";
+      mark.setAttribute("aria-hidden", "true");
+
+      const label = document.createElement("span");
+      label.className = "u3-line-map__label";
+      const name = document.createElement("span");
+      name.className = "u3-line-map__name";
+      name.textContent = station.name;
+      label.appendChild(name);
+      if (station.end) {
+        const endcap = document.createElement("span");
+        endcap.className = "u3-line-map__endcap";
+        endcap.textContent = "Endstation";
+        label.appendChild(endcap);
+      }
+
+      item.appendChild(tag);
+      item.appendChild(mark);
+      item.appendChild(label);
+      row.appendChild(item);
+    });
+
+    track.appendChild(row);
+    map.appendChild(track);
+    scheduleU3RailLayout(map);
+    return map;
+  }
+
+  function layoutU3Rail(map) {
+    const track = map.querySelector(".u3-line-map__track");
+    const rail = map.querySelector(".u3-line-map__rail");
+    const marks = [...map.querySelectorAll(".u3-line-map__mark")];
+    if (!track || !rail || marks.length < 2) return;
+
+    const trackRect = track.getBoundingClientRect();
+    const first = marks[0].getBoundingClientRect();
+    const last = marks[marks.length - 1].getBoundingClientRect();
+    const start = first.left + first.width / 2 - trackRect.left + track.scrollLeft;
+    const end = last.left + last.width / 2 - trackRect.left + track.scrollLeft;
+    rail.style.left = `${start}px`;
+    rail.style.width = `${Math.max(0, end - start)}px`;
+    rail.style.right = "auto";
+  }
+
+  function scheduleU3RailLayout(map) {
+    const layout = () => layoutU3Rail(map);
+    requestAnimationFrame(() => requestAnimationFrame(layout));
+
+    const track = map.querySelector(".u3-line-map__track");
+    if (!track || u3RailObservers.has(map)) return;
+    const observer = new ResizeObserver(layout);
+    observer.observe(track);
+    track.addEventListener("scroll", layout, { passive: true });
+    u3RailObservers.set(map, observer);
+  }
+
+  function syncU3DialogueHidden() {
+    const hide = u3Direction.mapOpen || u3Direction.platformOpen;
+    els.dialogueBox.classList.toggle("is-u3-map-open", hide);
+  }
+
+  function closeU3DirectionUi() {
+    u3Direction.mapOpen = false;
+    u3Direction.platformOpen = false;
+    document.getElementById("u3-map-overlay")?.remove();
+    document.getElementById("u3-platform-overlay")?.remove();
+    syncU3DialogueHidden();
+  }
+
+  function setU3MapOpen(open) {
+    u3Direction.mapOpen = open;
+    const toggle = document.getElementById("u3-map-toggle");
+    if (toggle) {
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      toggle.classList.toggle("is-open", open);
+    }
+
+    document.getElementById("u3-map-overlay")?.remove();
+    syncU3DialogueHidden();
+    if (!open) return;
+
+    const overlay = document.createElement("div");
+    overlay.id = "u3-map-overlay";
+    overlay.className = "u3-map-overlay";
+    overlay.setAttribute("role", "dialog");
+    overlay.setAttribute("aria-modal", "true");
+    overlay.setAttribute("aria-labelledby", "u3-map-overlay-title");
+    overlay.addEventListener("click", (event) => {
+      if (event.target === overlay) setU3MapOpen(false);
+    });
+
+    const frame = document.createElement("div");
+    frame.className = "u3-map-overlay__frame";
+    frame.addEventListener("click", (event) => event.stopPropagation());
+
+    const header = document.createElement("header");
+    header.className = "u3-map-overlay__header";
+    const title = document.createElement("h2");
+    title.id = "u3-map-overlay-title";
+    title.className = "u3-map-overlay__title";
+    title.textContent = "U3 Liniennetz / Line Map";
+    const closeX = document.createElement("button");
+    closeX.type = "button";
+    closeX.className = "u3-map-overlay__x";
+    closeX.setAttribute("aria-label", "Close line map");
+    closeX.textContent = "×";
+    closeX.addEventListener("click", () => setU3MapOpen(false));
+    header.appendChild(title);
+    header.appendChild(closeX);
+
+    const body = document.createElement("div");
+    body.className = "u3-map-overlay__body";
+    const map = createU3LineMap("overlay");
+    body.appendChild(map);
+
+    const closeBtn = document.createElement("button");
+    closeBtn.type = "button";
+    closeBtn.className = "u3-map-overlay__close";
+    closeBtn.textContent = "Close";
+    closeBtn.addEventListener("click", () => setU3MapOpen(false));
+
+    frame.appendChild(header);
+    frame.appendChild(body);
+    frame.appendChild(closeBtn);
+    overlay.appendChild(frame);
+    els.game.appendChild(overlay);
+    scheduleU3RailLayout(map);
+  }
+
+  function createU3MapToggle() {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.id = "u3-map-toggle";
+    btn.className = "u3-map-toggle";
+    btn.setAttribute("aria-expanded", "false");
+    btn.setAttribute("aria-controls", "u3-map-overlay");
+    btn.setAttribute("aria-label", "View U3 line map");
+    btn.innerHTML = `
+      <span class="u3-map-toggle__icon" aria-hidden="true">🗺️</span>
+      <span class="u3-map-toggle__copy">
+        <span class="u3-map-toggle__title">Map</span>
+        <span class="u3-map-toggle__sub">View Line Map</span>
+      </span>
+    `;
+    btn.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      setU3MapOpen(!u3Direction.mapOpen);
+    });
+    return btn;
+  }
+
+  function renderU3LineMap() {
+    closeU3DirectionUi();
+    els.dialogueText.replaceChildren(createU3LineMap());
+    state.fullText = `U3: ${U3_LINE_STATIONS.map((station) => station.name).join(", ")}.`;
+  }
+
+  function renderU3PlatformBoards() {
+    hideChoices();
+    state.waitingForChoice = true;
+    u3Direction.platformOpen = true;
+    syncU3DialogueHidden();
+    els.dialogueText.replaceChildren();
+    els.advanceHint.classList.add("is-hidden");
+    document.getElementById("u3-platform-overlay")?.remove();
+
+    const overlay = document.createElement("div");
+    overlay.id = "u3-platform-overlay";
+    overlay.className = "u3-platform-overlay";
+
+    const panel = document.createElement("div");
+    panel.className = "u3-platform-overlay__panel";
+
+    const head = document.createElement("header");
+    head.className = "u3-platform-overlay__head";
+    const title = document.createElement("h2");
+    title.className = "u3-platform-overlay__title";
+    title.textContent = "Choose platform direction:";
+    head.appendChild(title);
+    head.appendChild(createU3MapToggle());
+
+    const wrap = document.createElement("div");
+    wrap.className = "u3-platform-boards";
+
+    const boards = [
+      {
+        nextNode: "ch3_platform_wrong",
+        label: "U3 ➔ Ottakring",
+        aria: "U3 towards Ottakring",
+      },
+      {
+        nextNode: "ch3_platform_correct",
+        label: "U3 ➔ Simmering",
+        aria: "U3 towards Simmering",
+      },
+    ];
+
+    boards.forEach((board) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "u3-platform-board";
+      btn.setAttribute("aria-label", board.aria);
+
+      const boardBadge = document.createElement("span");
+      boardBadge.className = "u3-platform-board__badge";
+      boardBadge.textContent = "U3";
+
+      const dir = document.createElement("span");
+      dir.className = "u3-platform-board__dir";
+      dir.textContent = board.label.replace(/^U3\s*/, "");
+
+      btn.appendChild(boardBadge);
+      btn.appendChild(dir);
+      btn.addEventListener("click", () => {
+        closeU3DirectionUi();
+        selectChoice(board.label, board.nextNode);
+      });
+      wrap.appendChild(btn);
+    });
+
+    panel.appendChild(head);
+    panel.appendChild(wrap);
+    overlay.appendChild(panel);
+    els.game.appendChild(overlay);
+    state.fullText = "Choose U3 towards Simmering or U3 towards Ottakring.";
   }
 
   function applyDialogueStyle(node) {
@@ -1252,11 +1630,15 @@ let gameState = {
     const isInternalMonologue =
       !node.thought &&
       (speaker.includes("Internal Monologue") || speaker.includes("Internal Thought"));
+    const isMetroVisual =
+      node.dialogueStyle === "metro-sign" ||
+      node.dialogueStyle === "u3-line-map" ||
+      node.dialogueStyle === "u3-platform-boards";
 
     els.dialogueText.classList.toggle("internal-thought", isInternalMonologue);
     els.dialogueText.classList.toggle("sensory-text", node.dialogueStyle === "sensory");
     els.dialogueText.classList.toggle("announcement-text", node.dialogueStyle === "announcement");
-    els.dialogueText.classList.toggle("metro-sign-text", node.dialogueStyle === "metro-sign");
+    els.dialogueText.classList.toggle("metro-sign-text", isMetroVisual);
   }
 
   function renderDialogue(node) {
@@ -1270,16 +1652,28 @@ let gameState = {
     els.speakerName.classList.remove("is-hidden");
     els.speakerName.textContent = isInternalMonologue ? "Lena" : speaker || "???";
 
-    if (node.dialogueStyle === "metro-sign") {
+    if (node.dialogueStyle === "u3-line-map" || node.dialogueStyle === "u3-platform-boards") {
+      els.speakerName.classList.add("is-hidden");
+      els.speakerName.textContent = "";
+    }
+
+    if (node.dialogueStyle === "u3-line-map" || node.dialogueStyle === "metro-sign") {
       clearTypeTimer();
       state.typing = false;
-      renderMetroSignBoard();
+      renderU3LineMap();
       const choices = node.choices || [];
       if (choices.length) {
         showChoices(choices);
       } else {
         els.advanceHint.classList.remove("is-hidden");
       }
+      return;
+    }
+
+    if (node.dialogueStyle === "u3-platform-boards") {
+      clearTypeTimer();
+      state.typing = false;
+      renderU3PlatformBoards();
       return;
     }
 
@@ -1366,6 +1760,7 @@ let gameState = {
 
   function hideGameplayScene() {
     closeCh1ReviewThought();
+    closeU3DirectionUi();
     clearTypeTimer();
     state.typing = false;
     hideChoices();
@@ -1544,17 +1939,17 @@ let gameState = {
         photo: "photo-c3-a.png",
         alt: "Lena smiling on the U-Bahn in Vienna",
         german:
-          "Heute bin ich mit der U-Bahn gefahren. Ich habe die richtige Linie U3 und das richtige Gleis nach Simmering gefunden. Auf der Rolltreppe habe ich gelernt: Rechts stehen, links gehen! Ich fühle mich schon wie eine echte Wienerin.",
+          "Heute bin ich zum ersten Mal mit der U-Bahn gefahren. Die Wiener Linien sind wirklich schnell und praktisch! Ich habe alle Regeln gut verstanden und mich im System orientiert. Wenn man aufpasst, ist das Reisen hier gar nicht so schwer. Ich fühle mich schon fast wie eine echte Wienerin!",
         english:
-          "Today I took the underground train. I found the correct line U3 and the right platform towards Simmering. On the escalator I learned: Stand on the right, walk on the left! I already feel like a real Viennese.",
+          "Today I rode the underground for the first time. The Vienna transit system is really fast and practical! I understood all the rules and navigated the system well. When you pay attention, traveling here isn't that hard. I almost feel like a real Viennese!",
       },
       challenge: {
         photo: "photo-c3-b.png",
         alt: "Lena looking stressed on the U-Bahn in Vienna",
         german:
-          "Die U-Bahn in Wien ist sehr schnell und voll. Ich habe zuerst den falschen Bahnsteig gewählt und Zeit verloren. Dann gab es ein kleines Missverständnis auf der Rolltreppe. Aber zum Glück bin ich am Stephansplatz angekommen.",
+          "Heute bin ich mit der U-Bahn gefahren. In einer fremden Großstadt ist alles neu und etwas hektisch – die Fahrkarten, die Richtungen und die vielen Regeln. Nicht alles hat auf Anhieb geklappt, aber ich habe viel gelernt. Am Ende bin ich gut am Stephansplatz angekommen!",
         english:
-          "The underground in Vienna is very fast and crowded. I chose the wrong platform at first and lost time. Then there was a small misunderstanding on the escalator. But luckily I arrived at Stephansplatz.",
+          "Today I rode the underground. In a unfamiliar big city, everything is new and a bit hectic – the tickets, the directions, and all the rules. Not everything worked on the first try, but I learned a lot. In the end, I arrived safely at Stephansplatz!",
       },
     },
     4: {
@@ -1643,7 +2038,7 @@ let gameState = {
     }
 
     if (chapterNumber === 3) {
-      return Math.min(gameState.ch3Strikes, 2);
+      return getChapter3Strikes();
     }
 
     if (chapterNumber === 4) {
@@ -1705,7 +2100,9 @@ let gameState = {
         ? getChapter1TagebuchIsChallenge()
         : chapterNumber === 2
           ? strikes > 0
-          : strikes >= 2;
+          : chapterNumber === 3
+            ? strikes > 1
+            : strikes >= 2;
     const variant = isChallenging ? content.challenge : content.success;
 
     return {
@@ -1779,10 +2176,15 @@ let gameState = {
     els.lenaContainer.classList.add("is-hidden");
 
     const strikes = getChapterStrikeCount(chapterNumber);
+    if (chapterNumber === 3) {
+      console.log("Evaluating Chapter 3 Tagebuch with total strikes:", getChapter3Strikes());
+    }
     const variant =
-      chapterNumber === 1
-        ? getTagebuchVariant(1, strikes)
-        : getTagebuchVariant(chapterNumber, strikes);
+      chapterNumber === 3
+        ? getTagebuchVariant(3, getChapter3Strikes())
+        : chapterNumber === 1
+          ? getTagebuchVariant(1, strikes)
+          : getTagebuchVariant(chapterNumber, strikes);
 
     const overlay = document.createElement("div");
     overlay.id = "tagebuch-screen";
@@ -2253,11 +2655,54 @@ let gameState = {
     return ticketMachine.active && !ticketMachine.helpOpen && !ticketMachine.errorOpen;
   }
 
+  function appendHintSegments(parent, segments) {
+    segments.forEach((segment) => {
+      if (segment.strong) {
+        const strong = document.createElement("strong");
+        strong.textContent = segment.text;
+        parent.appendChild(strong);
+        return;
+      }
+      parent.appendChild(document.createTextNode(segment.text));
+    });
+  }
+
   function showTicketMachineHint() {
     if (!ticketMachine.active || !els.ticketMachineHintOverlay) return;
     ticketMachine.helpOpen = true;
     if (els.ticketMachineHintText) {
-      els.ticketMachineHintText.textContent = TICKET_MACHINE_HELP_TEXT;
+      els.ticketMachineHintText.replaceChildren();
+      const list = document.createElement("div");
+      list.className = "ticket-machine-hint__rows";
+
+      TICKET_MACHINE_HINT_ROWS.forEach((row) => {
+        const card = document.createElement("article");
+        card.className = "ticket-machine-hint__row";
+
+        const icon = document.createElement("span");
+        icon.className = "ticket-machine-hint__icon";
+        icon.setAttribute("aria-hidden", "true");
+        icon.textContent = row.icon;
+
+        const body = document.createElement("div");
+        body.className = "ticket-machine-hint__content";
+
+        const label = document.createElement("p");
+        label.className = "ticket-machine-hint__label";
+        label.textContent = row.label;
+
+        const copy = document.createElement("p");
+        copy.className = "ticket-machine-hint__copy";
+        appendHintSegments(copy, row.segments);
+
+        body.appendChild(label);
+        body.appendChild(copy);
+        card.appendChild(icon);
+        card.appendChild(body);
+        list.appendChild(card);
+      });
+
+      els.ticketMachineHintText.appendChild(list);
     }
     els.ticketMachineHintOverlay.hidden = false;
   }
@@ -2268,8 +2713,37 @@ let gameState = {
     els.ticketMachineHintOverlay.hidden = true;
   }
 
+  function getChapter3Strikes() {
+    const stored = gameState.chapter3Strikes;
+    const fallback = gameState.ch3Strikes;
+    const value = stored == null ? fallback : stored;
+    const n = Number(value);
+    if (!Number.isFinite(n) || n < 0) return 0;
+    return Math.min(n, CHAPTER3_MAX_STRIKES);
+  }
+
+  function addChapter3Strike() {
+    const next = Math.min(getChapter3Strikes() + 1, CHAPTER3_MAX_STRIKES);
+    gameState.chapter3Strikes = next;
+    gameState.ch3Strikes = next;
+    console.log("Chapter 3 Strike added! Total strikes:", gameState.chapter3Strikes);
+    return next;
+  }
+
+  function applyTicketMachineStrikeOnce() {
+    if (ticketMachine.chapterStrikeApplied) return;
+    ticketMachine.chapterStrikeApplied = true;
+    addChapter3Strike();
+  }
+
   function showTicketMachineError(message) {
     ticketMachine.mistakes += 1;
+    if (ticketMachine.mistakes === 1) {
+      ticketMachine.pendingHint = true;
+    }
+    if (ticketMachine.mistakes >= 2) {
+      applyTicketMachineStrikeOnce();
+    }
     ticketMachine.errorOpen = true;
     ticketMachine.step = "feedback";
     ticketMachine.message = message;
@@ -2291,6 +2765,11 @@ let gameState = {
     ticketMachine.messageType = "info";
     if (els.ticketMachineErrorOverlay) {
       els.ticketMachineErrorOverlay.hidden = true;
+    }
+    if (ticketMachine.pendingHint) {
+      ticketMachine.pendingHint = false;
+      showTicketMachineHint();
+      return;
     }
     renderTicketMachine();
   }
@@ -2409,10 +2888,10 @@ let gameState = {
 
   function completeTicketMachine(mistakeCount) {
     ticketMachine.mistakes = mistakeCount;
-    const completedSuccessfully = ticketMachine.mistakes < TICKET_MACHINE_MISTAKE_THRESHOLD;
-    if (!completedSuccessfully) {
-      gameState.ch3Strikes += 1;
+    if (ticketMachine.mistakes >= 1) {
+      applyTicketMachineStrikeOnce();
     }
+    const completedSuccessfully = ticketMachine.mistakes < TICKET_MACHINE_MISTAKE_THRESHOLD;
 
     const nextNodeId = completedSuccessfully
       ? TICKET_MACHINE_SUCCESS_NODE
@@ -2426,7 +2905,8 @@ let gameState = {
     ticketMachine.helpOpen = false;
     ticketMachine.errorOpen = false;
     if (els.ticketMachineErrorOverlay) els.ticketMachineErrorOverlay.hidden = true;
-    completeTicketMachine(mistakeCount);
+    const recordedMistakes = Math.max(ticketMachine.mistakes || 0, mistakeCount || 0);
+    completeTicketMachine(recordedMistakes);
   }
 
   function openTicketMachine(onCompleteNodeId) {
@@ -2439,6 +2919,8 @@ let gameState = {
     ticketMachine.onCompleteNodeId = onCompleteNodeId;
     ticketMachine.helpOpen = false;
     ticketMachine.errorOpen = false;
+    ticketMachine.pendingHint = false;
+    ticketMachine.chapterStrikeApplied = false;
 
     clearTypeTimer();
     state.typing = false;
@@ -3148,6 +3630,7 @@ let gameState = {
         title: item.title || "",
         instruction: item.instruction || "",
         shuffleLeft: !!item.shuffleLeft,
+        clearOnMatch: !!item.clearOnMatch,
         onComplete: () => {
           ch1Ppp.flowIndex += 1;
           ch1Ppp.sentenceIndex = 0;
@@ -3279,6 +3762,7 @@ let gameState = {
   }
 
   function showCh1PppSuccess(overlay) {
+    const pack = getPppPack();
     const ui = getCh1PppShell(overlay);
     ch1Ppp.step = getPppStepCount();
     updateCh1PppProgress(overlay);
@@ -3290,18 +3774,21 @@ let gameState = {
     ui.result.hidden = true;
     ui.checkBtn.hidden = true;
 
-    const card = document.createElement("div");
-    card.className = "ch1-ppp__done";
-    card.innerHTML = `
-      <p class="ch1-ppp__done-title"></p>
-    `;
-    card.querySelector(".ch1-ppp__done-title").textContent = getPppPack().doneTitle || "Lena feels confident now!";
-    ui.body.appendChild(card);
+    const doneTitle = pack.doneTitle || "";
+    if (doneTitle) {
+      const card = document.createElement("div");
+      card.className = "ch1-ppp__done";
+      const title = document.createElement("p");
+      title.className = "ch1-ppp__done-title";
+      title.textContent = doneTitle;
+      card.appendChild(title);
+      ui.body.appendChild(card);
+    }
 
     ui.checkBtn.hidden = false;
     ui.checkBtn.disabled = false;
     ui.checkBtn.className = "ch1-ppp__primary";
-    ui.checkBtn.textContent = getPppPack().doneButton;
+    ui.checkBtn.textContent = pack.doneButton || "Continue";
     ui.checkBtn.onclick = finishCh1PppPractice;
     const dev = overlay.querySelector(".ch1-ppp__dev");
     if (dev) dev.hidden = true;
@@ -3383,8 +3870,10 @@ let gameState = {
           btn.classList.add("is-matched");
           btn.disabled = true;
           if (clearOnMatch) {
-            selected.classList.add("is-cleared");
-            btn.classList.add("is-cleared");
+            window.setTimeout(() => {
+              selected.classList.add("is-cleared");
+              btn.classList.add("is-cleared");
+            }, 280);
           }
           ch1Ppp.selectedPairId = null;
           ch1Ppp.matchedCount += 1;
@@ -4377,6 +4866,7 @@ let gameState = {
     closeCashierGame();
     closeCh1PppPractice();
     closeHotelNavGame();
+    closeU3DirectionUi();
     removeCelebrationScreen();
 
     setBackground(node.background);
@@ -4573,10 +5063,13 @@ let gameState = {
         gameState.ch1NavMistakes += 1;
         gameState.navigationMistakes = gameState.ch1NavMistakes;
       }
-    } else if (currentNode === "ch3_platform_deduction" && nextNodeId !== "ch3_platform_correct") {
-      gameState.ch3Strikes += 1;
-    } else if (currentNode === "ch3_ubahn_thought" && nextNodeId !== "ch3_ubahn_polite") {
-      gameState.ch3Strikes += 1;
+    } else if (currentNode === "ch3_platform_choice" && nextNodeId === "ch3_platform_wrong") {
+      addChapter3Strike();
+    } else if (
+      currentNode === "ch3_ubahn_thought" &&
+      (nextNodeId === "ch3_ubahn_confused" || nextNodeId === "ch3_ubahn_imperfect")
+    ) {
+      addChapter3Strike();
     } else if (currentNode === "ch4_mozart_choice" && nextNodeId !== "ch4_mozart_correct") {
       gameState.ch4Strikes += 1;
     }
@@ -5053,7 +5546,7 @@ let gameState = {
     }
 
     els.dialogueBox.addEventListener("click", (event) => {
-      if (event.target.closest(".choice-btn")) return;
+      if (event.target.closest(".choice-btn, .u3-map-toggle, .u3-platform-board, .u3-line-map, .u3-platform-overlay")) return;
       advanceBeat();
     });
 
@@ -5071,6 +5564,12 @@ let gameState = {
           event.preventDefault();
           closeVocabPanel();
         }
+        return;
+      }
+
+      if (u3Direction.mapOpen && event.code === "Escape") {
+        event.preventDefault();
+        setU3MapOpen(false);
         return;
       }
 

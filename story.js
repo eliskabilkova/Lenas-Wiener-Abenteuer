@@ -594,19 +594,57 @@ const storyData = {
     lenaMood: "happy",
     npcImage: "none",
     choices: [
-      { text: "Continue", nextNode: "ch3_morning_intro_transport" },
+      { text: "Continue", nextNode: "ch3_practice_prompt" },
     ],
+  },
+
+  ch3_practice_prompt: {
+    id: "ch3_practice_prompt",
+    background: "hotel_room.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Let's practice some vocabulary first so I'm well prepared for today's adventure!",
+    lenaMood: "thoughtful",
+    npcImage: "none",
+    choices: [
+      {
+        text: "Practice / Übung",
+        nextNode: "ch3_ppp_practice",
+        prominent: true,
+      },
+    ],
+  },
+
+  ch3_ppp_practice: {
+    id: "ch3_ppp_practice",
+    background: "hotel_room.jpg",
+    speaker: "Lena",
+    text: "",
+    lenaMood: "thoughtful",
+    npcImage: "none",
+    choices: [],
   },
 
   ch3_morning_intro_transport: {
     id: "ch3_morning_intro_transport",
     background: "hotel_room.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "But first, I need to get to the U-Bahn station and figure out how the local transport works. Let's do this!",
+    text: "Okay, let's go to the U-Bahn station and figure out how local transport works!",
     lenaMood: "happy",
     npcImage: "none",
     choices: [
-      { text: "Head to the station", nextNode: "ch3_ticket_machine_intro" },
+      { text: "Head to the station", nextNode: "ch3_station_arrival" },
+    ],
+  },
+
+  ch3_station_arrival: {
+    id: "ch3_station_arrival",
+    background: "u_bahn_station.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Now I just need a ticket, let's see...",
+    lenaMood: "happy",
+    npcImage: "none",
+    choices: [
+      { text: "Check options", nextNode: "ch3_ticket_machine_intro" },
     ],
   },
 
@@ -614,11 +652,23 @@ const storyData = {
     id: "ch3_ticket_machine_intro",
     background: "u_bahn_station.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "I need to go to Stephansdom now, then to a museum, and later back to the hotel. That's at least 3 metro trips today. A single ticket (Einzelfahrt) costs €2.40. Let me check the ticket machine. I should buy whatever is cheaper for today: either individual tickets or a 24-hour pass. Also, since I'm a tourist and don't have an Austrian school ID, I must buy a standard adult fare.",
+    text: "I need to go to Stephansdom now, then to a park, and later back to the hotel. That's at least 3 metro trips today. A single ticket (Einzelfahrt) costs €2.40.",
     lenaMood: "unsure",
     npcImage: "none",
     choices: [
-      { text: "Use the ticket machine", nextNode: "ch3_ticket_machine" },
+      { text: "Next", nextNode: "ch3_ticket_machine_intro_fare" },
+    ],
+  },
+
+  ch3_ticket_machine_intro_fare: {
+    id: "ch3_ticket_machine_intro_fare",
+    background: "u_bahn_station.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "I should buy whatever is cheaper for today: either individual tickets or a 24-hour pass. Also, since I'm a tourist and don't have an Austrian school ID, I must buy a standard adult fare.",
+    lenaMood: "unsure",
+    npcImage: "none",
+    choices: [
+      { text: "Buy a ticket", nextNode: "ch3_ticket_machine" },
     ],
   },
 
@@ -665,45 +715,43 @@ const storyData = {
     lenaMood: "unsure",
     npcImage: "none",
     choices: [
-      { text: "Look at the signs", nextNode: "ch3_platform_sign" },
+      { text: "Look at line map", nextNode: "ch3_platform_map" },
     ],
   },
 
-  ch3_platform_sign: {
-    id: "ch3_platform_sign",
+  ch3_platform_map: {
+    id: "ch3_platform_map",
     background: "u_bahn_station.jpg",
-    speaker: "Station Sign",
+    speaker: "",
+    text: "",
+    lenaMood: "thoughtful",
+    npcImage: "none",
+    dialogueStyle: "u3-line-map",
+    choices: [
+      { text: "Choose platform", nextNode: "ch3_platform_choice" },
+    ],
+  },
+
+  ch3_platform_choice: {
+    id: "ch3_platform_choice",
+    background: "u_bahn_station.jpg",
+    speaker: "",
     text: "",
     lenaMood: "unsure",
     npcImage: "none",
-    dialogueStyle: "metro-sign",
-    choices: [
-      { text: "Continue", nextNode: "ch3_platform_deduction" },
-    ],
-  },
-
-  ch3_platform_deduction: {
-    id: "ch3_platform_deduction",
-    background: "u_bahn_station.jpg",
-    speaker: "Lena (Internal Monologue)",
-    text: "Okay, there's the network map. I just need to check where Stephansplatz is located and choose the correct 'Endstation' (final destination) from the choices below.",
-    lenaMood: "unsure",
-    npcImage: "none",
-    choices: [
-      { text: "Gleis 1: U3 Richtung Ottakring", nextNode: "ch3_platform_wrong" },
-      { text: "Gleis 2: U3 Richtung Simmering", nextNode: "ch3_platform_correct" },
-    ],
+    dialogueStyle: "u3-platform-boards",
+    choices: [],
   },
 
   ch3_platform_wrong: {
     id: "ch3_platform_wrong",
     background: "u_bahn_station.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "Oh no! After one stop, I realized the train is heading away from the center towards Ottakring. I had to get off and wait for the train going back. So embarrassing and such a waste of time!",
-    lenaMood: "unsure",
+    text: "Wait, Ottakring goes in the opposite direction!",
+    lenaMood: "surprised",
     npcImage: "none",
     choices: [
-      { text: "Continue", nextNode: "ch3_train_ride" },
+      { text: "Try again", nextNode: "ch3_platform_choice" },
     ],
   },
 
@@ -711,7 +759,7 @@ const storyData = {
     id: "ch3_platform_correct",
     background: "u_bahn_station.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "Perfect! Simmering is the correct end station. Stephansplatz is just three stops away from here. The doors are opening, let's get in!",
+    text: "Great, this train goes to Stephansplatz!",
     lenaMood: "happy",
     npcImage: "none",
     choices: [
@@ -723,7 +771,7 @@ const storyData = {
     id: "ch3_train_ride",
     background: "u_bahn_station.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "The metro here is so clean! I love the voice announcing the stations.",
+    text: "That was smooth! The U-Bahn comes so often here, and I love the voice announcing the stations.",
     lenaMood: "happy",
     npcImage: "none",
     choices: [
@@ -800,31 +848,31 @@ const storyData = {
     lenaMood: "unsure",
     npcImage: "commuter_man_annoyed.png",
     choices: [
-      { text: "Ach, Entschuldigung! Ich habe auf die Karte geschaut und nicht aufgepasst.", nextNode: "ch3_ubahn_polite" },
-      { text: "Es tut mir leid, aber Sie können doch warten, oder?", nextNode: "ch3_ubahn_rude" },
+      { text: "Entschuldigung! Ich bin nicht gewusst.", nextNode: "ch3_ubahn_imperfect" },
+      { text: "Entschuldigung, das wusste ich nicht. Ich passe nächstes Mal auf.", nextNode: "ch3_ubahn_polite" },
       { text: "Ja, links ist gut, danke!", nextNode: "ch3_ubahn_confused" },
+    ],
+  },
+
+  ch3_ubahn_imperfect: {
+    id: "ch3_ubahn_imperfect",
+    background: "u_bahn_station.jpg",
+    speaker: "Wiener Mann",
+    text: "Na gut... Aber auf der Rolltreppe gilt: rechts stehen, links gehen!",
+    lenaMood: "unsure",
+    npcImage: "commuter_man_annoyed.png",
+    choices: [
+      { text: "Continue", nextNode: "ch3_station_exit" },
     ],
   },
 
   ch3_ubahn_polite: {
     id: "ch3_ubahn_polite",
     background: "u_bahn_station.jpg",
-    speaker: "Narrator",
-    text: "The man grumbles but passes by.",
-    lenaMood: "normal",
-    npcImage: "none",
-    choices: [
-      { text: "Continue", nextNode: "ch3_station_exit" },
-    ],
-  },
-
-  ch3_ubahn_rude: {
-    id: "ch3_ubahn_rude",
-    background: "u_bahn_station.jpg",
-    speaker: "Narrator",
-    text: "The man gets angry and rants about rude tourists before moving on.",
-    lenaMood: "unsure",
-    npcImage: "none",
+    speaker: "Wiener Mann",
+    text: "Passt schon. Nächstes Mal einfach rechts stehen!",
+    lenaMood: "happy",
+    npcImage: "commuter_man_annoyed.png",
     choices: [
       { text: "Continue", nextNode: "ch3_station_exit" },
     ],
@@ -833,10 +881,10 @@ const storyData = {
   ch3_ubahn_confused: {
     id: "ch3_ubahn_confused",
     background: "u_bahn_station.jpg",
-    speaker: "Narrator",
-    text: "The man shakes his head in annoyance and pushes past.",
-    lenaMood: "unsure",
-    npcImage: "none",
+    speaker: "Wiener Mann",
+    text: "Sagen Sie einmal, verstehen Sie kein Deutsch?! Gehen Sie auf die rechte Seite!",
+    lenaMood: "surprised",
+    npcImage: "commuter_man_annoyed.png",
     choices: [
       { text: "Continue", nextNode: "ch3_station_exit" },
     ],
@@ -846,7 +894,7 @@ const storyData = {
     id: "ch3_station_exit",
     background: "u_bahn_station.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "I'm almost at the exit. I can see the light... Stephansplatz, here I come!",
+    text: "Stand on the right, walk on the left... got it! Step by step, I'm learning how this city works.",
     lenaMood: "happy",
     npcImage: "none",
     choices: [
