@@ -1518,45 +1518,76 @@ button {
   justify-content: center;
   padding: clamp(0.8rem, 3vw, 2rem);
   background:
-    linear-gradient(135deg, rgba(12, 13, 18, 0.9), rgba(27, 23, 25, 0.84)),
-    radial-gradient(circle at 50% 0%, rgba(220, 170, 90, 0.2), transparent 52%);
+    linear-gradient(135deg, rgba(8, 8, 10, 0.88), rgba(18, 16, 14, 0.82)),
+    radial-gradient(circle at 50% 8%, rgba(212, 175, 55, 0.18), transparent 48%);
   backdrop-filter: blur(10px);
 }
 
 .rules-game__panel {
-  width: min(96vw, 820px);
+  --rules-gold: #d4af37;
+  position: relative;
+  width: min(96vw, 860px);
   max-height: 92vh;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
-  padding: clamp(1rem, 2.8vw, 1.8rem);
-  border-radius: 20px;
-  border: 1px solid rgba(244, 195, 116, 0.28);
-  background: linear-gradient(160deg, rgba(35, 36, 43, 0.98), rgba(22, 23, 29, 0.98));
+  gap: 0.65rem;
+  padding: clamp(1.05rem, 2.6vw, 1.7rem) clamp(1rem, 2.6vw, 1.7rem) 1rem;
+  border-radius: 6px;
+  color: #f4efe4;
+  border: 10px solid #2a2c30;
+  background:
+    linear-gradient(180deg, rgba(212, 175, 55, 0.1) 0%, transparent 22%),
+    repeating-linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.018) 0 2px,
+      transparent 2px 7px
+    ),
+    linear-gradient(165deg, #3a3c42 0%, #24262b 42%, #17181c 100%);
   box-shadow:
-    0 28px 80px rgba(0, 0, 0, 0.58),
-    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+    0 0 0 1px var(--rules-gold),
+    0 0 0 3px #121316,
+    0 0 0 5px rgba(212, 175, 55, 0.55),
+    0 0 0 11px #1c1d21,
+    0 30px 80px rgba(0, 0, 0, 0.62),
+    inset 0 1px 0 rgba(255, 248, 220, 0.12),
+    inset 0 0 40px rgba(0, 0, 0, 0.28);
   animation: metroBoardIn 0.35s ease-out;
 }
 
-.rules-game__eyebrow {
-  margin: 0;
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  text-align: center;
-  color: #dca95f;
+.rules-game__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.5rem 0.85rem;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.45);
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.18), transparent);
 }
 
 .rules-game__title {
   margin: 0;
-  font-size: clamp(1.15rem, 3vw, 1.55rem);
-  font-weight: 800;
-  letter-spacing: 0.03em;
+  max-width: 22ch;
+  font-family: "Palatino Linotype", Palatino, "Times New Roman", serif;
+  font-size: clamp(1.05rem, 3.1vw, 1.55rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.25;
   text-align: center;
-  color: #fff8ec;
+  text-transform: uppercase;
+  color: #f7eed4;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.55);
+}
+
+.rules-game__subtitle {
+  margin: 0;
+  font-size: clamp(0.68rem, 1.7vw, 0.78rem);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--rules-gold);
 }
 
 .rules-game__instruction {
@@ -1588,21 +1619,22 @@ button {
 .rules-game__column {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.48rem;
   min-width: 0;
-  padding: 0.75rem;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  background: rgba(255, 255, 255, 0.025);
+  padding: 0.7rem;
+  border-radius: 4px;
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  background: rgba(8, 8, 10, 0.28);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
 }
 
 .rules-game__column-title {
-  margin: 0 0 0.1rem;
-  font-size: 0.7rem;
+  margin: 0 0 0.15rem;
+  font-size: 0.68rem;
   font-weight: 800;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(244, 195, 116, 0.76);
+  color: #d4af37;
 }
 
 .rules-game__item {
@@ -1610,62 +1642,84 @@ button {
   align-items: center;
   gap: 0.55rem;
   width: 100%;
-  min-height: 3.3rem;
-  padding: 0.7rem 0.8rem;
-  border-radius: 11px;
+  min-height: 2.85rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 3px;
   font-family: inherit;
-  font-size: clamp(0.72rem, 1.8vw, 0.85rem);
+  font-size: clamp(0.7rem, 1.7vw, 0.82rem);
   font-weight: 700;
-  line-height: 1.4;
+  line-height: 1.35;
   text-align: left;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.045));
-  color: rgba(255, 255, 255, 0.88);
-  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.18);
+  color: #f3eee3;
+  border: 1px solid rgba(212, 175, 55, 0.28);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02)),
+    #2b2d32;
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease,
+    background 0.16s ease,
+    border-color 0.16s ease,
+    opacity 0.45s ease,
+    color 0.45s ease;
 }
 
 .rules-game__item:hover:not(:disabled) {
-  transform: translateY(-2px);
-  border-color: rgba(244, 195, 116, 0.38);
-  background: linear-gradient(145deg, rgba(244, 195, 116, 0.14), rgba(255, 255, 255, 0.055));
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+  transform: translateY(-1px);
+  border-color: #d4af37;
+  background:
+    linear-gradient(180deg, rgba(212, 175, 55, 0.18), rgba(255, 255, 255, 0.04)),
+    #32343a;
+  box-shadow:
+    0 0 0 1px rgba(212, 175, 55, 0.35),
+    0 8px 18px rgba(0, 0, 0, 0.32);
+}
+
+.rules-game__item:active:not(:disabled) {
+  transform: translateY(0);
+  border-color: #e6c65a;
 }
 
 .rules-game__num {
   display: inline-grid;
   place-items: center;
   flex-shrink: 0;
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 2px;
+  font-size: 0.72rem;
   font-weight: 800;
-  color: #1c1b1d;
-  background: linear-gradient(180deg, #f4c374, #dca04d);
+  color: #1a1710;
+  background: linear-gradient(180deg, #e6c65a, #d4af37);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .rules-game__item--rule.is-selected {
-  border-color: #f4c374;
-  color: #fff8ec;
-  background: linear-gradient(145deg, rgba(244, 195, 116, 0.25), rgba(220, 160, 77, 0.12));
+  border-color: #d4af37;
+  color: #fff8e8;
+  background:
+    linear-gradient(180deg, rgba(212, 175, 55, 0.32), rgba(212, 175, 55, 0.08)),
+    #353228;
   box-shadow:
-    0 0 0 2px rgba(244, 195, 116, 0.16),
-    0 8px 22px rgba(0, 0, 0, 0.3);
+    0 0 0 2px rgba(212, 175, 55, 0.28),
+    0 8px 18px rgba(0, 0, 0, 0.34);
 }
 
 .rules-game__item.is-matched {
   cursor: default;
-  border-color: rgba(91, 203, 136, 0.52);
-  background: linear-gradient(145deg, rgba(57, 151, 96, 0.28), rgba(35, 95, 62, 0.18));
-  color: #c9f4da;
-  opacity: 0.78;
+  opacity: 0.72;
+  border-color: rgba(80, 200, 120, 0.7);
+  color: #d6ffe6;
+  background: linear-gradient(145deg, rgba(46, 160, 87, 0.55), rgba(16, 90, 52, 0.42));
 }
 
 .rules-game__item.is-matched .rules-game__num {
   color: #effff5;
-  background: #398f5f;
+  background: #2ecc71;
 }
 
 .rules-game__item.is-wrong {
@@ -1676,19 +1730,22 @@ button {
 
 @keyframes rulesShake {
   0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-6px); }
-  40% { transform: translateX(6px); }
-  60% { transform: translateX(-4px); }
-  80% { transform: translateX(4px); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
 }
 
-.rules-game__status {
-  margin: 0;
-  font-size: clamp(0.72rem, 1.7vw, 0.82rem);
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-align: center;
-  color: rgba(255, 255, 255, 0.66);
+.rules-game__live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* ── Universal mistake counter (Fehler-Zähler) ───────────────── */
@@ -1720,13 +1777,6 @@ button {
   color: #ffd0c8;
   background: rgba(190, 55, 55, 0.22);
   border-color: rgba(239, 99, 99, 0.5);
-}
-
-.rules-game__footer-status {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.35rem;
 }
 
 .rules-game__dev-controls {
@@ -1770,6 +1820,246 @@ button {
 
   .rules-game__columns {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ── Erlaubt vs. Verboten etiquette mini-game ─────────────────── */
+
+.etiquette-game {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(0.8rem, 3vw, 2rem);
+  background:
+    linear-gradient(135deg, rgba(8, 8, 10, 0.88), rgba(18, 16, 14, 0.82)),
+    radial-gradient(circle at 50% 8%, rgba(80, 200, 120, 0.12), transparent 48%);
+  backdrop-filter: blur(10px);
+}
+
+.etiquette-game__panel {
+  width: min(96vw, 820px);
+  max-height: 92vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: clamp(1rem, 2.6vw, 1.7rem);
+  border-radius: 6px;
+  border: 10px solid #2a2c30;
+  color: #f4efe4;
+  background:
+    linear-gradient(180deg, rgba(80, 200, 120, 0.08) 0%, transparent 22%),
+    linear-gradient(165deg, #3a3c42 0%, #24262b 42%, #17181c 100%);
+  box-shadow:
+    0 0 0 1px #d4af37,
+    0 0 0 3px #121316,
+    0 0 0 5px rgba(212, 175, 55, 0.45),
+    0 30px 80px rgba(0, 0, 0, 0.62);
+  animation: metroBoardIn 0.35s ease-out;
+}
+
+.etiquette-game__round {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-align: center;
+  text-transform: uppercase;
+  color: rgba(244, 239, 228, 0.62);
+}
+
+.etiquette-game__title {
+  margin: 0;
+  font-family: "Palatino Linotype", Palatino, "Times New Roman", serif;
+  font-size: clamp(1.2rem, 3.2vw, 1.7rem);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-align: center;
+  text-transform: uppercase;
+  color: #f7eed4;
+}
+
+.etiquette-game__instruction {
+  margin: 0;
+  font-size: clamp(0.78rem, 1.9vw, 0.92rem);
+  font-weight: 600;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.etiquette-game__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-top: 0.25rem;
+}
+
+.etiquette-game__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.7rem;
+  align-items: center;
+  padding: 0.7rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  background: rgba(8, 8, 10, 0.32);
+}
+
+.etiquette-game__row.is-solved {
+  border-color: rgba(80, 200, 120, 0.45);
+  background: rgba(16, 90, 52, 0.18);
+}
+
+.etiquette-game__row.is-shake {
+  animation: rulesShake 0.4s ease;
+}
+
+.etiquette-game__rule {
+  margin: 0;
+  font-size: clamp(0.82rem, 2vw, 0.98rem);
+  font-weight: 700;
+  line-height: 1.35;
+  color: #f3eee3;
+}
+
+.etiquette-game__toggles {
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.4rem;
+}
+
+.etiquette-game__toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-width: 8.4rem;
+  min-height: 2.7rem;
+  padding: 0.45rem 0.7rem;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.etiquette-game__badge {
+  display: inline-grid;
+  place-items: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.etiquette-game__toggle--erlaubt {
+  color: #d8ffe8;
+  border-color: #2ecc71;
+  background: linear-gradient(180deg, rgba(46, 204, 113, 0.28), rgba(16, 90, 52, 0.45));
+  box-shadow: 0 4px 12px rgba(16, 90, 52, 0.28);
+}
+
+.etiquette-game__toggle--erlaubt .etiquette-game__badge {
+  color: #0b3d22;
+  background: #50c878;
+}
+
+.etiquette-game__toggle--verboten {
+  color: #ffe0dc;
+  border-color: #e74c3c;
+  background: linear-gradient(180deg, rgba(231, 76, 60, 0.28), rgba(110, 28, 28, 0.48));
+  box-shadow: 0 4px 12px rgba(110, 28, 28, 0.28);
+}
+
+.etiquette-game__toggle--verboten .etiquette-game__badge {
+  color: #4a1010;
+  background: #ef6b5c;
+}
+
+.etiquette-game__toggle:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+}
+
+.etiquette-game__toggle:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.etiquette-game__toggle.is-correct {
+  color: #effff5;
+  border-color: #50c878;
+  background: linear-gradient(180deg, #2ecc71, #1e8f52);
+  box-shadow: 0 0 0 2px rgba(80, 200, 120, 0.35);
+}
+
+.etiquette-game__toggle.is-idle {
+  opacity: 0.38;
+  filter: grayscale(0.4);
+}
+
+.etiquette-game__toggle.is-wrong {
+  animation: rulesShake 0.4s ease;
+  border-color: #ff6b5b;
+  background: linear-gradient(180deg, #c0392b, #7b1e1e);
+}
+
+.etiquette-game__feedback {
+  min-height: 1.3em;
+  margin: 0.15rem 0 0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.etiquette-game__feedback.is-correct {
+  color: #8ef0b4;
+}
+
+.etiquette-game__feedback.is-wrong {
+  color: #ffb4aa;
+}
+
+.etiquette-game__dev {
+  display: flex;
+  justify-content: center;
+}
+
+.etiquette-game__dev button {
+  padding: 0.28rem 0.55rem;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.45);
+  background: rgba(0, 0, 0, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+@media (max-width: 700px) {
+  .etiquette-game__row {
+    grid-template-columns: 1fr;
+  }
+
+  .etiquette-game__toggles {
+    width: 100%;
+  }
+
+  .etiquette-game__toggle {
+    flex: 1;
+    min-width: 0;
   }
 }
 
@@ -4333,6 +4623,14 @@ button {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+.ch1-ppp__body .etiquette-game__list {
+  gap: 0.45rem;
+}
+
+.ch1-ppp__body .etiquette-game__row {
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .ch1-ppp__body[hidden],

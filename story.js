@@ -954,7 +954,7 @@ const storyData = {
     id: "ch4_stephans_intro",
     background: "cathedral.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "Stephansdom, or St. Stephen's Cathedral, is the symbol of Vienna. It is a huge Gothic church from the 12th century. People from Vienna call it 'Steffl' because of its tall tower. I saw it in so many pictures — and now it is real!",
+    text: "So this is the famous 'Steffl', as the locals call it. Seeing it in real life is completely different than in photos!",
     lenaMood: "happy",
     npcImage: "none",
     choices: [
@@ -966,7 +966,7 @@ const storyData = {
     id: "ch4_mozart_surprise",
     background: "cathedral.jpg",
     speaker: "Narrator",
-    text: "*ZAP!* Suddenly, a man in a white wig and a red coat jumps right in front of me. He waves a handful of golden tickets!",
+    text: "ZAP! Suddenly, a man in a white wig and a red coat jumps right in front of Lena. He waves a handful of golden tickets!",
     lenaMood: "surprised",
     npcImage: "mozart_seller_pushy.png",
     dialogueStyle: "sensory",
@@ -1059,8 +1059,34 @@ const storyData = {
     lenaMood: "thoughtful",
     npcImage: "none",
     choices: [
-      { text: "Walk into Stephansdom", nextNode: "ch4_rules_intro" },
+      { text: "Continue", nextNode: "ch4_practice_prompt" },
     ],
+  },
+
+  ch4_practice_prompt: {
+    id: "ch4_practice_prompt",
+    background: "cathedral.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Before heading inside, I’d better brush up on my German so I actually understand the rules and know how to behave!",
+    lenaMood: "thoughtful",
+    npcImage: "none",
+    choices: [
+      {
+        text: "Practice",
+        nextNode: "ch4_ppp_practice",
+        prominent: true,
+      },
+    ],
+  },
+
+  ch4_ppp_practice: {
+    id: "ch4_ppp_practice",
+    background: "cathedral.jpg",
+    speaker: "Lena",
+    text: "",
+    lenaMood: "thoughtful",
+    npcImage: "none",
+    choices: [],
   },
 
   // ── Entrance mini-game: match the visitor rules ─────────────────────────
@@ -1069,7 +1095,7 @@ const storyData = {
     id: "ch4_rules_intro",
     background: "cathedral.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "Wait, there's a sign here with rules for visitors. I should read it carefully so I don't cause any trouble inside. Let's see if I can understand these rules...",
+    text: "Wait — there's an official board: Verhaltensregeln im Stephansdom. I should match each German rule with its English meaning so I don't cause any trouble inside.",
     lenaMood: "unsure",
     npcImage: "none",
     choices: [

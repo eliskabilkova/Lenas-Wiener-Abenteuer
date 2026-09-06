@@ -21,6 +21,7 @@ let gameState = {
   chapter3Strikes: 0,
   ch4Strikes: 0,
   ch5Strikes: 0,
+  chapter5Strikes: 0,
   hasSeenVokabelTutorial: false,
   characters: {
     lena: { mood: "neutral" },
@@ -158,6 +159,7 @@ let gameState = {
     gameState.chapter3Strikes = 0;
     gameState.ch4Strikes = 0;
     gameState.ch5Strikes = 0;
+    gameState.chapter5Strikes = 0;
     gameState.characters = {
       lena: { mood: "neutral" },
       npc: { character: "elder", mood: "neutral", name: "", visible: false },
@@ -240,6 +242,7 @@ let gameState = {
   const CH1_PPP_TRIGGER_NODE = "ch1_ppp_practice";
   const CH2_PPP_TRIGGER_NODE = "ch2_ppp_practice";
   const CH3_PPP_TRIGGER_NODE = "ch3_ppp_practice";
+  const CH4_PPP_TRIGGER_NODE = "ch4_ppp_practice";
   const CH1_PPP_SUCCESS_NODE = "start_ask_hotel";
   const CH1_REVIEW_ROUTE_NODE = "ch1_review_route";
   const HOTEL_NAV_NODE_IDS = new Set([
@@ -601,6 +604,38 @@ let gameState = {
     english: pair.english,
   }));
 
+  const CH4_PPP_VOCAB_SETS = [
+    [
+      { id: "fotografieren", german: "fotografieren", english: "to take photos" },
+      { id: "telefonieren", german: "telefonieren", english: "to make a phone call" },
+      { id: "essen", german: "essen", english: "to eat" },
+      { id: "trinken", german: "trinken", english: "to drink" },
+      { id: "fluestern", german: "flüstern", english: "to whisper" },
+      { id: "besuchen", german: "besuchen", english: "to visit" },
+    ],
+    [
+      { id: "laufen", german: "laufen", english: "to run" },
+      { id: "rauchen", german: "rauchen", english: "to smoke" },
+      { id: "laut_sprechen", german: "laut sprechen", english: "to speak loudly" },
+      { id: "tragen", german: "tragen", english: "to wear" },
+      { id: "muell", german: "Müll machen", english: "to make a mess" },
+      { id: "kaputt", german: "Sachen kaputt machen", english: "to break things" },
+    ],
+    [
+      { id: "blitzlicht", german: "das Blitzlicht", english: "the camera flash" },
+      { id: "hund", german: "der Hund", english: "the dog" },
+      { id: "ruhe", german: "die Ruhe", english: "the quiet" },
+      { id: "kappe", german: "die Kappe", english: "the cap" },
+      { id: "regel", german: "die Regel", english: "the rule" },
+      { id: "laerm", german: "der Lärm", english: "the noise" },
+    ],
+  ];
+
+  const CHAPTER4_PPP_VOCAB = CH4_PPP_VOCAB_SETS.flat().map((pair) => ({
+    german: pair.german,
+    english: pair.english,
+  }));
+
   const CH2_PPP_MODALS = [
     { id: "koennen", german: "können", english: "can" },
     { id: "muessen", german: "müssen", english: "must" },
@@ -653,6 +688,23 @@ let gameState = {
       options: ["A guest registration form", "A metro ticket", "A breakfast menu"],
       correct: "A guest registration form",
     },
+  ];
+
+  const ETIQUETTE_ROUNDS = [
+    [
+      { id: "r1-ruhe", text: "Ruhe halten", answer: "erlaubt" },
+      { id: "r1-essen", text: "Im Dom essen und trinken.", answer: "verboten" },
+      { id: "r1-leise", text: "Leise sprechen.", answer: "erlaubt" },
+      { id: "r1-handy", text: "Mit dem Handy telefonieren.", answer: "verboten" },
+      { id: "r1-kunst", text: "Die Bilder und Kunstwerke ansehen.", answer: "erlaubt" },
+    ],
+    [
+      { id: "r2-blitz", text: "Fotos mit Blitz machen.", answer: "verboten" },
+      { id: "r2-kappe", text: "Kappe oder Hut abnehmen.", answer: "erlaubt" },
+      { id: "r2-hunde", text: "Hunde mit in den Dom nehmen.", answer: "verboten" },
+      { id: "r2-laune", text: "Gute Laune mitbringen.", answer: "erlaubt" },
+      { id: "r2-rauchen", text: "Im Dom rauchen.", answer: "verboten" },
+    ],
   ];
 
   const PPP_PACKS = {
@@ -751,6 +803,50 @@ let gameState = {
         },
       ],
     },
+    ch4_ppp_practice: {
+      successNode: "ch4_rules_intro",
+      doneButton: "Proceed to the entrance",
+      doneTitle: "Lena feels confident and ready to step inside Stephansdom.",
+      vocab: CHAPTER4_PPP_VOCAB,
+      vocabChapter: "chapter4",
+      vocabFlag: "chapter4Ppp",
+      matching1: CH4_PPP_VOCAB_SETS,
+      flow: [
+        {
+          type: "matching",
+          title: "Stephansdom Vocabulary & Rules Practice",
+          instruction: "Match the German terms with their English meanings.",
+          pairs: CH4_PPP_VOCAB_SETS[0],
+          shuffleLeft: true,
+        },
+        {
+          type: "matching",
+          title: "Stephansdom Vocabulary & Rules Practice",
+          instruction: "Match the German terms with their English meanings.",
+          pairs: CH4_PPP_VOCAB_SETS[1],
+          shuffleLeft: true,
+        },
+        {
+          type: "matching",
+          title: "Stephansdom Vocabulary & Rules Practice",
+          instruction: "Match the German terms with their English meanings.",
+          pairs: CH4_PPP_VOCAB_SETS[2],
+          shuffleLeft: true,
+        },
+        {
+          type: "etiquette",
+          title: "Is this allowed or forbidden in Stephansdom?",
+          instruction: "Choose ALLOWED or FORBIDDEN for each rule.",
+          rules: ETIQUETTE_ROUNDS[0],
+        },
+        {
+          type: "etiquette",
+          title: "Is this allowed or forbidden in Stephansdom?",
+          instruction: "Choose ALLOWED or FORBIDDEN for each rule.",
+          rules: ETIQUETTE_ROUNDS[1],
+        },
+      ],
+    },
   };
 
   const MELDEZETTEL_TRIGGER_NODE = "ch2_meldezettel";
@@ -787,6 +883,8 @@ let gameState = {
 
   const RULES_GAME_TRIGGER_NODE = "ch4_rules_game";
   const RULES_GAME_MISTAKE_THRESHOLD = 3;
+  const ETIQUETTE_GAME_TRIGGER_NODE = "ch4_erlaubt_game";
+  const ETIQUETTE_GAME_SUCCESS_NODE = "ch4_rules_intro";
 
   const AISLE_GAME_TRIGGER_NODE = "ch5_aisles_game";
   const AISLE_GAME_SUCCESS_NODE = "ch5_basket_done";
@@ -847,6 +945,7 @@ let gameState = {
     { id: "dogs", german: "Keine Hunde im Dom.", english: "No dogs allowed" },
     { id: "flash", german: "Keine Fotos mit Blitzlicht.", english: "No flash photography" },
     { id: "hats", german: "Bitte keine Kappen oder Hüte tragen.", english: "Remove hats and caps" },
+    { id: "food", german: "Essen und Trinken verboten.", english: "No eating or drinking." },
   ];
 
   const TICKET_TYPES = [
@@ -2162,6 +2261,7 @@ let gameState = {
     closeMeldezettelGame();
     closeTicketMachine();
     closeRulesGame();
+    closeEtiquetteGame();
     closeAisleGame();
     closeCashierGame();
     closeCh1PppPractice();
@@ -2974,17 +3074,15 @@ let gameState = {
   }
 
   function updateRulesGameStatus() {
-    const progress = document.getElementById("rules-game-progress");
-    const counter = document.getElementById("rules-game-mistakes");
-
-    if (progress) {
-      progress.textContent =
-        rulesGame.matchedCount === CHURCH_RULES_PAIRS.length
-          ? "Alle Regeln zugeordnet! (All rules matched!)"
-          : `Zugeordnet: ${rulesGame.matchedCount} / ${CHURCH_RULES_PAIRS.length}`;
+    const live = document.getElementById("rules-game-live");
+    if (live) {
+      live.textContent = `${rulesGame.matchedCount} of ${CHURCH_RULES_PAIRS.length} rules matched.`;
     }
+  }
 
-    updateMistakeCounter(counter, rulesGame.mistakes, RULES_GAME_MISTAKE_THRESHOLD);
+  function addChapter4Strike() {
+    gameState.ch4Strikes = Math.min((gameState.ch4Strikes || 0) + 1, 3);
+    console.log("Chapter 4 Strike added! Total strikes:", gameState.ch4Strikes);
   }
 
   function finishRulesGame() {
@@ -2993,7 +3091,6 @@ let gameState = {
 
     let outcomeNodeId = "ch4_rules_perfect";
     if (mistakes >= RULES_GAME_MISTAKE_THRESHOLD) {
-      gameState.ch4Strikes += 1;
       outcomeNodeId = "ch4_rules_fail";
     } else if (mistakes > 0) {
       outcomeNodeId = "ch4_rules_ok";
@@ -3029,11 +3126,22 @@ let gameState = {
       }
     } else {
       rulesGame.mistakes += 1;
+      addChapter4Strike();
       updateRulesGameStatus();
-      meaningBtn.classList.remove("is-wrong");
-      void meaningBtn.offsetWidth;
-      meaningBtn.classList.add("is-wrong");
-      window.setTimeout(() => meaningBtn.classList.remove("is-wrong"), 450);
+
+      const shake = (el) => {
+        if (!el) return;
+        el.classList.remove("is-wrong");
+        void el.offsetWidth;
+        el.classList.add("is-wrong");
+        window.setTimeout(() => el.classList.remove("is-wrong"), 450);
+      };
+      shake(meaningBtn);
+      shake(selectedRuleBtn);
+
+      selectedRuleBtn.classList.remove("is-selected");
+      selectedRuleBtn.setAttribute("aria-pressed", "false");
+      rulesGame.selectedRuleId = null;
     }
   }
 
@@ -3058,16 +3166,20 @@ let gameState = {
     panel.setAttribute("aria-labelledby", "rules-game-title");
     panel.setAttribute("aria-describedby", "rules-game-instruction");
 
-    const eyebrow = document.createElement("p");
-    eyebrow.className = "rules-game__eyebrow";
-    eyebrow.textContent = "Stephansdom · Eingang";
-    panel.appendChild(eyebrow);
+    const header = document.createElement("header");
+    header.className = "rules-game__header";
 
     const title = document.createElement("h2");
     title.id = "rules-game-title";
     title.className = "rules-game__title";
-    title.textContent = "Information für Besucher";
-    panel.appendChild(title);
+    title.textContent = "VERHALTENSREGELN IM STEPHANSDOM";
+    header.appendChild(title);
+
+    const subtitle = document.createElement("p");
+    subtitle.className = "rules-game__subtitle";
+    subtitle.textContent = "Visitor Etiquette / Visitors' Rules";
+    header.appendChild(subtitle);
+    panel.appendChild(header);
 
     const instruction = document.createElement("p");
     instruction.id = "rules-game-instruction";
@@ -3124,24 +3236,12 @@ let gameState = {
 
     panel.appendChild(columns);
 
-    const footerStatus = document.createElement("div");
-    footerStatus.className = "rules-game__footer-status";
-
-    const progress = document.createElement("p");
-    progress.id = "rules-game-progress";
-    progress.className = "rules-game__status";
-    progress.setAttribute("role", "status");
-    progress.setAttribute("aria-live", "polite");
-    footerStatus.appendChild(progress);
-
-    const counter = document.createElement("p");
-    counter.id = "rules-game-mistakes";
-    counter.className = "mistake-counter";
-    counter.setAttribute("role", "status");
-    counter.setAttribute("aria-live", "polite");
-    footerStatus.appendChild(counter);
-
-    panel.appendChild(footerStatus);
+    const live = document.createElement("p");
+    live.id = "rules-game-live";
+    live.className = "rules-game__live";
+    live.setAttribute("role", "status");
+    live.setAttribute("aria-live", "polite");
+    panel.appendChild(live);
 
     const devControls = document.createElement("div");
     devControls.className = "rules-game__dev-controls";
@@ -3161,6 +3261,7 @@ let gameState = {
     devFailBtn.textContent = "DEV: Skip Fail";
     devFailBtn.addEventListener("click", () => {
       rulesGame.mistakes = RULES_GAME_MISTAKE_THRESHOLD;
+      while ((gameState.ch4Strikes || 0) < 3) addChapter4Strike();
       finishRulesGame();
     });
     devControls.appendChild(devFailBtn);
@@ -3170,6 +3271,214 @@ let gameState = {
     overlay.appendChild(panel);
     els.game.appendChild(overlay);
     updateRulesGameStatus();
+  }
+
+  // ── Erlaubt vs. Verboten etiquette mini-game ─────────────────────────────
+
+  const etiquetteGame = {
+    active: false,
+    roundIndex: 0,
+    solved: {},
+    locked: false,
+  };
+
+  function closeEtiquetteGame() {
+    etiquetteGame.active = false;
+    etiquetteGame.locked = false;
+    document.getElementById("etiquette-game")?.remove();
+  }
+
+  function addChapter5Strike() {
+    gameState.chapter5Strikes = (gameState.chapter5Strikes || 0) + 1;
+    addChapter4Strike();
+    console.log("Chapter 5 Strike added! Total strikes:", gameState.chapter5Strikes);
+  }
+
+  function finishEtiquetteGame() {
+    closeEtiquetteGame();
+    goToNode(ETIQUETTE_GAME_SUCCESS_NODE);
+  }
+
+  function setEtiquetteFeedback(overlay, text, kind) {
+    const feedback = overlay.querySelector("#etiquette-game-feedback");
+    if (!feedback) return;
+    feedback.textContent = text || "";
+    feedback.className = `etiquette-game__feedback${kind ? ` is-${kind}` : ""}`;
+  }
+
+  function currentEtiquetteRound() {
+    return etiquetteGame.rules || [];
+  }
+
+  function isEtiquetteRoundComplete() {
+    return currentEtiquetteRound().every((rule) => etiquetteGame.solved[rule.id]);
+  }
+
+  function fillEtiquetteList(list, rules, overlay) {
+    list.innerHTML = "";
+    rules.forEach((rule) => {
+      const row = document.createElement("div");
+      row.className = "etiquette-game__row";
+      row.dataset.ruleId = rule.id;
+
+      const text = document.createElement("p");
+      text.className = "etiquette-game__rule";
+      text.textContent = rule.text;
+      row.appendChild(text);
+
+      const toggles = document.createElement("div");
+      toggles.className = "etiquette-game__toggles";
+      toggles.setAttribute("role", "group");
+      toggles.setAttribute("aria-label", rule.text);
+
+      ["erlaubt", "verboten"].forEach((choice) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = `etiquette-game__toggle etiquette-game__toggle--${choice}`;
+        btn.dataset.choice = choice;
+        btn.innerHTML =
+          choice === "erlaubt"
+            ? `<span class="etiquette-game__badge" aria-hidden="true">✓</span><span>Erlaubt</span>`
+            : `<span class="etiquette-game__badge" aria-hidden="true">✕</span><span>Verboten</span>`;
+        btn.addEventListener("click", () => handleEtiquetteChoice(rule, choice, btn, overlay));
+        toggles.appendChild(btn);
+      });
+
+      row.appendChild(toggles);
+      list.appendChild(row);
+    });
+  }
+
+  function renderEtiquetteRound(overlay) {
+    const list = overlay.querySelector("#etiquette-game-list");
+    const roundLabel = overlay.querySelector("#etiquette-game-round");
+    const title = overlay.querySelector("#etiquette-game-title");
+    if (!list) return;
+
+    const roundNumber = etiquetteGame.roundIndex + 1;
+    if (roundLabel) roundLabel.textContent = `ROUND ${roundNumber} / ${ETIQUETTE_ROUNDS.length}`;
+    if (title) title.textContent = "Erlaubt oder Verboten?";
+
+    etiquetteGame.solved = {};
+    etiquetteGame.locked = false;
+    etiquetteGame.rules = currentEtiquetteRoundFromIndex();
+    etiquetteGame.onComplete = () => {
+      if (etiquetteGame.roundIndex < ETIQUETTE_ROUNDS.length - 1) {
+        etiquetteGame.roundIndex += 1;
+        renderEtiquetteRound(overlay);
+        return;
+      }
+      finishEtiquetteGame();
+    };
+    fillEtiquetteList(list, etiquetteGame.rules, overlay);
+    setEtiquetteFeedback(overlay, "Choose ALLOWED or FORBIDDEN for each rule.", "");
+  }
+
+  function currentEtiquetteRoundFromIndex() {
+    return ETIQUETTE_ROUNDS[etiquetteGame.roundIndex] || [];
+  }
+
+  function handleEtiquetteChoice(rule, choice, btn, overlay) {
+    if (!etiquetteGame.active || etiquetteGame.locked) return;
+    if (etiquetteGame.solved[rule.id]) return;
+
+    const row = overlay.querySelector(`.etiquette-game__row[data-rule-id="${rule.id}"]`);
+    if (!row) return;
+
+    if (choice === rule.answer) {
+      etiquetteGame.solved[rule.id] = true;
+      row.classList.add("is-solved");
+      row.querySelectorAll(".etiquette-game__toggle").forEach((toggle) => {
+        toggle.disabled = true;
+        toggle.classList.toggle("is-correct", toggle === btn);
+        toggle.classList.toggle("is-idle", toggle !== btn);
+      });
+      setEtiquetteFeedback(overlay, "Richtig!", "correct");
+
+      if (isEtiquetteRoundComplete()) {
+        etiquetteGame.locked = true;
+        setEtiquetteFeedback(overlay, "Richtig!", "correct");
+        window.setTimeout(() => {
+          if (!etiquetteGame.active) return;
+          etiquetteGame.onComplete?.();
+        }, 650);
+      }
+      return;
+    }
+
+    addChapter5Strike();
+    btn.classList.remove("is-wrong");
+    void btn.offsetWidth;
+    btn.classList.add("is-wrong");
+    row.classList.remove("is-shake");
+    void row.offsetWidth;
+    row.classList.add("is-shake");
+    setEtiquetteFeedback(overlay, "Noch einmal versuchen. / Try again.", "wrong");
+    window.setTimeout(() => {
+      btn.classList.remove("is-wrong");
+      row.classList.remove("is-shake");
+    }, 450);
+  }
+
+  function openEtiquetteGame() {
+    closeEtiquetteGame();
+    etiquetteGame.active = true;
+    etiquetteGame.roundIndex = 0;
+    etiquetteGame.solved = {};
+    etiquetteGame.locked = false;
+
+    els.dialogueBox.hidden = true;
+    els.npcContainer.style.display = "none";
+    els.npcContainer.classList.add("is-hidden");
+    els.lenaContainer.classList.add("is-hidden");
+
+    const overlay = document.createElement("div");
+    overlay.id = "etiquette-game";
+    overlay.className = "etiquette-game";
+
+    const panel = document.createElement("section");
+    panel.className = "etiquette-game__panel";
+    panel.setAttribute("aria-labelledby", "etiquette-game-title");
+
+    const round = document.createElement("p");
+    round.id = "etiquette-game-round";
+    round.className = "etiquette-game__round";
+    panel.appendChild(round);
+
+    const title = document.createElement("h2");
+    title.id = "etiquette-game-title";
+    title.className = "etiquette-game__title";
+    panel.appendChild(title);
+
+    const instruction = document.createElement("p");
+    instruction.className = "etiquette-game__instruction";
+    instruction.textContent = "Is this allowed or forbidden in Stephansdom?";
+    panel.appendChild(instruction);
+
+    const list = document.createElement("div");
+    list.id = "etiquette-game-list";
+    list.className = "etiquette-game__list";
+    panel.appendChild(list);
+
+    const feedback = document.createElement("p");
+    feedback.id = "etiquette-game-feedback";
+    feedback.className = "etiquette-game__feedback";
+    feedback.setAttribute("role", "status");
+    feedback.setAttribute("aria-live", "polite");
+    panel.appendChild(feedback);
+
+    const devControls = document.createElement("div");
+    devControls.className = "etiquette-game__dev";
+    const devSkip = document.createElement("button");
+    devSkip.type = "button";
+    devSkip.textContent = "Dev: Skip";
+    devSkip.addEventListener("click", finishEtiquetteGame);
+    devControls.appendChild(devSkip);
+    panel.appendChild(devControls);
+
+    overlay.appendChild(panel);
+    els.game.appendChild(overlay);
+    renderEtiquetteRound(overlay);
   }
 
   // ── Supermarket aisle finder mini-game ───────────────────────────────────
@@ -3612,6 +3921,38 @@ let gameState = {
     renderCh1PppStep1(overlay);
   }
 
+  function renderPppEtiquette(overlay, item, onComplete) {
+    const ui = getCh1PppShell(overlay);
+    etiquetteGame.active = true;
+    etiquetteGame.solved = {};
+    etiquetteGame.locked = false;
+    etiquetteGame.rules = item.rules || [];
+    etiquetteGame.onComplete = onComplete;
+    ch1Ppp.locked = false;
+
+    updateCh1PppProgress(overlay);
+    ui.title.textContent = item.title || "";
+    setCh1PppInstruction(overlay, item.instruction || "");
+    ui.body.hidden = false;
+    ui.body.innerHTML = "";
+    ui.result.hidden = true;
+    ui.checkBtn.hidden = true;
+
+    const list = document.createElement("div");
+    list.id = "etiquette-game-list";
+    list.className = "etiquette-game__list";
+    fillEtiquetteList(list, etiquetteGame.rules, overlay);
+    ui.body.appendChild(list);
+
+    const feedback = document.createElement("p");
+    feedback.id = "etiquette-game-feedback";
+    feedback.className = "etiquette-game__feedback";
+    feedback.setAttribute("role", "status");
+    feedback.setAttribute("aria-live", "polite");
+    ui.body.appendChild(feedback);
+    setEtiquetteFeedback(overlay, "", "");
+  }
+
   function renderPppFlow(overlay) {
     const flow = getPppFlow();
     if (!flow) {
@@ -3619,6 +3960,10 @@ let gameState = {
       return;
     }
     if (ch1Ppp.flowIndex >= flow.length) {
+      if (getPppPack().skipDoneScreen) {
+        finishCh1PppPractice();
+        return;
+      }
       showCh1PppSuccess(overlay);
       return;
     }
@@ -3636,6 +3981,15 @@ let gameState = {
           ch1Ppp.sentenceIndex = 0;
           renderPppFlow(overlay);
         },
+      });
+      return;
+    }
+
+    if (item.type === "etiquette") {
+      renderPppEtiquette(overlay, item, () => {
+        ch1Ppp.flowIndex += 1;
+        ch1Ppp.sentenceIndex = 0;
+        renderPppFlow(overlay);
       });
       return;
     }
@@ -3685,6 +4039,8 @@ let gameState = {
     ch1Ppp.active = false;
     ch1Ppp.locked = false;
     ch1Ppp.pendingAdvance = null;
+    etiquetteGame.active = false;
+    etiquetteGame.locked = false;
     if (ch1Ppp.matchTimer) {
       window.clearTimeout(ch1Ppp.matchTimer);
       ch1Ppp.matchTimer = null;
@@ -3925,6 +4281,7 @@ let gameState = {
     ch1Ppp.selectedPairId = null;
 
     if (getPppFlow()) {
+      etiquetteGame.locked = false;
       ch1Ppp.flowIndex += 1;
       ch1Ppp.sentenceIndex = 0;
       renderPppFlow(overlay);
@@ -4687,6 +5044,7 @@ let gameState = {
     closeMeldezettelGame();
     closeTicketMachine();
     closeRulesGame();
+    closeEtiquetteGame();
     closeAisleGame();
     closeCashierGame();
     closeCh1PppPractice();
@@ -4862,6 +5220,7 @@ let gameState = {
     closeMeldezettelGame();
     closeTicketMachine();
     closeRulesGame();
+    closeEtiquetteGame();
     closeAisleGame();
     closeCashierGame();
     closeCh1PppPractice();
@@ -5177,6 +5536,7 @@ let gameState = {
     closeMeldezettelGame();
     closeTicketMachine();
     closeRulesGame();
+    closeEtiquetteGame();
     closeAisleGame();
     closeCashierGame();
     closeCh1PppPractice();
@@ -5199,6 +5559,7 @@ let gameState = {
     closeMeldezettelGame();
     closeTicketMachine();
     closeRulesGame();
+    closeEtiquetteGame();
     closeAisleGame();
     closeCashierGame();
     closeCh1PppPractice();
@@ -5474,6 +5835,7 @@ let gameState = {
     closeMeldezettelGame();
     closeTicketMachine();
     closeRulesGame();
+    closeEtiquetteGame();
     closeAisleGame();
     closeCashierGame();
     closeCh1PppPractice();
@@ -5511,6 +5873,7 @@ let gameState = {
     closeMeldezettelGame();
     closeTicketMachine();
     closeRulesGame();
+    closeEtiquetteGame();
     closeAisleGame();
     closeCashierGame();
     closeCh1PppPractice();
