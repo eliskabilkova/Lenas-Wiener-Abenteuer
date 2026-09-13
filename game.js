@@ -21,12 +21,16 @@ let gameState = {
   chapter3Strikes: 0,
   ch4Strikes: 0,
   ch5Strikes: 0,
-  chapter5Strikes: 0,
+  ch4CandleDone: false,
   hasSeenVokabelTutorial: false,
   characters: {
     lena: { mood: "neutral" },
     npc: { character: "elder", mood: "neutral", name: "", visible: false },
   },
+};
+
+let cathedralState = {
+  lookAroundCompleted: false,
 };
 
 /**
@@ -38,7 +42,7 @@ let gameState = {
 
   const START_NODE = "chapter_1_title";
   const TYPE_SPEED = 24;
-  const TOTAL_CHAPTERS = 5;
+  const TOTAL_CHAPTERS = 6;
   const PROGRESS_STORAGE_KEY = "lenasWienerAbenteuer.progress";
 
   // ── Vocabulary lists (edit words here — glossary & practice mode read from this) ──
@@ -99,16 +103,34 @@ let gameState = {
       { german: "Ruhe bewahren", english: "to stay quiet / keep calm" },
       { german: "das Blitzlicht", english: "camera flash" },
       { german: "keine Kappen tragen", english: "no hats / caps allowed" },
-      { german: "der Ausblick / die Aussicht", english: "view / panorama" },
-      { german: "die Stufe", english: "step (staircase)" },
-      { german: "der Südturm", english: "South Tower" },
-      { german: "steigen / klettern", english: "to climb" },
-      { german: "anstrengend", english: "exhausting / tiring" },
+      { german: "erlaubt / verboten", english: "allowed / forbidden" },
+      { german: "der Dom", english: "cathedral" },
+      { german: "das Glasfenster", english: "stained-glass window" },
       { german: "eine Kerze anzünden", english: "to light a candle" },
+      { german: "die Stille", english: "silence / stillness" },
     ],
     chapter5: [
+      { german: "der Südturm", english: "South Tower" },
+      { german: "die Stufe", english: "step (staircase)" },
+      { german: "steigen / klettern", english: "to climb" },
+      { german: "der Ausblick / die Aussicht", english: "view / panorama" },
+      { german: "anstrengend", english: "exhausting / tiring" },
+      { german: "hoch → höher → am höchsten", english: "high → higher → highest" },
+      { german: "gut → besser → am besten", english: "good → better → best" },
+      { german: "der Höhepunkt", english: "highlight / climax" },
+      { german: "ganz oben", english: "all the way at the top" },
+    ],
+    chapter6: [
       { german: "das Kaffeehaus", english: "coffee house / café" },
       { german: "die Melange", english: "Viennese coffee with milk foam" },
+      { german: "Grüß Gott", english: "hello (formal, Austrian)" },
+      { german: "Was darf es sein?", english: "what would you like? (waiter's phrase)" },
+      { german: "bestellen", english: "to order" },
+      { german: "die Speisekarte", english: "menu" },
+      { german: "die Rechnung", english: "the bill" },
+      { german: "Ich möchte bitte zahlen", english: "I would like to pay, please (polite)" },
+      { german: "Stimmt so", english: "keep the change" },
+      { german: "Gute Reise", english: "have a good trip" },
       { german: "das Frühstück", english: "breakfast" },
       { german: "die Abreise", english: "departure" },
       { german: "auf Wiedersehen", english: "goodbye (until we see each other again)" },
@@ -126,6 +148,7 @@ let gameState = {
     "chapter3",
     "chapter4",
     "chapter5",
+    "chapter6",
   ];
 
   function getVocabularyForChapter(chapterNumber) {
@@ -159,7 +182,8 @@ let gameState = {
     gameState.chapter3Strikes = 0;
     gameState.ch4Strikes = 0;
     gameState.ch5Strikes = 0;
-    gameState.chapter5Strikes = 0;
+    gameState.ch4CandleDone = false;
+    cathedralState.lookAroundCompleted = false;
     gameState.characters = {
       lena: { mood: "neutral" },
       npc: { character: "elder", mood: "neutral", name: "", visible: false },
@@ -175,6 +199,7 @@ let gameState = {
     "u_bahn_station.jpg": "u_bahn_station",
     "cathedral.jpg": "cathedral",
     "cathedral_interior.jpg": "cathedral_interior",
+    "stained-glass.jpg": "stained_glass",
     "vienna_view.jpg": "vienna_view",
     "supermarket_exterior.jpg": "supermarket_exterior",
     "supermarket_interior.jpg": "supermarket_interior",
@@ -197,6 +222,8 @@ let gameState = {
     "mozart_seller_pushy.png": { visible: true, character: "mozart_seller", name: "Straßenverkäufer", mood: "pushy" },
     "warden_stern.png": { visible: true, character: "warden", name: "Domaufseher", mood: "stern" },
     "cashier_friendly.png": { visible: true, character: "mira", name: "Kassiererin", mood: "happy" },
+    "waiter_friendly.png": { visible: true, character: "waiter", name: "Herr Ober", mood: "happy" },
+    "waiter_confused.png": { visible: true, character: "waiter", name: "Herr Ober", mood: "uncertain" },
   };
 
   // Sprite-ready mood values written to gameState.characters and data-mood:
@@ -883,6 +910,62 @@ let gameState = {
 
   const RULES_GAME_TRIGGER_NODE = "ch4_rules_game";
   const RULES_GAME_MISTAKE_THRESHOLD = 3;
+  const TOWER_CLIMB_TRIGGER_NODE = "ch5_climb_game";
+  const TOWER_CLIMB_SUCCESS_NODE = "ch5_tower_view";
+  const TOWER_TOTAL_STEPS = 343;
+  const TOWER_CHECKPOINTS = [
+    {
+      id: "cp100",
+      at: 100,
+      next: 200,
+      animateMs: 1400,
+      monologue:
+        "Whew, 100 steps done! My legs are definitely feeling it, and these narrow spiral stairs just keep going.",
+      prompt: "Der Stephansdom ist hoch, aber der Südturm ist noch [ _______ ].",
+      before: "Der Stephansdom ist hoch, aber der Südturm ist noch ",
+      after: ".",
+      options: [
+        { id: "hoeher", text: "höher", correct: true },
+        { id: "hocher", text: "hocher", correct: false },
+        { id: "hoechsten", text: "am höchsten", correct: false },
+      ],
+      hint: "Hint: 'hoch' gets an umlaut in comparative: 'höher'!",
+    },
+    {
+      id: "cp200",
+      at: 200,
+      next: 300,
+      animateMs: 1400,
+      monologue:
+        "200 steps down! Taking a quick breather by a small stone window... wow, the view over Vienna's rooftops is incredible!",
+      prompt: "Die Aussicht hier ist gut, aber ganz oben ist sie sicher [ _______ ]!",
+      before: "Die Aussicht hier ist gut, aber ganz oben ist sie sicher ",
+      after: "!",
+      options: [
+        { id: "besser", text: "besser", correct: true },
+        { id: "guter", text: "guter", correct: false },
+        { id: "besten", text: "am besten", correct: false },
+      ],
+      hint: "Hint: 'gut' is irregular — the comparative is 'besser', not 'guter'!",
+    },
+    {
+      id: "cp300",
+      at: 300,
+      next: 343,
+      animateMs: 900,
+      monologue:
+        "300 steps! I can feel a cool breeze rushing down through the doorway. Almost at the top—just a final push!",
+      prompt: "Das war der [ _______ ] Aufstieg meines Lebens, aber es lohnt sich!",
+      before: "Das war der ",
+      after: " Aufstieg meines Lebens, aber es lohnt sich!",
+      options: [
+        { id: "anstrengendste", text: "anstrengendste", correct: true },
+        { id: "anstrengender", text: "anstrengender", correct: false },
+        { id: "mehr", text: "mehr anstrengend", correct: false },
+      ],
+      hint: "Hint: Superlative of 'anstrengend' is 'der anstrengendste' (the most exhausting)!",
+    },
+  ];
   const ETIQUETTE_GAME_TRIGGER_NODE = "ch4_erlaubt_game";
   const ETIQUETTE_GAME_SUCCESS_NODE = "ch4_rules_intro";
 
@@ -997,7 +1080,7 @@ let gameState = {
     { id: "plz_ort", label: "PLZ / Ort", answer: "143 00 Praha 12" },
     { id: "staatsangehoerigkeit", label: "Staatsangehörigkeit", answer: "tschechisch" },
     { id: "ankunftsdatum", label: "Ankunftsdatum", answer: "15. 07. 2027" },
-    { id: "abreisedatum", label: "Abreisedatum", answer: "16. 07. 2027" },
+    { id: "abreisedatum", label: "Abreisedatum", answer: "17. 07. 2027" },
     { id: "zimmertyp", label: "Zimmertyp", answer: "Einzelzimmer" },
     { id: "zahlungsart", label: "Zahlungsart", answer: "Kreditkarte" },
   ];
@@ -1063,10 +1146,7 @@ let gameState = {
     startChaptersBackBtn: document.getElementById("start-chapters-back-btn"),
     chapterSelectGrid: document.getElementById("chapter-select-grid"),
     chapterCards: Array.from(document.querySelectorAll(".chapter-card")),
-    startOptionsBtn: document.getElementById("start-options-btn"),
     startVokabeltrainerBtn: document.getElementById("start-vokabeltrainer-btn"),
-    optionsPanel: document.getElementById("options-panel"),
-    optionsBackBtn: document.getElementById("options-back-btn"),
     vokabeltrainer: document.getElementById("vokabeltrainer"),
     vtSelect: document.getElementById("vt-select"),
     vtQuiz: document.getElementById("vt-quiz"),
@@ -1265,7 +1345,23 @@ let gameState = {
       return storyData[replaySourceNodeId]?.choices || [];
     }
 
-    return node.choices || [];
+    const choices = node.choices || [];
+    if (node.id === "ch4_inside_thought") {
+      return choices
+        .filter((choice) => {
+          if (choice.nextNode === "ch4_candle" && gameState.ch4CandleDone) return false;
+          if (choice.nextNode === "ch4_look_around" && cathedralState.lookAroundCompleted) return false;
+          return true;
+        })
+        .map((choice) => {
+          if (choice.nextNode === "ch4_exit_cathedral" && !cathedralState.lookAroundCompleted) {
+            return { ...choice, nextNode: "ch4_exit_blocked" };
+          }
+          return choice;
+        });
+    }
+
+    return choices;
   }
 
   function applyTextFadeIn() {
@@ -1393,10 +1489,12 @@ let gameState = {
     });
 
     const speaker = followUp.speaker || "Lena";
-    const isInternalMonologue = speaker.includes("Internal Monologue") || speaker.includes("Internal Thought");
+    const isInternalMonologue = isInternalThoughtSpeaker(speaker);
+    const isNarrator = isNarratorSpeaker(speaker);
 
     els.dialogueText.classList.toggle("internal-thought", isInternalMonologue);
     els.dialogueText.classList.remove("sensory-text", "announcement-text", "metro-sign-text");
+    els.dialogueText.classList.toggle("narrator-text", isNarrator);
     els.speakerName.classList.remove("is-hidden");
     els.speakerName.textContent = isInternalMonologue ? "Lena" : speaker;
 
@@ -1724,9 +1822,15 @@ let gameState = {
     state.fullText = "Choose U3 towards Simmering or U3 towards Ottakring.";
   }
 
+  function isNarratorSpeaker(speaker) {
+    return (speaker || "").trim() === "Narrator";
+  }
+
   function applyDialogueStyle(node) {
     const speaker = node.speaker || "";
+    const isNarrator = isNarratorSpeaker(speaker) || node.dialogueStyle === "narrator";
     const isInternalMonologue =
+      !isNarrator &&
       !node.thought &&
       (speaker.includes("Internal Monologue") || speaker.includes("Internal Thought"));
     const isMetroVisual =
@@ -1735,7 +1839,8 @@ let gameState = {
       node.dialogueStyle === "u3-platform-boards";
 
     els.dialogueText.classList.toggle("internal-thought", isInternalMonologue);
-    els.dialogueText.classList.toggle("sensory-text", node.dialogueStyle === "sensory");
+    els.dialogueText.classList.toggle("narrator-text", isNarrator);
+    els.dialogueText.classList.toggle("sensory-text", !isNarrator && node.dialogueStyle === "sensory");
     els.dialogueText.classList.toggle("announcement-text", node.dialogueStyle === "announcement");
     els.dialogueText.classList.toggle("metro-sign-text", isMetroVisual);
   }
@@ -1746,7 +1851,7 @@ let gameState = {
     applyDialogueStyle(node);
 
     const speaker = node.speaker || "";
-    const isInternalMonologue = speaker.includes("Internal Monologue");
+    const isInternalMonologue = isInternalThoughtSpeaker(speaker);
 
     els.speakerName.classList.remove("is-hidden");
     els.speakerName.textContent = isInternalMonologue ? "Lena" : speaker || "???";
@@ -1860,6 +1965,7 @@ let gameState = {
   function hideGameplayScene() {
     closeCh1ReviewThought();
     closeU3DirectionUi();
+    closeTowerClimb();
     clearTypeTimer();
     state.typing = false;
     hideChoices();
@@ -1962,6 +2068,7 @@ let gameState = {
       node?.id === "chapter_2_teaser" ||
       node?.id === "chapter_3_title" ||
       node?.id === "chapter_4_title" ||
+      node?.id === "chapter_5_title" ||
       node?.id === "chapter_6_title"
     );
   }
@@ -1972,8 +2079,8 @@ let gameState = {
     "chapter_2_teaser",
     "chapter_3_title",
     "chapter_4_title",
+    "chapter_5_title",
     "chapter_6_title",
-    "ch4_time_passes",
     "ch6_morning_title",
   ]);
 
@@ -2054,37 +2161,37 @@ let gameState = {
     4: {
       success: {
         photo: "photo-c4-a.png",
-        alt: "Lena smiling at the top of the Stephansdom tower",
+        alt: "Lena smiling inside Stephansdom",
         german:
-          "Stephansdom war fantastisch! Ich habe die Regeln verstanden und bin 343 Stufen auf den Südturm gestiegen. Der Ausblick über ganz Wien war unglaublich schön. Ich bin sehr stolz auf mich!",
+          "Liebes Tagebuch,\n\nheute war ich im Stephansdom — dem Herzen von Wien! Ich war zuerst ein bisschen nervös wegen der strengen Regeln am Eingang, aber alles hat super geklappt. Die Atmosphäre drinnen ist magisch: das bunte Licht der Glasfenster, der Duft von Kerzen und diese tiefstimmige Stille.\n\nIch merke, wie ich jeden Tag mutiger werde. Und jetzt stehe ich hier vor dem Südturm. 343 Stufen warten auf mich... Das wird der absolute Höhepunkt meiner Reise! Ich bin bereit.",
         english:
-          "Stephansdom was fantastic! I understood the rules and climbed 343 steps up the South Tower. The view over all of Vienna was unbelievably beautiful. I am very proud of myself!",
+          "Dear diary,\n\ntoday I was inside Stephansdom — the heart of Vienna! At first I was a little nervous about the strict rules at the entrance, but everything went really well. The atmosphere inside is magical: the coloured light of the stained-glass windows, the scent of candles, and that deep, low silence.\n\nI can feel myself getting braver every day. And now I'm standing here in front of the South Tower. 343 steps are waiting for me... This is going to be the absolute highlight of my journey! I'm ready.",
       },
       challenge: {
         photo: "photo-c4-b.png",
-        alt: "Lena looking exhausted on the cathedral tower stairs",
+        alt: "Lena looking flustered at the Stephansdom entrance",
         german:
-          "Ein sehr langer und anstrengender Tag. Der Stephansdom ist wunderschön, aber die vielen Treppen waren sehr schwer für mich. Im Dom war ich kurz etwas verwirrt wegen der Regeln. Aber der Ausblick war es trotzdem wert.",
+          "Liebes Tagebuch,\n\nder Stephansdom ist unglaublich beeindruckend, auch wenn der Start holprig war. Ich war am Eingang total verwirrt und habe Fehler gemacht. Der Aufseher war streng und mein Deutsch hat kurz komplett versagt...\n\nAber weißt du was? Es ist völlig okay. Ich habe mich nicht verunsichern lassen, habe eine Kerze angezündet und die Stille genossen. Fehler gehören dazu — wichtig ist nur, dass man weitermacht!\n\nJetzt stehe ich vor dem Südturm: 343 Stufen nach oben. Meine Beine zittern jetzt schon, aber ich gebe nicht auf. Das wird mein persönlicher Höhepunkt!",
         english:
-          "A very long and exhausting day. Stephansdom is beautiful, but the many stairs were very hard for me. In the cathedral I was briefly confused about the rules. But the view was still worth it.",
+          "Dear diary,\n\nStephansdom is incredibly impressive, even if the start was bumpy. I was completely confused at the entrance and made mistakes. The warden was strict and my German failed me entirely for a moment...\n\nBut you know what? It's perfectly fine. I didn't let it rattle me, I lit a candle and enjoyed the silence. Mistakes are part of the deal — all that matters is that you keep going!\n\nNow I'm standing in front of the South Tower: 343 steps to the top. My legs are trembling already, but I'm not giving up. This is going to be my personal highlight!",
       },
     },
     5: {
       success: {
-        photo: "photo-c6-a.png",
-        alt: "Lena enjoying a Melange in a Viennese café",
+        photo: "photo-c5-a.png",
+        alt: "Lena smiling at the top of the Stephansdom tower",
         german:
-          "Wien war einfach wunderbar! Ich hatte am Anfang Angst, Deutsch zu sprechen, aber mit jedem Tag wurde es einfacher. Ich habe so viel gelernt!",
+          "343 Stufen geschafft! Ich stehe oben auf dem Südturm und ganz Wien liegt mir zu Füßen. Der Wind ist kühl, aber die Aussicht ist einfach unglaublich. Vor ein paar Tagen hatte ich noch Angst, ein Ticket zu bestellen — und jetzt genieße ich diesen Moment in vollen Zügen. Ich habe es wirklich geschafft!",
         english:
-          "Vienna was simply wonderful! I was afraid to speak German at first, but it got easier every day. I learned so much!",
+          "343 steps — done! I'm standing at the top of the South Tower and all of Vienna lies at my feet. The wind is cool, but the view is simply incredible. A few days ago I was still afraid to order a ticket — and now I'm savouring this moment to the fullest. I really did it!",
       },
       challenge: {
-        photo: "photo-c6-b.png",
-        alt: "Lena reflecting in a Viennese café before departure",
+        photo: "photo-c5-b.png",
+        alt: "Lena looking exhausted on the cathedral tower stairs",
         german:
-          "Wien war einfach wunderbar! Ich hatte am Anfang Angst, Deutsch zu sprechen, aber mit jedem Tag wurde es einfacher. Ich habe so viel gelernt!",
+          "343 Stufen... meine Beine brennen, aber ich stehe oben! Sprachen lernen ist genau wie dieser Turmaufstieg: Es ist anstrengend, eng und man stolpert ab und zu über schwere Wörter. Aber mit jedem einzelnen Schritt kommt man dem Ziel näher. Die Aussicht von hier oben erinnert mich daran, dass sich jede Mühe lohnt. Ich mache weiter!",
         english:
-          "Vienna was simply wonderful! I was afraid to speak German at first, but it got easier every day. I learned so much!",
+          "343 steps... my legs are burning, but I made it to the top! Learning a language is exactly like climbing this tower: it's exhausting, it's narrow, and every now and then you stumble over a difficult word. But with every single step you get closer to the goal. The view from up here reminds me that every bit of effort is worth it. I'm keeping going!",
       },
     },
   };
@@ -2093,8 +2200,9 @@ let gameState = {
     1: "Ankunft",
     2: "Check-in",
     3: "Unterwegs",
-    4: "Dem Himmel so nah",
-    5: "Epilog",
+    4: "Das Herz von Wien",
+    5: "Dem Himmel so nah",
+    6: "Epilog",
   };
 
   function removeTagebuchScreen() {
@@ -2141,10 +2249,14 @@ let gameState = {
     }
 
     if (chapterNumber === 4) {
-      return Math.min(gameState.ch4Strikes, 2);
+      return Math.min(gameState.ch4Strikes || 0, 2);
     }
 
     if (chapterNumber === 5) {
+      return Math.min(gameState.ch5Strikes || 0, 2);
+    }
+
+    if (chapterNumber === 6) {
       return 0;
     }
 
@@ -2161,23 +2273,6 @@ let gameState = {
     return Math.min(dialogueStrike + navigationStrike, 2);
   }
 
-  function getTotalJourneyStrikes() {
-    try {
-      const progress = loadSavedProgress();
-      let total = 0;
-      for (let chapter = 1; chapter <= TOTAL_CHAPTERS; chapter += 1) {
-        const entry = progress[`chapter${chapter}`];
-        if (entry && typeof entry.strikes === "number") {
-          total += entry.strikes;
-        }
-      }
-      return total;
-    } catch (error) {
-      console.warn("Unable to read journey progress:", error);
-      return 0;
-    }
-  }
-
   function getChapter1TagebuchIsChallenge() {
     const dialogueStrikes = Math.max(
       Number(gameState.dialogueStrikes) || 0,
@@ -2192,16 +2287,16 @@ let gameState = {
     return dialogueStrikes > 0 || navigationMistakes >= 2;
   }
 
+  function getTagebuchIsChallenging(chapterNumber, strikes) {
+    if (chapterNumber === 1) return getChapter1TagebuchIsChallenge();
+    if (chapterNumber === 2) return strikes > 0;
+    if (chapterNumber === 3) return strikes > 1;
+    return strikes >= 2;
+  }
+
   function getTagebuchVariant(chapterNumber, strikes) {
     const content = TAGEBUCH_CONTENT[chapterNumber] || TAGEBUCH_CONTENT[1];
-    const isChallenging =
-      chapterNumber === 1
-        ? getChapter1TagebuchIsChallenge()
-        : chapterNumber === 2
-          ? strikes > 0
-          : chapterNumber === 3
-            ? strikes > 1
-            : strikes >= 2;
+    const isChallenging = getTagebuchIsChallenging(chapterNumber, strikes);
     const variant = isChallenging ? content.challenge : content.success;
 
     return {
@@ -2228,8 +2323,13 @@ let gameState = {
   const NEXT_CHAPTER_MAP = {
     1: { label: "Chapter 2 - Check-in", nodeId: "chapter_2_teaser" },
     2: { label: "Chapter 3 - Unterwegs", nodeId: "chapter_3_title" },
-    3: { label: "Chapter 4: Dem Himmel so nah", nodeId: "chapter_4_title" },
-    4: { label: "Chapter 5: Epilog", nodeId: "chapter_6_title" },
+    3: { label: "Chapter 4: Das Herz von Wien", nodeId: "chapter_4_title" },
+    4: {
+      label: "Chapter 5: Dem Himmel so nah",
+      nodeId: "chapter_5_title",
+      buttonLabel: "Kapitel 5 starten: Dem Himmel so nah",
+    },
+    5: { label: "Chapter 6: Epilog", nodeId: "chapter_6_title" },
   };
 
   function goToNextChapterOrMenu(completedChapter) {
@@ -2262,6 +2362,7 @@ let gameState = {
     closeTicketMachine();
     closeRulesGame();
     closeEtiquetteGame();
+    closeTowerClimb();
     closeAisleGame();
     closeCashierGame();
     closeCh1PppPractice();
@@ -2314,8 +2415,11 @@ let gameState = {
     germanLabel.textContent = "German";
     card.appendChild(germanLabel);
 
+    const isLetter = variant.german.includes("\n");
+
     const germanText = document.createElement("p");
     germanText.className = "tagebuch-card__text tagebuch-card__text--german";
+    if (isLetter) germanText.classList.add("tagebuch-card__text--letter");
     germanText.textContent = variant.german;
     card.appendChild(germanText);
 
@@ -2326,6 +2430,7 @@ let gameState = {
 
     const englishText = document.createElement("p");
     englishText.className = "tagebuch-card__text tagebuch-card__text--english";
+    if (isLetter) englishText.classList.add("tagebuch-card__text--letter");
     const englishItalic = document.createElement("i");
     englishItalic.textContent = variant.english;
     englishText.appendChild(englishItalic);
@@ -2335,20 +2440,13 @@ let gameState = {
     btn.type = "button";
     btn.className = "tagebuch-card__button";
 
-    if (chapterNumber === 5) {
-      btn.textContent = "Continue";
-      btn.addEventListener("click", () => {
-        saveChapterProgress(chapterNumber, strikes);
-        removeTagebuchScreen();
-        goToNode("ch6_departure");
-      });
-    } else {
-      btn.textContent = chapterNumber < TOTAL_CHAPTERS ? "Next" : "Finish";
-      btn.addEventListener("click", () => {
-        saveChapterProgress(chapterNumber, strikes);
-        goToNextChapterOrMenu(chapterNumber);
-      });
-    }
+    btn.textContent =
+      NEXT_CHAPTER_MAP[chapterNumber]?.buttonLabel ||
+      (chapterNumber < TOTAL_CHAPTERS ? "Next" : "Finish");
+    btn.addEventListener("click", () => {
+      saveChapterProgress(chapterNumber, strikes);
+      goToNextChapterOrMenu(chapterNumber);
+    });
 
     card.appendChild(btn);
 
@@ -3076,8 +3174,17 @@ let gameState = {
   function updateRulesGameStatus() {
     const live = document.getElementById("rules-game-live");
     if (live) {
-      live.textContent = `${rulesGame.matchedCount} of ${CHURCH_RULES_PAIRS.length} rules matched.`;
+      live.textContent = `${rulesGame.matchedCount} of ${CHURCH_RULES_PAIRS.length} rules matched. ${Math.min(rulesGame.mistakes, 3)} of 3 strikes.`;
     }
+    updateRulesStrikeIndicators();
+  }
+
+  function updateRulesStrikeIndicators() {
+    const dots = document.querySelectorAll("#rules-game .rules-game__strike");
+    const used = Math.min(rulesGame.mistakes, 3);
+    dots.forEach((dot, index) => {
+      dot.classList.toggle("is-used", index < used);
+    });
   }
 
   function addChapter4Strike() {
@@ -3088,15 +3195,7 @@ let gameState = {
   function finishRulesGame() {
     const mistakes = rulesGame.mistakes;
     closeRulesGame();
-
-    let outcomeNodeId = "ch4_rules_perfect";
-    if (mistakes >= RULES_GAME_MISTAKE_THRESHOLD) {
-      outcomeNodeId = "ch4_rules_fail";
-    } else if (mistakes > 0) {
-      outcomeNodeId = "ch4_rules_ok";
-    }
-
-    goToNode(outcomeNodeId);
+    goToNode(mistakes > 0 ? "ch4_rules_fail" : "ch4_rules_perfect");
   }
 
   function handleRulesMeaningClick(meaningBtn, overlay) {
@@ -3129,15 +3228,13 @@ let gameState = {
       addChapter4Strike();
       updateRulesGameStatus();
 
-      const shake = (el) => {
+      const tintWrong = (el) => {
         if (!el) return;
-        el.classList.remove("is-wrong");
-        void el.offsetWidth;
         el.classList.add("is-wrong");
-        window.setTimeout(() => el.classList.remove("is-wrong"), 450);
+        window.setTimeout(() => el.classList.remove("is-wrong"), 650);
       };
-      shake(meaningBtn);
-      shake(selectedRuleBtn);
+      tintWrong(meaningBtn);
+      tintWrong(selectedRuleBtn);
 
       selectedRuleBtn.classList.remove("is-selected");
       selectedRuleBtn.setAttribute("aria-pressed", "false");
@@ -3169,23 +3266,29 @@ let gameState = {
     const header = document.createElement("header");
     header.className = "rules-game__header";
 
+    const strikes = document.createElement("div");
+    strikes.className = "rules-game__strikes";
+    strikes.setAttribute("aria-label", "Strikes");
+    for (let i = 0; i < 3; i += 1) {
+      const dot = document.createElement("span");
+      dot.className = "rules-game__strike";
+      dot.setAttribute("aria-hidden", "true");
+      strikes.appendChild(dot);
+    }
+    header.appendChild(strikes);
+
     const title = document.createElement("h2");
     title.id = "rules-game-title";
     title.className = "rules-game__title";
-    title.textContent = "VERHALTENSREGELN IM STEPHANSDOM";
+    title.textContent = "Verhaltensregeln im Stephansdom";
     header.appendChild(title);
 
     const subtitle = document.createElement("p");
-    subtitle.className = "rules-game__subtitle";
-    subtitle.textContent = "Visitor Etiquette / Visitors' Rules";
+    subtitle.id = "rules-game-instruction";
+    subtitle.className = "rules-game__subtitle rules-game__instruction";
+    subtitle.textContent = "Match the official German rules with their English meanings.";
     header.appendChild(subtitle);
     panel.appendChild(header);
-
-    const instruction = document.createElement("p");
-    instruction.id = "rules-game-instruction";
-    instruction.className = "rules-game__instruction";
-    instruction.textContent = "Choose a German rule, then choose its English meaning.";
-    panel.appendChild(instruction);
 
     const columns = document.createElement("div");
     columns.className = "rules-game__columns";
@@ -3288,10 +3391,11 @@ let gameState = {
     document.getElementById("etiquette-game")?.remove();
   }
 
+  // Chapter 5 covers the tower climb only, so its strikes are tracked apart
+  // from the cathedral mistakes that decide the Chapter 4 Tagebuch.
   function addChapter5Strike() {
-    gameState.chapter5Strikes = (gameState.chapter5Strikes || 0) + 1;
-    addChapter4Strike();
-    console.log("Chapter 5 Strike added! Total strikes:", gameState.chapter5Strikes);
+    gameState.ch5Strikes = Math.min((gameState.ch5Strikes || 0) + 1, 3);
+    console.log("Chapter 5 Strike added! Total strikes:", gameState.ch5Strikes);
   }
 
   function finishEtiquetteGame() {
@@ -3406,18 +3510,12 @@ let gameState = {
       return;
     }
 
-    addChapter5Strike();
-    btn.classList.remove("is-wrong");
-    void btn.offsetWidth;
+    addChapter4Strike();
     btn.classList.add("is-wrong");
-    row.classList.remove("is-shake");
-    void row.offsetWidth;
-    row.classList.add("is-shake");
     setEtiquetteFeedback(overlay, "Noch einmal versuchen. / Try again.", "wrong");
     window.setTimeout(() => {
       btn.classList.remove("is-wrong");
-      row.classList.remove("is-shake");
-    }, 450);
+    }, 650);
   }
 
   function openEtiquetteGame() {
@@ -3479,6 +3577,265 @@ let gameState = {
     overlay.appendChild(panel);
     els.game.appendChild(overlay);
     renderEtiquetteRound(overlay);
+  }
+
+  // ── Südturm tower climb mini-game ───────────────────────────────────────
+
+  const towerClimb = {
+    active: false,
+    steps: 0,
+    checkpointIndex: 0,
+    locked: false,
+    animFrame: 0,
+  };
+
+  function closeTowerClimb() {
+    if (towerClimb.animFrame) {
+      window.cancelAnimationFrame(towerClimb.animFrame);
+      towerClimb.animFrame = 0;
+    }
+    towerClimb.active = false;
+    towerClimb.locked = false;
+    document.getElementById("tower-climb")?.remove();
+  }
+
+  function finishTowerClimb() {
+    closeTowerClimb();
+    goToNode(TOWER_CLIMB_SUCCESS_NODE);
+  }
+
+  function formatTowerSteps(steps) {
+    return `Südturm — ${steps} / ${TOWER_TOTAL_STEPS} Stufen`;
+  }
+
+  function getClimbQuizCard(overlay) {
+    return overlay?.querySelector(".climb-quiz-card");
+  }
+
+  function setClimbQuizState(overlay, kind) {
+    const quiz = getClimbQuizCard(overlay);
+    if (!quiz) return;
+    quiz.classList.remove("is-correct", "is-wrong");
+    if (kind) quiz.classList.add(`is-${kind}`);
+  }
+
+  // While the step counter ticks, the monologue and the quiz card fade out and
+  // keep their space, so the next checkpoint fades in without a layout jump.
+  function setClimbContentVisible(overlay, visible) {
+    if (!overlay) return;
+    const parts = [
+      overlay.querySelector("#tower-climb-monologue"),
+      getClimbQuizCard(overlay),
+    ];
+    parts.forEach((el) => {
+      if (!el) return;
+      el.classList.toggle("is-faded", !visible);
+      el.setAttribute("aria-hidden", visible ? "false" : "true");
+    });
+  }
+
+  function updateTowerHud(overlay, fillSteps) {
+    if (!overlay) return;
+    const counter = overlay.querySelector("#tower-climb-steps");
+    const fill = overlay.querySelector("#tower-climb-fill");
+    if (counter) counter.textContent = formatTowerSteps(towerClimb.steps);
+    if (fill && fillSteps != null) {
+      fill.style.width = `${Math.min(100, (fillSteps / TOWER_TOTAL_STEPS) * 100)}%`;
+    }
+  }
+
+  function animateTowerSteps(overlay, from, to, duration, onDone) {
+    if (towerClimb.animFrame) window.cancelAnimationFrame(towerClimb.animFrame);
+    setClimbQuizState(overlay, "");
+    setTowerFeedback(overlay, "", "");
+    setClimbContentVisible(overlay, false);
+    updateTowerHud(overlay, to);
+    const start = performance.now();
+    const span = to - from;
+    const tick = (now) => {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - (1 - t) * (1 - t);
+      towerClimb.steps = Math.round(from + span * eased);
+      updateTowerHud(overlay);
+      if (t < 1) {
+        towerClimb.animFrame = window.requestAnimationFrame(tick);
+        return;
+      }
+      towerClimb.animFrame = 0;
+      towerClimb.steps = to;
+      updateTowerHud(overlay);
+      if (onDone) onDone();
+    };
+    towerClimb.animFrame = window.requestAnimationFrame(tick);
+  }
+
+  function setTowerFeedback(overlay, text, kind) {
+    const tip = overlay.querySelector("#tower-climb-feedback");
+    if (!tip) return;
+    tip.textContent = text || "";
+    tip.className = `tower-climb__feedback${kind ? ` is-${kind}` : ""}`;
+  }
+
+  function renderTowerSentence(overlay, checkpoint, filled) {
+    const sentence = overlay.querySelector("#tower-climb-sentence");
+    if (!sentence) return;
+    sentence.replaceChildren();
+    sentence.append(checkpoint.before);
+    const blank = document.createElement("span");
+    blank.className = `tower-climb__blank${filled ? " is-filled" : ""}`;
+    blank.textContent = filled || "_______";
+    sentence.appendChild(blank);
+    sentence.append(checkpoint.after);
+  }
+
+  function renderTowerCheckpoint(overlay) {
+    const checkpoint = TOWER_CHECKPOINTS[towerClimb.checkpointIndex];
+    if (!checkpoint) return;
+
+    towerClimb.locked = false;
+    setClimbQuizState(overlay, "");
+    setTowerFeedback(overlay, "", "");
+
+    const monologue = overlay.querySelector("#tower-climb-monologue");
+    if (monologue) monologue.textContent = checkpoint.monologue;
+    renderTowerSentence(overlay, checkpoint, "");
+
+    const options = overlay.querySelector("#tower-climb-options");
+    options.replaceChildren();
+    shuffleArray(checkpoint.options).forEach((option) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "tower-climb__option";
+      btn.dataset.optionId = option.id;
+      btn.textContent = option.text;
+      btn.addEventListener("click", () => handleTowerOption(overlay, option, btn));
+      options.appendChild(btn);
+    });
+
+    setClimbContentVisible(overlay, true);
+  }
+
+  function handleTowerOption(overlay, option, btn) {
+    if (towerClimb.locked) return;
+    const checkpoint = TOWER_CHECKPOINTS[towerClimb.checkpointIndex];
+    if (!checkpoint) return;
+
+    if (option.correct) {
+      towerClimb.locked = true;
+      overlay.querySelectorAll(".tower-climb__option").forEach((el) => {
+        el.disabled = true;
+      });
+      btn.classList.add("is-correct");
+      setClimbQuizState(overlay, "correct");
+      renderTowerSentence(overlay, checkpoint, option.text);
+      // A right answer speaks for itself — the hint is only shown after a slip.
+      setTowerFeedback(overlay, "", "");
+      window.setTimeout(() => {
+        animateTowerSteps(overlay, checkpoint.at, checkpoint.next, checkpoint.animateMs, () => {
+          if (checkpoint.next >= TOWER_TOTAL_STEPS) {
+            window.setTimeout(finishTowerClimb, 700);
+            return;
+          }
+          towerClimb.checkpointIndex += 1;
+          renderTowerCheckpoint(overlay);
+        });
+      }, 1200);
+      return;
+    }
+
+    addChapter5Strike();
+    // The tinted option stays marked until this checkpoint is solved.
+    btn.classList.add("is-wrong");
+    setTowerFeedback(overlay, checkpoint.hint, "wrong");
+  }
+
+  function openTowerClimb() {
+    closeTowerClimb();
+    towerClimb.active = true;
+    towerClimb.steps = 0;
+    towerClimb.checkpointIndex = 0;
+    towerClimb.locked = true;
+
+    hideChoices();
+    els.dialogueBox.hidden = true;
+    els.npcContainer.style.display = "none";
+    els.npcContainer.classList.add("is-hidden");
+    els.lenaContainer.classList.add("is-hidden");
+
+    const overlay = document.createElement("div");
+    overlay.id = "tower-climb";
+    overlay.className = "tower-climb";
+
+    const container = document.createElement("div");
+    container.className = "climb-container";
+
+    const narrative = document.createElement("section");
+    narrative.className = "climb-narrative-card";
+    narrative.setAttribute("aria-labelledby", "tower-climb-steps");
+
+    const header = document.createElement("h2");
+    header.id = "tower-climb-steps";
+    header.className = "climb-narrative-card__header";
+    header.textContent = formatTowerSteps(0);
+    narrative.appendChild(header);
+
+    const bar = document.createElement("div");
+    bar.className = "tower-climb__bar";
+    bar.setAttribute("role", "progressbar");
+    bar.setAttribute("aria-valuemin", "0");
+    bar.setAttribute("aria-valuemax", String(TOWER_TOTAL_STEPS));
+    const fill = document.createElement("div");
+    fill.id = "tower-climb-fill";
+    fill.className = "tower-climb__fill";
+    bar.appendChild(fill);
+    narrative.appendChild(bar);
+
+    const monologue = document.createElement("p");
+    monologue.id = "tower-climb-monologue";
+    monologue.className = "tower-climb__monologue is-faded";
+    monologue.setAttribute("aria-hidden", "true");
+    narrative.appendChild(monologue);
+    container.appendChild(narrative);
+
+    const quiz = document.createElement("section");
+    quiz.className = "climb-quiz-card is-faded";
+    quiz.setAttribute("aria-hidden", "true");
+    quiz.setAttribute("aria-label", "Südturm grammar checkpoint");
+
+    const sentence = document.createElement("p");
+    sentence.id = "tower-climb-sentence";
+    sentence.className = "tower-climb__sentence";
+    quiz.appendChild(sentence);
+
+    const options = document.createElement("div");
+    options.id = "tower-climb-options";
+    options.className = "tower-climb__options";
+    quiz.appendChild(options);
+
+    const feedback = document.createElement("p");
+    feedback.id = "tower-climb-feedback";
+    feedback.className = "tower-climb__feedback";
+    feedback.setAttribute("role", "status");
+    quiz.appendChild(feedback);
+    container.appendChild(quiz);
+
+    const dev = document.createElement("div");
+    dev.className = "tower-climb__dev";
+    const skip = document.createElement("button");
+    skip.type = "button";
+    skip.textContent = "Dev Skip";
+    skip.addEventListener("click", finishTowerClimb);
+    dev.appendChild(skip);
+    container.appendChild(dev);
+
+    overlay.appendChild(container);
+    els.game.appendChild(overlay);
+    updateTowerHud(overlay, 0);
+    window.requestAnimationFrame(() => {
+      animateTowerSteps(overlay, 0, 100, 1400, () => {
+        renderTowerCheckpoint(overlay);
+      });
+    });
   }
 
   // ── Supermarket aisle finder mini-game ───────────────────────────────────
@@ -5045,6 +5402,7 @@ let gameState = {
     closeTicketMachine();
     closeRulesGame();
     closeEtiquetteGame();
+    closeTowerClimb();
     closeAisleGame();
     closeCashierGame();
     closeCh1PppPractice();
@@ -5057,9 +5415,6 @@ let gameState = {
     els.npcContainer.classList.add("is-hidden");
     els.lenaContainer.classList.add("is-hidden");
 
-    const totalStrikes = getTotalJourneyStrikes();
-    const isExpert = totalStrikes <= 2;
-
     const overlay = document.createElement("div");
     overlay.id = "celebration-screen";
     overlay.className = "celebration-screen";
@@ -5067,23 +5422,36 @@ let gameState = {
     const card = document.createElement("article");
     card.className = "celebration-card";
 
+    const eyebrow = document.createElement("p");
+    eyebrow.className = "celebration-card__eyebrow";
+    eyebrow.textContent = "👑 GLÜCKWUNSCH!";
+    card.appendChild(eyebrow);
+
     const title = document.createElement("h2");
     title.className = "celebration-card__title";
-    title.textContent = "Herzlichen Glückwunsch! Journey Complete!";
+    title.textContent = "Du hast es geschafft!";
     card.appendChild(title);
 
-    const badge = document.createElement("p");
-    badge.className = "celebration-card__badge";
-    badge.textContent = isExpert
-      ? "🏆 Wien-Profi (Vienna Expert)"
-      : "🥉 Mutige Entdeckerin (Brave Explorer)";
-    card.appendChild(badge);
+    const award = document.createElement("section");
+    award.className = "celebration-card__award";
+
+    const awardIcon = document.createElement("span");
+    awardIcon.className = "celebration-card__award-icon";
+    awardIcon.textContent = "🏆";
+    awardIcon.setAttribute("aria-hidden", "true");
+    award.appendChild(awardIcon);
+
+    const awardTitle = document.createElement("p");
+    awardTitle.className = "celebration-card__award-title";
+    awardTitle.textContent = "Wien-Profi";
+    award.appendChild(awardTitle);
+
+    card.appendChild(award);
 
     const summary = document.createElement("p");
     summary.className = "celebration-card__summary";
-    summary.textContent = isExpert
-      ? "You navigated Vienna with confidence — outstanding work!"
-      : "You kept going even when it was tricky — that takes real courage!";
+    summary.textContent =
+      "You conquered your fear, survived Vienna, and proved that language isn't about perfection—it's about the courage to speak.";
     card.appendChild(summary);
 
     const actions = document.createElement("div");
@@ -5092,7 +5460,7 @@ let gameState = {
     const vocabBtn = document.createElement("button");
     vocabBtn.type = "button";
     vocabBtn.className = "celebration-card__btn";
-    vocabBtn.textContent = "Practice Vocabulary";
+    vocabBtn.textContent = "Vocab Practice";
     vocabBtn.addEventListener("click", () => {
       removeCelebrationScreen();
       showStartMainActions();
@@ -5148,6 +5516,7 @@ let gameState = {
   function renderNode() {
     const node = getNode();
     if (!node) return;
+    if (node.id === "ch4_candle_words") gameState.ch4CandleDone = true;
     syncDirectionHint(node);
 
     if (BLACK_SCREEN_NODE_IDS.has(node.id)) {
@@ -5186,6 +5555,14 @@ let gameState = {
       return;
     }
 
+    if (node.id === TOWER_CLIMB_TRIGGER_NODE) {
+      removeBlackScreen();
+      removeJumpScareFlash();
+      setBackground(node.background);
+      openTowerClimb();
+      return;
+    }
+
     if (node.id === RULES_GAME_TRIGGER_NODE) {
       removeBlackScreen();
       removeJumpScareFlash();
@@ -5221,6 +5598,7 @@ let gameState = {
     closeTicketMachine();
     closeRulesGame();
     closeEtiquetteGame();
+    closeTowerClimb();
     closeAisleGame();
     closeCashierGame();
     closeCh1PppPractice();
@@ -5294,6 +5672,11 @@ let gameState = {
   }
 
   function routeToNode(nodeId) {
+    if (nodeId === "ch4_exit_cathedral" && !cathedralState.lookAroundCompleted) {
+      goToNode("ch4_exit_blocked");
+      return;
+    }
+
     if (nodeId === "ch1_nav_reaction") {
       applyChapter1NavigationStrike();
       goToNode("ch1_nav_reaction");
@@ -5325,12 +5708,14 @@ let gameState = {
       return;
     }
 
-    if (nodeId === "end_chapter_6") {
+    if (nodeId === "end_chapter_5") {
       showTagebuchScreen(5);
       return;
     }
 
     if (nodeId === "journey_complete") {
+      // The epilogue has no diary entry, so its progress is banked here.
+      saveChapterProgress(6, getChapterStrikeCount(6));
       showCelebrationScreen();
       return;
     }
@@ -5361,6 +5746,14 @@ let gameState = {
   }
 
   function goToNode(nodeId) {
+    if (state.nodeId === "ch4_look_lena" && nodeId === "ch4_inside_thought") {
+      cathedralState.lookAroundCompleted = true;
+    }
+
+    if (nodeId === "ch4_exit_cathedral" && !cathedralState.lookAroundCompleted) {
+      nodeId = "ch4_exit_blocked";
+    }
+
     if (!storyData[nodeId]) {
       console.warn("Unknown node:", nodeId);
       return;
@@ -5496,22 +5889,25 @@ let gameState = {
     2: "chapter_2_teaser",
     3: "chapter_3_title",
     4: "chapter_4_title",
-    5: "chapter_6_title",
+    5: "chapter_5_title",
+    6: "chapter_6_title",
   };
 
   const CHAPTER_LABELS = {
     1: "Chapter 1 - Ankunft",
     2: "Chapter 2 - Check-in",
     3: "Chapter 3 - Unterwegs",
-    4: "Chapter 4: Dem Himmel so nah",
-    5: "Chapter 5: Epilog",
+    4: "Chapter 4: Das Herz von Wien",
+    5: "Chapter 5: Dem Himmel so nah",
+    6: "Chapter 6: Epilog",
   };
 
   function getCurrentChapterNumber() {
     const nodeId = state.nodeId || "";
-    if (nodeId.startsWith("ch6_") || nodeId === "chapter_6_title" || nodeId === "end_chapter_6" || nodeId === "journey_complete") {
-      return 5;
+    if (nodeId.startsWith("ch6_") || nodeId === "chapter_6_title" || nodeId === "journey_complete") {
+      return 6;
     }
+    if (nodeId.startsWith("ch5_") || nodeId === "chapter_5_title" || nodeId === "end_chapter_5") return 5;
     if (nodeId.startsWith("ch4_") || nodeId === "chapter_4_title" || nodeId === "end_chapter_4") return 4;
     if (nodeId.startsWith("ch3_") || nodeId === "chapter_3_title" || nodeId === "end_chapter_3") return 3;
     if (
@@ -5537,6 +5933,7 @@ let gameState = {
     closeTicketMachine();
     closeRulesGame();
     closeEtiquetteGame();
+    closeTowerClimb();
     closeAisleGame();
     closeCashierGame();
     closeCh1PppPractice();
@@ -5560,6 +5957,7 @@ let gameState = {
     closeTicketMachine();
     closeRulesGame();
     closeEtiquetteGame();
+    closeTowerClimb();
     closeAisleGame();
     closeCashierGame();
     closeCh1PppPractice();
@@ -5657,16 +6055,6 @@ let gameState = {
     els.startMenu.classList.remove("start-menu--chapter-select");
   }
 
-  function openOptionsPanel() {
-    showStartMenuOnly();
-    els.optionsPanel.hidden = false;
-  }
-
-  function closeOptionsPanel() {
-    els.optionsPanel.hidden = true;
-    showStartMainActions();
-  }
-
   // ── Vokabeltrainer (vocabulary practice mode) ────────────────────────────
 
   const vokabeltrainer = {
@@ -5711,7 +6099,6 @@ let gameState = {
     vokabeltrainer.correctCount = 0;
     vokabeltrainer.locked = false;
     showStartMenuOnly();
-    els.optionsPanel.hidden = true;
     els.vokabeltrainer.hidden = false;
     showTrainerView("select");
   }
@@ -5836,6 +6223,7 @@ let gameState = {
     closeTicketMachine();
     closeRulesGame();
     closeEtiquetteGame();
+    closeTowerClimb();
     closeAisleGame();
     closeCashierGame();
     closeCh1PppPractice();
@@ -5874,6 +6262,7 @@ let gameState = {
     closeTicketMachine();
     closeRulesGame();
     closeEtiquetteGame();
+    closeTowerClimb();
     closeAisleGame();
     closeCashierGame();
     closeCh1PppPractice();
@@ -5891,8 +6280,10 @@ let gameState = {
       els.chapterLabel.textContent = CHAPTER_LABELS[3];
     } else if (targetNodeId === "chapter_4_title") {
       els.chapterLabel.textContent = CHAPTER_LABELS[4];
-    } else if (targetNodeId === "chapter_6_title") {
+    } else if (targetNodeId === "chapter_5_title") {
       els.chapterLabel.textContent = CHAPTER_LABELS[5];
+    } else if (targetNodeId === "chapter_6_title") {
+      els.chapterLabel.textContent = CHAPTER_LABELS[6];
     }
 
     goToNode(targetNodeId);
@@ -6015,8 +6406,6 @@ let gameState = {
       });
     });
 
-    els.startOptionsBtn.addEventListener("click", openOptionsPanel);
-    els.optionsBackBtn.addEventListener("click", closeOptionsPanel);
     els.startVokabeltrainerBtn.addEventListener("click", openVokabeltrainer);
     els.vtBackMenuBtn.addEventListener("click", closeVokabeltrainerToMenu);
     els.vtQuizBackBtn.addEventListener("click", closeVokabeltrainerToMenu);

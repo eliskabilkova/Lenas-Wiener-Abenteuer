@@ -6,7 +6,7 @@
   <title>Lenas Wiener Abenteuer</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Nunito:wght@400;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -17,10 +17,9 @@
       <div class="start-menu__content">
         <h1 class="start-menu__title" id="start-menu-title">Lenas Wiener<br>Abenteuer</h1>
         <div id="start-main-actions" class="start-menu__actions">
-          <button type="button" id="start-game-btn" class="start-menu__btn">Start Game</button>
-          <button type="button" id="start-chapters-btn" class="start-menu__btn start-menu__btn--secondary">Select Chapter</button>
-          <button type="button" id="start-options-btn" class="start-menu__btn start-menu__btn--secondary">Options</button>
-          <button type="button" id="start-vokabeltrainer-btn" class="start-menu__btn start-menu__btn--secondary">Vocabulary Practice</button>
+          <button type="button" id="start-game-btn">Start Game</button>
+          <button type="button" id="start-chapters-btn">Select Chapter</button>
+          <button type="button" id="start-vokabeltrainer-btn">Vocabulary Practice</button>
         </div>
 
         <div id="start-chapters-selection" class="start-chapters-selection" hidden>
@@ -47,12 +46,17 @@
 
               <button type="button" class="chapter-card" data-chapter-node="chapter_4_title" data-chapter="4">
                 <span class="chapter-card__emoji" aria-hidden="true">⛪</span>
-                <span class="chapter-card__title">4. Dem Himmel so nah</span>
+                <span class="chapter-card__title">4. Das Herz von Wien</span>
               </button>
 
-              <button type="button" class="chapter-card" data-chapter-node="chapter_6_title" data-chapter="5">
+              <button type="button" class="chapter-card" data-chapter-node="chapter_5_title" data-chapter="5">
+                <span class="chapter-card__emoji" aria-hidden="true">🌤️</span>
+                <span class="chapter-card__title">5. Dem Himmel so nah</span>
+              </button>
+
+              <button type="button" class="chapter-card" data-chapter-node="chapter_6_title" data-chapter="6">
                 <span class="chapter-card__emoji" aria-hidden="true">☕</span>
-                <span class="chapter-card__title">5. Epilog</span>
+                <span class="chapter-card__title">6. Epilog</span>
               </button>
             </div>
           </div>
@@ -60,30 +64,24 @@
       </div>
     </div>
 
-    <!-- Options panel -->
-    <div id="options-panel" class="info-panel" hidden>
-      <div class="info-panel__content">
-        <h2 class="info-panel__title">Options</h2>
-        <p class="info-panel__text">Settings are coming soon. Stay tuned for sound, text speed, and language options!</p>
-        <button type="button" id="options-back-btn" class="start-menu__btn start-menu__btn--secondary">Back</button>
-      </div>
-    </div>
-
     <!-- Vokabeltrainer practice mode -->
     <div id="vokabeltrainer" class="vokabeltrainer" hidden>
       <div class="vokabeltrainer__panel" role="dialog" aria-modal="true" aria-labelledby="vt-title">
         <div id="vt-select" class="vokabeltrainer__view">
-          <h2 class="vokabeltrainer__title" id="vt-title">Vokabeltrainer — Choose Practice Set</h2>
-          <p class="vokabeltrainer__subtitle">Practice German vocabulary from Lena's journey.</p>
+          <header class="vokabeltrainer__header">
+            <h1 class="vokabeltrainer__title" id="vt-title">Vokabeltrainer</h1>
+            <p class="vokabeltrainer__subtitle subtitle">Choose Practice Set</p>
+          </header>
           <div class="vokabeltrainer__set-list">
-            <button type="button" class="vokabeltrainer__set-btn" data-vt-set="1">Kapitel 1: Die Ankunft</button>
-            <button type="button" class="vokabeltrainer__set-btn" data-vt-set="2">Kapitel 2: Das Hotel</button>
-            <button type="button" class="vokabeltrainer__set-btn" data-vt-set="3">Kapitel 3: Die U-Bahn</button>
-            <button type="button" class="vokabeltrainer__set-btn" data-vt-set="4">Kapitel 4: Über den Dächern von Wien</button>
-            <button type="button" class="vokabeltrainer__set-btn" data-vt-set="5">Kapitel 5: Epilog</button>
-            <button type="button" class="vokabeltrainer__set-btn vokabeltrainer__set-btn--mixed" data-vt-set="mixed">Alle Kapitel (Mixed Challenge)</button>
+            <button type="button" class="vokabeltrainer__set-btn" data-vt-set="1">Kapitel 1: Ankunft</button>
+            <button type="button" class="vokabeltrainer__set-btn" data-vt-set="2">Kapitel 2: Check-in</button>
+            <button type="button" class="vokabeltrainer__set-btn" data-vt-set="3">Kapitel 3: Unterwegs</button>
+            <button type="button" class="vokabeltrainer__set-btn" data-vt-set="4">Kapitel 4: Das Herz von Wien</button>
+            <button type="button" class="vokabeltrainer__set-btn" data-vt-set="5">Kapitel 5: Dem Himmel so nah</button>
+            <button type="button" class="vokabeltrainer__set-btn" data-vt-set="6">Kapitel 6: Epilog</button>
+            <button type="button" id="alle-kapitel-btn" class="vokabeltrainer__set-btn vokabeltrainer__set-btn--mixed" data-vt-set="mixed">Alle Kapitel (Mix)</button>
           </div>
-          <button type="button" id="vt-back-menu-btn" class="start-menu__btn start-menu__btn--secondary">Back to Menu</button>
+          <button type="button" id="vt-back-menu-btn" class="vokabeltrainer__action vokabeltrainer__action--secondary">Back to Menu</button>
         </div>
 
         <div id="vt-quiz" class="vokabeltrainer__view" hidden>
@@ -104,8 +102,8 @@
           <p class="vokabeltrainer__score" id="vt-score">8 / 10 Correct!</p>
           <p class="vokabeltrainer__message" id="vt-message">Gute Arbeit! Übung macht den Meister!</p>
           <div class="vokabeltrainer__result-actions">
-            <button type="button" id="vt-retry-btn" class="start-menu__btn">Try Again</button>
-            <button type="button" id="vt-results-menu-btn" class="start-menu__btn start-menu__btn--secondary">Main Menu</button>
+            <button type="button" id="vt-retry-btn" class="vokabeltrainer__action">Try Again</button>
+            <button type="button" id="vt-results-menu-btn" class="vokabeltrainer__action vokabeltrainer__action--secondary">Main Menu</button>
           </div>
         </div>
       </div>

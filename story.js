@@ -912,13 +912,13 @@ const storyData = {
     choices: [],
   },
 
-  // ── Kapitel 4: Dem Himmel so nah ────────────────────────────────────────
+  // ── Kapitel 4: Das Herz von Wien ────────────────────────────────────────
 
   chapter_4_title: {
     id: "chapter_4_title",
     background: "black",
     speaker: "System",
-    text: "Chapter 4: Dem Himmel so nah",
+    text: "Chapter 4: Das Herz von Wien",
     lenaMood: "none",
     npcImage: "none",
     choices: [
@@ -969,7 +969,7 @@ const storyData = {
     text: "ZAP! Suddenly, a man in a white wig and a red coat jumps right in front of Lena. He waves a handful of golden tickets!",
     lenaMood: "surprised",
     npcImage: "mozart_seller_pushy.png",
-    dialogueStyle: "sensory",
+    dialogueStyle: "narrator",
     effect: "jumpScare",
     choices: [
       { text: "Continue", nextNode: "ch4_mozart_seller" },
@@ -1022,6 +1022,7 @@ const storyData = {
     text: "The seller sees that I am not sure. He puts shiny brochures into my hands and stands in my way. He talks and talks about the 'best concert in Vienna'. Many minutes pass before I can finally walk away.",
     lenaMood: "unsure",
     npcImage: "mozart_seller_pushy.png",
+    dialogueStyle: "narrator",
     choices: [
       { text: "Continue", nextNode: "ch4_mozart_after" },
     ],
@@ -1034,6 +1035,7 @@ const storyData = {
     text: "He does not accept my excuse. \"Keine Zeit? Das Konzert dauert nur zwei Stunden! Kommen Sie!\" He steps closer, and I feel trapped. It is hard to escape politely.",
     lenaMood: "unsure",
     npcImage: "mozart_seller_pushy.png",
+    dialogueStyle: "narrator",
     choices: [
       { text: "Continue", nextNode: "ch4_mozart_after" },
     ],
@@ -1054,9 +1056,21 @@ const storyData = {
   ch4_mozart_after: {
     id: "ch4_mozart_after",
     background: "cathedral.jpg",
-    speaker: "Lena",
+    speaker: "Lena (Internal Monologue)",
     text: "Whew, that was intense! The square is so busy. I need a moment of peace. I'll head inside the cathedral—the famous Stephansdom.",
     lenaMood: "thoughtful",
+    npcImage: "none",
+    choices: [
+      { text: "Continue", nextNode: "ch4_cathedral_arrival" },
+    ],
+  },
+
+  ch4_cathedral_arrival: {
+    id: "ch4_cathedral_arrival",
+    background: "cathedral.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Okay, here I am right at Stephansdom! I've seen so many pictures, and I can't wait to finally see what it looks like on the inside.",
+    lenaMood: "happy",
     npcImage: "none",
     choices: [
       { text: "Continue", nextNode: "ch4_practice_prompt" },
@@ -1067,12 +1081,12 @@ const storyData = {
     id: "ch4_practice_prompt",
     background: "cathedral.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "Before heading inside, I’d better brush up on my German so I actually understand the rules and know how to behave!",
+    text: "Oh, I see there's a rules board right in front of the entrance! I'd better brush up on my German so I know how to behave inside.",
     lenaMood: "thoughtful",
     npcImage: "none",
     choices: [
       {
-        text: "Practice",
+        text: "Practice / Übung",
         nextNode: "ch4_ppp_practice",
         prominent: true,
       },
@@ -1095,11 +1109,11 @@ const storyData = {
     id: "ch4_rules_intro",
     background: "cathedral.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "Wait — there's an official board: Verhaltensregeln im Stephansdom. I should match each German rule with its English meaning so I don't cause any trouble inside.",
+    text: "Okay, there it is—the official board: 'Verhaltensregeln im Stephansdom'. Let's see if I understand all the rules!",
     lenaMood: "unsure",
     npcImage: "none",
     choices: [
-      { text: "Read the sign", nextNode: "ch4_rules_game" },
+      { text: "Continue", nextNode: "ch4_rules_game" },
     ],
   },
 
@@ -1116,34 +1130,47 @@ const storyData = {
   ch4_rules_perfect: {
     id: "ch4_rules_perfect",
     background: "cathedral.jpg",
-    speaker: "Lena",
+    speaker: "Lena (Internal Monologue)",
     text: "Great, I understood all the rules. I'm ready to go inside!",
     lenaMood: "happy",
     npcImage: "none",
     choices: [
-      { text: "Step inside", nextNode: "ch4_inside_atmosphere" },
+      { text: "Head inside", nextNode: "ch4_inside_atmosphere" },
     ],
   },
 
   ch4_rules_ok: {
     id: "ch4_rules_ok",
     background: "cathedral.jpg",
-    speaker: "Lena",
-    text: "I got a bit confused with some rules, but I think I've got it now.",
+    speaker: "Lena (Internal Monologue)",
+    text: "Hmm, I'm not entirely sure about all those rules... but let me head inside anyway!",
     lenaMood: "thoughtful",
     npcImage: "none",
     choices: [
-      { text: "Step inside", nextNode: "ch4_inside_atmosphere" },
+      { text: "Head inside", nextNode: "ch4_rules_fail_entry" },
     ],
   },
 
   ch4_rules_fail: {
     id: "ch4_rules_fail",
+    background: "cathedral.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Hmm, I'm not entirely sure about all those rules... but let me head inside anyway!",
+    lenaMood: "thoughtful",
+    npcImage: "none",
+    choices: [
+      { text: "Head inside", nextNode: "ch4_rules_fail_entry" },
+    ],
+  },
+
+  ch4_rules_fail_entry: {
+    id: "ch4_rules_fail_entry",
     background: "cathedral_interior.jpg",
     speaker: "Narrator",
     text: "Lena walks in. But she did not really understand the rules: she still wears her cap, and she talks to herself very loudly. Heads turn. A warden in a dark uniform comes to her quickly.",
     lenaMood: "surprised",
     npcImage: "none",
+    dialogueStyle: "narrator",
     choices: [
       { text: "Continue", nextNode: "ch4_warden_shush" },
     ],
@@ -1182,7 +1209,7 @@ const storyData = {
     text: "Inside, everything is quiet. The church is huge. Tall stone columns go up like old trees. Colorful light falls through the glass windows onto the floor. The air smells like candles and old stone.",
     lenaMood: "surprised",
     npcImage: "none",
-    dialogueStyle: "sensory",
+    dialogueStyle: "narrator",
     choices: [
       { text: "Continue", nextNode: "ch4_inside_thought" },
     ],
@@ -1197,35 +1224,47 @@ const storyData = {
     npcImage: "none",
     choices: [
       { text: "Light a candle", nextNode: "ch4_candle" },
-      { text: "Look around the cathedral", nextNode: "ch4_time_passes" },
+      { text: "Look around the cathedral", nextNode: "ch4_look_around" },
       { text: "Find the tower entrance", nextNode: "ch4_exit_cathedral" },
     ],
   },
 
-  // ── Optional: taking a moment to look around ────────────────────────────
-
-  ch4_time_passes: {
-    id: "ch4_time_passes",
-    background: "black",
-    speaker: "System",
-    text: "A few minutes later...",
-    lenaMood: "none",
+  ch4_exit_blocked: {
+    id: "ch4_exit_blocked",
+    background: "cathedral_interior.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Hold on, I haven't even explored the cathedral yet! I should look around first.",
+    lenaMood: "thoughtful",
     npcImage: "none",
     choices: [
-      { text: "Continue", nextNode: "ch4_look_around" },
+      { text: "Continue", nextNode: "ch4_inside_thought" },
     ],
   },
+
+  // ── Look around: stained-glass atmosphere ───────────────────────────────
 
   ch4_look_around: {
     id: "ch4_look_around",
-    background: "cathedral_interior.jpg",
+    background: "stained-glass.jpg",
+    speaker: "Narrator",
+    text: "Lena walks quietly down the main aisle towards the high altar.",
+    lenaMood: "happy",
+    npcImage: "none",
+    dialogueStyle: "narrator",
+    choices: [
+      { text: "Continue", nextNode: "ch4_look_lena" },
+    ],
+  },
+
+  ch4_look_lena: {
+    id: "ch4_look_lena",
+    background: "stained-glass.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "The Gothic architecture is breathtaking. Those stained glass windows are so colorful, and the columns feel like they're touching the sky. I'm glad I took a moment to just soak it all in. Now, I'm ready to find that tower!",
+    text: "I look up at the huge glass windows. The sunlight shines through them and creates beautiful red, gold, and blue light on the stone floor. It's so calm and quiet here.",
     lenaMood: "happy",
     npcImage: "none",
     choices: [
-      { text: "Light a candle", nextNode: "ch4_candle" },
-      { text: "Find the tower entrance", nextNode: "ch4_exit_cathedral" },
+      { text: "Return to cathedral hall", nextNode: "ch4_inside_thought" },
     ],
   },
 
@@ -1236,6 +1275,7 @@ const storyData = {
     text: "Lena puts a coin into the small metal box and takes a thin candle. She lights it. Now her little flame burns together with many others — one small wish for her big journey.",
     lenaMood: "happy",
     npcImage: "none",
+    dialogueStyle: "narrator",
     choices: [
       { text: "Continue", nextNode: "ch4_candle_words" },
     ],
@@ -1244,116 +1284,136 @@ const storyData = {
   ch4_candle_words: {
     id: "ch4_candle_words",
     background: "cathedral_interior.jpg",
-    speaker: "Lena",
+    speaker: "Lena (Internal Monologue)",
     text: "Small light, big wishes. Now, I feel ready for the challenge.",
     lenaMood: "happy",
     npcImage: "none",
     choices: [
-      { text: "Find the tower entrance", nextNode: "ch4_exit_cathedral" },
+      { text: "Continue", nextNode: "ch4_inside_thought" },
     ],
   },
 
-  // ── Transition: back outside, finding the Südturm door ─────────────────
+  // ── Transition: standing before the Südturm door ───────────────────────
 
   ch4_exit_cathedral: {
     id: "ch4_exit_cathedral",
     background: "cathedral.jpg",
+    speaker: "Narrator",
+    text: "Lena walks back towards the side of the cathedral and stands before the small wooden door marked 'Südturm'.",
+    lenaMood: "thoughtful",
+    npcImage: "none",
+    dialogueStyle: "narrator",
+    choices: [
+      { text: "Continue", nextNode: "ch4_exit_thought" },
+    ],
+  },
+
+  ch4_exit_thought: {
+    id: "ch4_exit_thought",
+    background: "cathedral.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "Back outside, the sunlight is bright and the square is loud again. What a contrast! Now... where is the entrance to the South Tower (Südturm)? There! A small door on the side of the church, with a sign: 'Südturm'. It looks so tiny next to this giant cathedral.",
+    text: "Before I take on those 343 steps to the sky, I need to pause for a second and write in my diary.",
     lenaMood: "thoughtful",
     npcImage: "none",
     choices: [
-      { text: "Open the small door", nextNode: "ch4_tower_entrance" },
+      { text: "Open Tagebuch", nextNode: "end_chapter_4" },
     ],
   },
 
-  // ── The Südturm climb ───────────────────────────────────────────────────
+  // ── Kapitel 5: Dem Himmel so nah ────────────────────────────────────────
 
-  ch4_tower_entrance: {
-    id: "ch4_tower_entrance",
-    background: "cathedral_interior.jpg",
+  chapter_5_title: {
+    id: "chapter_5_title",
+    background: "black",
+    speaker: "System",
+    text: "Chapter 5: Dem Himmel so nah",
+    lenaMood: "none",
+    npcImage: "none",
+    choices: [
+      { text: "Start Chapter", nextNode: "ch5_tower_entrance" },
+    ],
+  },
+
+  ch5_tower_entrance: {
+    id: "ch5_tower_entrance",
+    background: "cathedral.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "Here are the stairs. The sign says: 343 Stufen (steps) to the top. No elevator here. Should I?",
+    text: "343 steps all the way to the top? My legs are going to hate me tomorrow, but there's no way I'm leaving Vienna without seeing this view!",
     lenaMood: "unsure",
     npcImage: "none",
     choices: [
-      { text: "Start the climb (343 steps)", nextNode: "ch4_climb_1" },
+      { text: "Start climbing", nextNode: "ch5_climb_game" },
     ],
   },
 
-  ch4_climb_1: {
-    id: "ch4_climb_1",
+  ch5_climb_game: {
+    id: "ch5_climb_game",
     background: "cathedral_interior.jpg",
-    speaker: "Lena (Internal Monologue)",
-    text: "Okay, let's go! The stone steps are old and very narrow. The staircase turns and turns, like a snail shell. Step 100 already — this is easy! ...Okay, maybe not so easy.",
-    lenaMood: "happy",
-    npcImage: "none",
-    climbStage: 1,
-    choices: [
-      { text: "Keep climbing", nextNode: "ch4_climb_2" },
-    ],
-  },
-
-  ch4_climb_2: {
-    id: "ch4_climb_2",
-    background: "cathedral_interior.jpg",
-    speaker: "Lena (Internal Monologue)",
-    text: "Step 200... Puh! My legs are heavy and I am out of breath. My heart is beating so fast. How do the bell ringers do this every day?!",
+    speaker: "System",
+    text: "",
     lenaMood: "tired",
     npcImage: "none",
-    climbStage: 2,
-    choices: [
-      { text: "Don't stop now!", nextNode: "ch4_climb_3" },
-    ],
+    choices: [],
   },
 
-  ch4_climb_3: {
-    id: "ch4_climb_3",
-    background: "cathedral_interior.jpg",
-    speaker: "Lena (Internal Monologue)",
-    text: "Step 300... I can't feel my legs anymore. But wait — there is more light coming through the small windows! The top must be very close. Come on, Lena, only a few more steps!",
-    lenaMood: "exhausted",
-    npcImage: "none",
-    climbStage: 3,
-    choices: [
-      { text: "Push to the top", nextNode: "ch4_tower_view" },
-    ],
-  },
+  // ── Climax: the view from the Türmerstube ───────────────────────────────
 
-  // ── The reward: the view from the Türmerstube ───────────────────────────
-
-  ch4_tower_view: {
-    id: "ch4_tower_view",
+  ch5_tower_view: {
+    id: "ch5_tower_view",
     background: "vienna_view.jpg",
     speaker: "Narrator",
-    text: "The Tower Room (Türmerstube). Lena looks out the window. Wow! She can see all of Vienna. Right below her is the famous colorful roof of the cathedral. In the distance, she can see the giant Ferris Wheel (Riesenrad) and many green hills. It is beautiful!",
+    text: "As Lena steps out onto the viewing platform 136 meters above the city, a cool breeze hits her face. Spread out below her, Vienna stretches as far as the eye can see.",
     lenaMood: "surprised",
     npcImage: "none",
-    dialogueStyle: "sensory",
+    dialogueStyle: "narrator",
     choices: [
-      { text: "Continue", nextNode: "ch4_tower_lena" },
+      { text: "Continue", nextNode: "ch5_tower_lena" },
     ],
   },
 
-  ch4_tower_lena: {
-    id: "ch4_tower_lena",
+  ch5_tower_lena: {
+    id: "ch5_tower_lena",
     background: "vienna_view.jpg",
-    speaker: "Lena",
-    text: "I did it! 136 meters high. Vienna looks like a toy city from here. The 'Steffl' is truly the best spot in town.",
+    speaker: "Lena (Internal Monologue)",
+    text: "343 steps... I actually made it! Wow... just look at this view. The iconic tiled roof is right beneath me, glittering in the sun. I can see the Giant Ferris Wheel over in Prater, the Danube cutting through the city, and the green hills in the distance.",
     lenaMood: "happy",
     npcImage: "none",
     choices: [
-      { text: "Take a photo and go back down", nextNode: "end_chapter_4" },
+      { text: "Look closer at the city", nextNode: "ch5_tower_reflect" },
     ],
   },
 
-  // ── Kapitel 5: Epilog ───────────────────────────────────────────────────
+  ch5_tower_reflect: {
+    id: "ch5_tower_reflect",
+    background: "vienna_view.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "When I first stepped off the train in Vienna, everything felt a bit intimidating. I was nervous to speak German, terrified of making silly mistakes or getting lost. But climbing these 343 steps feels just like this trip—it was tiring and I made mistakes, but I kept going one step at a time.",
+    lenaMood: "thoughtful",
+    npcImage: "none",
+    choices: [
+      { text: "Take out diary", nextNode: "ch5_tower_triumph" },
+    ],
+  },
+
+  ch5_tower_triumph: {
+    id: "ch5_tower_triumph",
+    background: "vienna_view.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Und jetzt bin ich ganz oben! I used to freeze up whenever I had to say a single word in German, but today proved that making mistakes isn't the end of the world. It really opened my eyes—speaking a language isn't about being perfect, it's just about having the courage to try. I need to write all of this down in my diary right now!",
+    lenaMood: "happy",
+    npcImage: "none",
+    choices: [
+      { text: "Write entry", nextNode: "end_chapter_5" },
+    ],
+  },
+
+  // ── Kapitel 6: Epilog ───────────────────────────────────────────────────
 
   chapter_6_title: {
     id: "chapter_6_title",
     background: "black",
     speaker: "System",
-    text: "Chapter 5: Epilog — Das Ende einer tollen Reise",
+    text: "Chapter 6: Epilog — Das Ende einer tollen Reise",
     lenaMood: "none",
     npcImage: "none",
     choices: [
@@ -1369,19 +1429,229 @@ const storyData = {
     lenaMood: "none",
     npcImage: "none",
     choices: [
-      { text: "Continue", nextNode: "ch6_cafe_scene" },
+      { text: "Continue", nextNode: "ch6_cafe_arrival" },
     ],
   },
 
-  ch6_cafe_scene: {
-    id: "ch6_cafe_scene",
+  // ── The Kaffeehaus: one last coffee, one last conversation ─────────────
+
+  ch6_cafe_arrival: {
+    id: "ch6_cafe_arrival",
     background: "kaffeehaus.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "I'm sitting in this beautiful Viennese café, enjoying my last Melange before my train back to Prague. Looking back at this week, I'm so proud of myself! From asking for directions to finding my way through the U-Bahn and visiting Stephansdom... I actually spoke German every day!",
+    text: "Warm dark wood, marble tables, cups clinking somewhere behind me. A waiter in a black vest glides between the tables like he's done it a thousand times.",
     lenaMood: "happy",
     npcImage: "none",
     choices: [
-      { text: "Write in the Tagebuch", nextNode: "end_chapter_6" },
+      { text: "Continue", nextNode: "ch6_cafe_thought" },
+    ],
+  },
+
+  ch6_cafe_thought: {
+    id: "ch6_cafe_thought",
+    background: "kaffeehaus.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "My last hour in Vienna, suitcase next to my chair. One more Melange before the train—and I'm ordering it in German.",
+    lenaMood: "happy",
+    npcImage: "none",
+    choices: [
+      { text: "Grüß Gott!", nextNode: "ch6_waiter_greet" },
+    ],
+  },
+
+  ch6_waiter_greet: {
+    id: "ch6_waiter_greet",
+    background: "kaffeehaus.jpg",
+    speaker: "Herr Ober",
+    text: "Grüß Gott, junge Dame! Was darf ich Ihnen bringen?",
+    lenaMood: "confident",
+    npcImage: "waiter_friendly.png",
+    highlightVocab: true,
+    choices: [
+      { text: "Ich will Kaffee.", nextNode: "ch6_waiter_wrong_blunt" },
+      { text: "Eine Melange, weil ich möchte trinken.", nextNode: "ch6_waiter_wrong_order" },
+      { text: "Ich möchte bitte eine Melange und ein Glas Wasser.", nextNode: "ch6_waiter_serve" },
+    ],
+  },
+
+  ch6_waiter_wrong_blunt: {
+    id: "ch6_waiter_wrong_blunt",
+    background: "kaffeehaus.jpg",
+    speaker: "Herr Ober",
+    text: "Hmm... 'Ich will'? Bei uns im Kaffeehaus sagt man lieber 'Ich möchte bitte'. Das klingt viel freundlicher.",
+    lenaMood: "unsure",
+    npcImage: "waiter_confused.png",
+    choices: [
+      { text: "Try again", nextNode: "ch6_waiter_greet" },
+    ],
+  },
+
+  ch6_waiter_wrong_order: {
+    id: "ch6_waiter_wrong_order",
+    background: "kaffeehaus.jpg",
+    speaker: "Herr Ober",
+    text: "Wie bitte? Sie meinen 'weil ich trinken möchte', nicht wahr? Nach 'weil' kommt das Verb ganz am Ende.",
+    lenaMood: "unsure",
+    npcImage: "waiter_confused.png",
+    choices: [
+      { text: "Try again", nextNode: "ch6_waiter_greet" },
+    ],
+  },
+
+  ch6_waiter_serve: {
+    id: "ch6_waiter_serve",
+    background: "kaffeehaus.jpg",
+    speaker: "Herr Ober",
+    text: "Sehr gerne! Eine Melange und ein Glas Wasser — kommt sofort.",
+    lenaMood: "happy",
+    npcImage: "waiter_friendly.png",
+    highlightVocab: true,
+    choices: [
+      { text: "Continue", nextNode: "ch6_waiter_smalltalk" },
+    ],
+  },
+
+  // Only after the coffee is on the table does he stay for a chat.
+  ch6_waiter_smalltalk: {
+    id: "ch6_waiter_smalltalk",
+    background: "kaffeehaus.jpg",
+    speaker: "Herr Ober",
+    text: "Ihr Akzent — Sie sind nicht von hier, oder? Woher kommen Sie denn, und wie lange sind Sie schon in Wien?",
+    lenaMood: "confident",
+    npcImage: "waiter_friendly.png",
+    highlightVocab: true,
+    choices: [
+      { text: "Prag. Zug. Heute.", nextNode: "ch6_smalltalk_wrong_short" },
+      { text: "Ich komme aus Prag. Ich bin drei Tage hier — und heute fahre ich zurück.", nextNode: "ch6_waiter_praise" },
+      { text: "Ich bin aus Prag und ich bin seit drei Tage hier.", nextNode: "ch6_waiter_praise" },
+    ],
+  },
+
+  ch6_smalltalk_wrong_short: {
+    id: "ch6_smalltalk_wrong_short",
+    background: "kaffeehaus.jpg",
+    speaker: "Herr Ober",
+    text: "Prag... Zug... heute? Nur die Hälfte, junge Dame! Sagen Sie es mir in einem ganzen Satz — Sie können das.",
+    lenaMood: "unsure",
+    npcImage: "waiter_confused.png",
+    choices: [
+      { text: "Try again", nextNode: "ch6_waiter_smalltalk" },
+    ],
+  },
+
+  // He gently echoes the correct "seit drei Tagen" instead of correcting her.
+  ch6_waiter_praise: {
+    id: "ch6_waiter_praise",
+    background: "kaffeehaus.jpg",
+    speaker: "Herr Ober",
+    text: "Ah, aus Prag! Seit drei Tagen in Wien? Wie wunderbar — und Ihr Deutsch ist wirklich gut, junge Dame. Respekt, die meisten Touristen sagen hier nur 'one coffee, please'.",
+    lenaMood: "surprised",
+    npcImage: "waiter_friendly.png",
+    highlightVocab: true,
+    choices: [
+      { text: "Continue", nextNode: "ch6_praise_thought" },
+    ],
+  },
+
+  ch6_praise_thought: {
+    id: "ch6_praise_thought",
+    background: "kaffeehaus.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "A Viennese waiter just complimented my German! How did I get here?",
+    lenaMood: "happy",
+    npcImage: "waiter_friendly.png",
+    choices: [
+      { text: "Continue", nextNode: "ch6_bill_prompt" },
+    ],
+  },
+
+  ch6_bill_prompt: {
+    id: "ch6_bill_prompt",
+    background: "kaffeehaus.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "My Melange is empty and the clock says it's time. One last sentence in German, then the station.",
+    lenaMood: "thoughtful",
+    npcImage: "waiter_friendly.png",
+    choices: [
+      { text: "Die Karte, bitte.", nextNode: "ch6_bill_wrong_card" },
+      { text: "Entschuldigung, ich möchte bitte zahlen.", nextNode: "ch6_bill_paid" },
+      { text: "Wie viel kostet das Kaffeehaus?", nextNode: "ch6_bill_wrong_price" },
+    ],
+  },
+
+  ch6_bill_wrong_card: {
+    id: "ch6_bill_wrong_card",
+    background: "kaffeehaus.jpg",
+    speaker: "Herr Ober",
+    text: "Die Karte? Möchten Sie die Speisekarte noch einmal sehen? Oder möchten Sie vielleicht zahlen?",
+    lenaMood: "unsure",
+    npcImage: "waiter_confused.png",
+    choices: [
+      { text: "Try again", nextNode: "ch6_bill_prompt" },
+    ],
+  },
+
+  ch6_bill_wrong_price: {
+    id: "ch6_bill_wrong_price",
+    background: "kaffeehaus.jpg",
+    speaker: "Herr Ober",
+    text: "Das ganze Kaffeehaus? Das steht leider nicht zum Verkauf, junge Dame! Sie meinen die Rechnung, oder?",
+    lenaMood: "unsure",
+    npcImage: "waiter_confused.png",
+    choices: [
+      { text: "Try again", nextNode: "ch6_bill_prompt" },
+    ],
+  },
+
+  ch6_bill_paid: {
+    id: "ch6_bill_paid",
+    background: "kaffeehaus.jpg",
+    speaker: "Herr Ober",
+    text: "Sehr gerne. Das macht sechs Euro achtzig.",
+    lenaMood: "confident",
+    npcImage: "waiter_friendly.png",
+    highlightVocab: true,
+    choices: [
+      { text: "Sieben Euro fünfzig — stimmt so, danke!", nextNode: "ch6_bill_farewell" },
+    ],
+  },
+
+  ch6_bill_farewell: {
+    id: "ch6_bill_farewell",
+    background: "kaffeehaus.jpg",
+    speaker: "Herr Ober",
+    text: "Vielen Dank, junge Dame! Gute Reise nach Prag — und auf Wiedersehen in Wien!",
+    lenaMood: "happy",
+    npcImage: "waiter_friendly.png",
+    highlightVocab: true,
+    choices: [
+      { text: "Continue", nextNode: "ch6_reflect_1" },
+    ],
+  },
+
+  // ── Looking back over the whole trip ───────────────────────────────────
+
+  ch6_reflect_1: {
+    id: "ch6_reflect_1",
+    background: "kaffeehaus.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "When I first arrived, I was terrified to say even a single word. Now I'm sitting here, having a real conversation in German over coffee.",
+    lenaMood: "thoughtful",
+    npcImage: "none",
+    choices: [
+      { text: "Continue", nextNode: "ch6_reflect_2" },
+    ],
+  },
+
+  ch6_reflect_2: {
+    id: "ch6_reflect_2",
+    background: "kaffeehaus.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "One last look around the cozy café, and I'm off to the station.",
+    lenaMood: "happy",
+    npcImage: "none",
+    choices: [
+      { text: "Continue", nextNode: "ch6_departure" },
     ],
   },
 
@@ -1389,7 +1659,58 @@ const storyData = {
     id: "ch6_departure",
     background: "vienna_hauptbahnhof.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "My train leaves in an hour from Hauptbahnhof. Tschüss Wien, auf Wiedersehen!",
+    text: "Three days ago this hall felt enormous, full of words I couldn't say. Now it's just a train station.",
+    lenaMood: "happy",
+    npcImage: "none",
+    choices: [
+      { text: "Continue", nextNode: "ch6_platform" },
+    ],
+  },
+
+  ch6_platform: {
+    id: "ch6_platform",
+    background: "vienna_hauptbahnhof.jpg",
+    speaker: "Narrator",
+    text: "'Railjet nach Prag, Bahnsteig 7.' Lena takes the handle of her suitcase, looks back one last time — and smiles.",
+    lenaMood: "happy",
+    npcImage: "none",
+    dialogueStyle: "narrator",
+    choices: [
+      { text: "Board the train", nextNode: "ch6_train_1" },
+    ],
+  },
+
+  // ── On the train home: a mirror of the prologue ─────────────────────────
+
+  ch6_train_1: {
+    id: "ch6_train_1",
+    background: "train_interior.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Same train. Same window seat. Three days ago I sat right here and prayed that nobody would ask me anything.",
+    lenaMood: "thoughtful",
+    npcImage: "none",
+    choices: [
+      { text: "Look out the window", nextNode: "ch6_train_2" },
+    ],
+  },
+
+  ch6_train_2: {
+    id: "ch6_train_2",
+    background: "train_interior.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Every word I was too afraid to say was a conversation I never got to have. I'm done missing those.",
+    lenaMood: "happy",
+    npcImage: "none",
+    choices: [
+      { text: "Continue", nextNode: "ch6_train_3" },
+    ],
+  },
+
+  ch6_train_3: {
+    id: "ch6_train_3",
+    background: "train_interior.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Language isn't about being perfect. It's about having the courage to speak anyway. Auf Wiedersehen, Wien!",
     lenaMood: "happy",
     npcImage: "none",
     choices: [
