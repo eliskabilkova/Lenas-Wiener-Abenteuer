@@ -806,7 +806,7 @@ const storyData = {
 
   ch3_escalator_entry: {
     id: "ch3_escalator_entry",
-    background: "u_bahn_station.jpg",
+    background: "u_bahn_escalator.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "The escalator is long and crowded. I step on and look at the map on my phone, without noticing that I am blocking the left side.",
     lenaMood: "unsure",
@@ -818,7 +818,7 @@ const storyData = {
 
   ch3_ubahn_bump: {
     id: "ch3_ubahn_bump",
-    background: "u_bahn_station.jpg",
+    background: "u_bahn_escalator.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "Oops! Someone just bumped into me from behind quite hard...",
     lenaMood: "unsure",
@@ -830,7 +830,7 @@ const storyData = {
 
   ch3_ubahn_dialogue: {
     id: "ch3_ubahn_dialogue",
-    background: "u_bahn_station.jpg",
+    background: "u_bahn_escalator.jpg",
     speaker: "Wiener Mann",
     text: "Entschuldigung! Rechts stehen, links gehen!",
     lenaMood: "unsure",
@@ -842,7 +842,7 @@ const storyData = {
 
   ch3_ubahn_thought: {
     id: "ch3_ubahn_thought",
-    background: "u_bahn_station.jpg",
+    background: "u_bahn_escalator.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "Oh no, I blocked the way because I was looking at my map! What should I say to apologize politely?",
     lenaMood: "unsure",
@@ -856,7 +856,7 @@ const storyData = {
 
   ch3_ubahn_imperfect: {
     id: "ch3_ubahn_imperfect",
-    background: "u_bahn_station.jpg",
+    background: "u_bahn_escalator.jpg",
     speaker: "Wiener Mann",
     text: "Na gut... Aber auf der Rolltreppe gilt: rechts stehen, links gehen!",
     lenaMood: "unsure",
@@ -868,7 +868,7 @@ const storyData = {
 
   ch3_ubahn_polite: {
     id: "ch3_ubahn_polite",
-    background: "u_bahn_station.jpg",
+    background: "u_bahn_escalator.jpg",
     speaker: "Wiener Mann",
     text: "Passt schon. Nächstes Mal einfach rechts stehen!",
     lenaMood: "happy",
@@ -880,7 +880,7 @@ const storyData = {
 
   ch3_ubahn_confused: {
     id: "ch3_ubahn_confused",
-    background: "u_bahn_station.jpg",
+    background: "u_bahn_escalator.jpg",
     speaker: "Wiener Mann",
     text: "Sagen Sie einmal, verstehen Sie kein Deutsch?! Gehen Sie auf die rechte Seite!",
     lenaMood: "surprised",
@@ -892,7 +892,7 @@ const storyData = {
 
   ch3_station_exit: {
     id: "ch3_station_exit",
-    background: "u_bahn_station.jpg",
+    background: "u_bahn_escalator.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "Stand on the right, walk on the left... got it! Step by step, I'm learning how this city works.",
     lenaMood: "happy",
@@ -928,7 +928,7 @@ const storyData = {
 
   ch4_stephans_amazed: {
     id: "ch4_stephans_amazed",
-    background: "cathedral.jpg",
+    background: "stephansplatz.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "Oh my goodness... It's huge! The roof has so many colors, and the tower goes all the way up into the clouds. I can't fit the whole cathedral in one photo! I'm just standing here with my mouth open...",
     lenaMood: "happy",
@@ -940,7 +940,7 @@ const storyData = {
 
   ch4_square_crowds: {
     id: "ch4_square_crowds",
-    background: "cathedral.jpg",
+    background: "stephansplatz.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "And so many people! Tourists with cameras, street artists, music from every corner... The square is loud and full of life. I feel very small next to this giant church and this big crowd.",
     lenaMood: "surprised",
@@ -952,7 +952,7 @@ const storyData = {
 
   ch4_stephans_intro: {
     id: "ch4_stephans_intro",
-    background: "cathedral.jpg",
+    background: "stephansplatz.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "So this is the famous 'Steffl', as the locals call it. Seeing it in real life is completely different than in photos!",
     lenaMood: "happy",
@@ -964,7 +964,7 @@ const storyData = {
 
   ch4_mozart_surprise: {
     id: "ch4_mozart_surprise",
-    background: "cathedral.jpg",
+    background: "stephansplatz.jpg",
     speaker: "Narrator",
     text: "ZAP! Suddenly, a man in a white wig and a red coat jumps right in front of Lena. He waves a handful of golden tickets!",
     lenaMood: "surprised",
@@ -978,7 +978,7 @@ const storyData = {
 
   ch4_mozart_seller: {
     id: "ch4_mozart_seller",
-    background: "cathedral.jpg",
+    background: "stephansplatz.jpg",
     speaker: "Straßenverkäufer",
     text: "Hallo! Guten Tag! Suchen Sie klassische Musik? Mozart! Vivaldi! Konzert heute Abend im wunderschönen Saal! Nur heute super Angebot, nur für Sie, meine Dame!",
     lenaMood: "surprised",
@@ -990,7 +990,7 @@ const storyData = {
 
   ch4_mozart_shock: {
     id: "ch4_mozart_shock",
-    background: "cathedral.jpg",
+    background: "stephansplatz.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "Oh! He scared me! Wait... I read about this online. In the city center, there are ticket sellers dressed as Mozart. They sell very expensive concert tickets to tourists. I have to be careful and say no!",
     lenaMood: "unsure",
@@ -1002,7 +1002,7 @@ const storyData = {
 
   ch4_mozart_choice: {
     id: "ch4_mozart_choice",
-    background: "cathedral.jpg",
+    background: "stephansplatz.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "What should I say to him?",
     lenaMood: "unsure",
@@ -1017,7 +1017,7 @@ const storyData = {
 
   ch4_mozart_wrong_a: {
     id: "ch4_mozart_wrong_a",
-    background: "cathedral.jpg",
+    background: "stephansplatz.jpg",
     speaker: "Narrator",
     text: "The seller sees that I am not sure. He puts shiny brochures into my hands and stands in my way. He talks and talks about the 'best concert in Vienna'. Many minutes pass before I can finally walk away.",
     lenaMood: "unsure",
@@ -1030,7 +1030,7 @@ const storyData = {
 
   ch4_mozart_wrong_b: {
     id: "ch4_mozart_wrong_b",
-    background: "cathedral.jpg",
+    background: "stephansplatz.jpg",
     speaker: "Narrator",
     text: "He does not accept my excuse. \"Keine Zeit? Das Konzert dauert nur zwei Stunden! Kommen Sie!\" He steps closer, and I feel trapped. It is hard to escape politely.",
     lenaMood: "unsure",
@@ -1043,7 +1043,7 @@ const storyData = {
 
   ch4_mozart_correct: {
     id: "ch4_mozart_correct",
-    background: "cathedral.jpg",
+    background: "stephansplatz.jpg",
     speaker: "Straßenverkäufer",
     text: "Schade! Schönen Tag noch!",
     lenaMood: "normal",
@@ -1055,7 +1055,7 @@ const storyData = {
 
   ch4_mozart_after: {
     id: "ch4_mozart_after",
-    background: "cathedral.jpg",
+    background: "stephansplatz.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "Whew, that was intense! The square is so busy. I need a moment of peace. I'll head inside the cathedral—the famous Stephansdom.",
     lenaMood: "thoughtful",
@@ -1270,7 +1270,7 @@ const storyData = {
 
   ch4_candle: {
     id: "ch4_candle",
-    background: "cathedral_interior.jpg",
+    background: "cathedral_candles.jpg",
     speaker: "Narrator",
     text: "Lena puts a coin into the small metal box and takes a thin candle. She lights it. Now her little flame burns together with many others — one small wish for her big journey.",
     lenaMood: "happy",
@@ -1283,7 +1283,7 @@ const storyData = {
 
   ch4_candle_words: {
     id: "ch4_candle_words",
-    background: "cathedral_interior.jpg",
+    background: "cathedral_candles.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "Small light, big wishes. Now, I feel ready for the challenge.",
     lenaMood: "happy",
@@ -1348,7 +1348,7 @@ const storyData = {
 
   ch5_climb_game: {
     id: "ch5_climb_game",
-    background: "cathedral_interior.jpg",
+    background: "cathedral_stairs.jpg",
     speaker: "System",
     text: "",
     lenaMood: "tired",

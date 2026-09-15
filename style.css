@@ -57,34 +57,11 @@ button {
   transition: background-image 0.8s ease;
 }
 
-.game[data-background="village"] {
-  background-image:
-    linear-gradient(180deg, rgba(12, 10, 24, 0.15) 0%, rgba(12, 10, 24, 0.55) 100%),
-    radial-gradient(ellipse at 70% 20%, rgba(255, 210, 120, 0.35) 0%, transparent 55%),
-    radial-gradient(ellipse at 20% 80%, rgba(120, 180, 255, 0.25) 0%, transparent 50%),
-    linear-gradient(160deg, #6b8fd4 0%, #9ec8a8 45%, #d4b896 100%);
-}
-
-.game[data-background="forest"] {
-  background-image:
-    linear-gradient(180deg, rgba(8, 16, 10, 0.2) 0%, rgba(8, 16, 10, 0.65) 100%),
-    radial-gradient(circle at 30% 40%, rgba(90, 200, 120, 0.2) 0%, transparent 45%),
-    linear-gradient(180deg, #1a3d2e 0%, #2d5a3d 50%, #1f3328 100%);
-}
-
 .game[data-background="cafe"] {
   background-image:
     linear-gradient(180deg, rgba(30, 18, 10, 0.15) 0%, rgba(30, 18, 10, 0.6) 100%),
     radial-gradient(ellipse at 50% 0%, rgba(255, 190, 110, 0.35) 0%, transparent 60%),
     linear-gradient(145deg, #3d2818 0%, #6b4a32 40%, #8a6040 100%);
-}
-
-.game[data-background="night"] {
-  background-image:
-    linear-gradient(180deg, rgba(5, 8, 20, 0.3) 0%, rgba(5, 8, 20, 0.75) 100%),
-    radial-gradient(circle at 80% 15%, rgba(200, 210, 255, 0.15) 0%, transparent 40%),
-    radial-gradient(circle at 15% 25%, rgba(124, 108, 240, 0.2) 0%, transparent 35%),
-    linear-gradient(180deg, #0f1228 0%, #1a1f45 50%, #0d1020 100%);
 }
 
 .game[data-background="vienna_hauptbahnhof"] {
@@ -128,11 +105,31 @@ button {
     linear-gradient(165deg, #3a3f4a 0%, #545a66 45%, #2a2d34 100%);
 }
 
+.game[data-background="u_bahn_escalator"] {
+  background-image:
+    linear-gradient(180deg, rgba(10, 12, 20, 0.22) 0%, rgba(10, 12, 20, 0.58) 100%),
+    url("backgrounds/u_bahn_escalator.jpg"),
+    radial-gradient(ellipse at 50% 0%, rgba(255, 210, 90, 0.22) 0%, transparent 42%),
+    linear-gradient(180deg, #2c3340 0%, #4a5160 40%, #1c2028 100%);
+  background-size: cover;
+  background-position: center;
+}
+
 .game[data-background="cathedral"] {
   background-image:
     linear-gradient(180deg, rgba(20, 15, 24, 0.12) 0%, rgba(20, 15, 24, 0.55) 100%),
     radial-gradient(ellipse at 50% 18%, rgba(255, 224, 170, 0.34) 0%, transparent 48%),
     linear-gradient(165deg, #5a6074 0%, #a7a1a3 46%, #806d64 100%);
+}
+
+.game[data-background="stephansplatz"] {
+  background-image:
+    linear-gradient(180deg, rgba(20, 15, 24, 0.12) 0%, rgba(20, 15, 24, 0.5) 100%),
+    url("backgrounds/stephansplatz.jpg"),
+    radial-gradient(ellipse at 50% 20%, rgba(255, 220, 150, 0.32) 0%, transparent 50%),
+    linear-gradient(165deg, #6a7388 0%, #c4b8a8 42%, #8a6a58 100%);
+  background-size: cover;
+  background-position: center;
 }
 
 .game[data-background="cathedral_interior"] {
@@ -142,6 +139,28 @@ button {
     radial-gradient(ellipse at 70% 20%, rgba(60, 90, 180, 0.24) 0%, transparent 42%),
     radial-gradient(ellipse at 50% 80%, rgba(255, 190, 110, 0.18) 0%, transparent 45%),
     linear-gradient(170deg, #221c2e 0%, #2e2438 45%, #1a1420 100%);
+}
+
+.game[data-background="cathedral_stairs"] {
+  background-image:
+    linear-gradient(180deg, rgba(8, 6, 14, 0.12) 0%, rgba(8, 6, 14, 0.42) 100%),
+    url("backgrounds/cathedral_stairs.jpg"),
+    radial-gradient(ellipse at 50% 12%, rgba(210, 190, 150, 0.28) 0%, transparent 42%),
+    radial-gradient(ellipse at 80% 85%, rgba(30, 22, 16, 0.4) 0%, transparent 48%),
+    linear-gradient(175deg, #6a5e50 0%, #4a4036 38%, #1c1814 100%);
+  background-size: cover;
+  background-position: center;
+}
+
+.game[data-background="cathedral_candles"] {
+  background-image:
+    linear-gradient(180deg, rgba(8, 6, 14, 0.28) 0%, rgba(8, 6, 14, 0.62) 100%),
+    url("backgrounds/cathedral_candles.jpg"),
+    radial-gradient(ellipse at 50% 70%, rgba(255, 170, 70, 0.45) 0%, transparent 50%),
+    radial-gradient(ellipse at 30% 80%, rgba(255, 120, 40, 0.22) 0%, transparent 40%),
+    linear-gradient(170deg, #1a1210 0%, #2a1814 50%, #120c0c 100%);
+  background-size: cover;
+  background-position: center;
 }
 
 .game[data-background="stained_glass"] {
@@ -163,27 +182,6 @@ button {
     radial-gradient(ellipse at 50% 8%, rgba(255, 240, 200, 0.4) 0%, transparent 55%),
     radial-gradient(ellipse at 80% 60%, rgba(120, 180, 130, 0.2) 0%, transparent 40%),
     linear-gradient(175deg, #8fb8d8 0%, #c9b8a0 55%, #7a6d70 100%);
-}
-
-.game[data-background="supermarket_exterior"] {
-  background-image:
-    linear-gradient(180deg, rgba(18, 22, 20, 0.12) 0%, rgba(18, 22, 20, 0.55) 100%),
-    radial-gradient(ellipse at 40% 20%, rgba(255, 220, 140, 0.28) 0%, transparent 50%),
-    linear-gradient(165deg, #6a9a72 0%, #c4c8a8 40%, #8a9088 75%, #4a5548 100%);
-}
-
-.game[data-background="supermarket_interior"] {
-  background-image:
-    linear-gradient(180deg, rgba(20, 24, 28, 0.18) 0%, rgba(20, 24, 28, 0.58) 100%),
-    radial-gradient(ellipse at 50% 0%, rgba(255, 245, 220, 0.35) 0%, transparent 55%),
-    linear-gradient(160deg, #e8e4d8 0%, #c8d0c4 35%, #9aa898 70%, #5a6558 100%);
-}
-
-.game[data-background="supermarket_cashier"] {
-  background-image:
-    linear-gradient(180deg, rgba(24, 20, 18, 0.2) 0%, rgba(24, 20, 18, 0.62) 100%),
-    radial-gradient(ellipse at 50% 15%, rgba(255, 200, 120, 0.3) 0%, transparent 50%),
-    linear-gradient(155deg, #d8c8b0 0%, #b0a090 40%, #6a5850 100%);
 }
 
 .game[data-background="kaffeehaus"] {
@@ -2101,7 +2099,7 @@ button {
   align-items: center;
   justify-content: center;
   padding: clamp(0.8rem, 3vw, 2rem);
-  background: #121316;
+  background: radial-gradient(ellipse at center, transparent 28%, rgba(8, 6, 14, 0.38) 100%);
 }
 
 .climb-container {
@@ -4271,382 +4269,6 @@ button {
   box-shadow: 0 14px 32px rgba(124, 108, 240, 0.5);
 }
 
-/* ── Supermarket aisle finder ─────────────────────────────────────────── */
-
-.aisle-game {
-  position: absolute;
-  inset: 0;
-  z-index: 30;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: clamp(0.8rem, 3vw, 2rem);
-  background:
-    linear-gradient(135deg, rgba(16, 22, 18, 0.88), rgba(28, 34, 28, 0.82)),
-    radial-gradient(circle at 50% 0%, rgba(120, 180, 110, 0.22), transparent 55%);
-  backdrop-filter: blur(10px);
-}
-
-.aisle-game__panel {
-  width: min(96vw, 720px);
-  max-height: 92vh;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding: clamp(1rem, 2.8vw, 1.8rem);
-  border-radius: 20px;
-  border: 1px solid rgba(140, 190, 120, 0.28);
-  background: linear-gradient(160deg, rgba(38, 44, 38, 0.98), rgba(22, 26, 22, 0.98));
-  box-shadow:
-    0 28px 80px rgba(0, 0, 0, 0.55),
-    inset 0 1px 0 rgba(255, 255, 255, 0.07);
-  animation: metroBoardIn 0.35s ease-out;
-}
-
-.aisle-game__eyebrow {
-  margin: 0;
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  text-align: center;
-  color: #8fca7a;
-}
-
-.aisle-game__title {
-  margin: 0;
-  font-size: clamp(1.1rem, 3vw, 1.45rem);
-  font-weight: 800;
-  text-align: center;
-  color: #f4ffe8;
-}
-
-.aisle-game__progress {
-  margin: 0;
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-align: center;
-  color: rgba(255, 255, 255, 0.55);
-}
-
-.aisle-game__thought {
-  padding: 0.85rem 1rem;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.06);
-}
-
-.aisle-game__thought-label {
-  margin: 0 0 0.3rem;
-  font-size: 0.65rem;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgba(200, 230, 170, 0.7);
-}
-
-.aisle-game__prompt {
-  margin: 0;
-  font-size: clamp(0.95rem, 2.4vw, 1.1rem);
-  font-weight: 700;
-  line-height: 1.45;
-  color: #fff8ec;
-}
-
-.aisle-game__map {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.7rem;
-}
-
-.aisle-game__aisle {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.25rem;
-  min-height: 6.2rem;
-  padding: 0.9rem 0.7rem;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04));
-  color: #fff;
-  font-family: inherit;
-  cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, border-color 0.15s ease;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
-}
-
-.aisle-game__aisle:hover:not(:disabled) {
-  transform: translateY(-2px);
-  border-color: rgba(140, 190, 120, 0.45);
-  background: linear-gradient(145deg, rgba(140, 190, 120, 0.18), rgba(255, 255, 255, 0.06));
-}
-
-.aisle-game__aisle.is-correct {
-  border-color: rgba(91, 203, 136, 0.7);
-  background: linear-gradient(145deg, rgba(57, 151, 96, 0.4), rgba(35, 95, 62, 0.25));
-  color: #c9f4da;
-}
-
-.aisle-game__aisle.is-wrong {
-  border-color: rgba(239, 68, 68, 0.45);
-  background: rgba(239, 68, 68, 0.15);
-}
-
-.aisle-game__icon {
-  font-size: 1.7rem;
-  line-height: 1;
-}
-
-.aisle-game__name {
-  font-size: clamp(0.78rem, 1.9vw, 0.92rem);
-  font-weight: 800;
-  text-align: center;
-}
-
-.aisle-game__sub {
-  font-size: 0.68rem;
-  font-weight: 600;
-  text-align: center;
-  color: rgba(255, 255, 255, 0.55);
-}
-
-.aisle-game__feedback {
-  min-height: 1.4rem;
-  margin: 0;
-  font-size: 0.85rem;
-  font-weight: 700;
-  text-align: center;
-  color: rgba(255, 255, 255, 0.65);
-}
-
-.aisle-game__feedback--success {
-  color: #9fe8b4;
-}
-
-.aisle-game__feedback--hint {
-  color: #f0c89a;
-}
-
-.aisle-game__dev-controls,
-.cashier-game__dev-controls {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-top: 0.2rem;
-}
-
-.aisle-game__dev-controls button,
-.cashier-game__dev-controls button {
-  padding: 0.35rem 0.7rem;
-  border-radius: 8px;
-  border: 1px dashed rgba(255, 255, 255, 0.25);
-  background: transparent;
-  color: rgba(255, 255, 255, 0.45);
-  font-family: inherit;
-  font-size: 0.68rem;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-/* ── Cashier dialogue mini-game ───────────────────────────────────────── */
-
-.cashier-game {
-  position: absolute;
-  inset: 0;
-  z-index: 30;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: clamp(0.8rem, 3vw, 2rem);
-  background:
-    linear-gradient(135deg, rgba(22, 16, 14, 0.9), rgba(36, 28, 24, 0.84)),
-    radial-gradient(circle at 50% 0%, rgba(220, 160, 90, 0.22), transparent 52%);
-  backdrop-filter: blur(10px);
-}
-
-.cashier-game__panel {
-  width: min(96vw, 640px);
-  max-height: 92vh;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
-  padding: clamp(1rem, 2.8vw, 1.8rem);
-  border-radius: 20px;
-  border: 1px solid rgba(220, 170, 100, 0.28);
-  background: linear-gradient(160deg, rgba(42, 34, 30, 0.98), rgba(24, 20, 18, 0.98));
-  box-shadow:
-    0 28px 80px rgba(0, 0, 0, 0.58),
-    inset 0 1px 0 rgba(255, 255, 255, 0.07);
-  animation: metroBoardIn 0.35s ease-out;
-}
-
-.cashier-game__eyebrow {
-  margin: 0;
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  text-align: center;
-  color: #dca95f;
-}
-
-.cashier-game__title {
-  margin: 0;
-  font-size: clamp(1.1rem, 3vw, 1.45rem);
-  font-weight: 800;
-  text-align: center;
-  color: #fff8ec;
-}
-
-.cashier-game__register {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.9rem 1rem;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(0, 0, 0, 0.22);
-}
-
-.cashier-game__cashier-avatar {
-  width: 3.4rem;
-  height: 3.4rem;
-  border-radius: 50%;
-  flex-shrink: 0;
-  background:
-    radial-gradient(circle at 35% 30%, #f2d2b0 0%, #d4a07a 45%, #8a5a40 100%);
-  box-shadow: 0 0 0 3px rgba(220, 170, 100, 0.35);
-}
-
-.cashier-game__register-screen {
-  flex: 1;
-  padding: 0.55rem 0.8rem;
-  border-radius: 10px;
-  background: linear-gradient(180deg, #1a2a22, #0e1814);
-  border: 1px solid rgba(100, 200, 140, 0.25);
-  font-family: "Courier New", monospace;
-}
-
-.cashier-game__total-label {
-  margin: 0;
-  font-size: 0.65rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(140, 220, 170, 0.7);
-}
-
-.cashier-game__total {
-  margin: 0.1rem 0 0;
-  font-size: 1.45rem;
-  font-weight: 800;
-  color: #9fe8b4;
-}
-
-.cashier-game__speaker {
-  margin: 0.2rem 0 0;
-  font-size: 0.78rem;
-  font-weight: 800;
-  color: #dca95f;
-}
-
-.cashier-game__dialogue {
-  margin: 0;
-  font-size: clamp(0.95rem, 2.3vw, 1.1rem);
-  font-weight: 700;
-  line-height: 1.45;
-  color: #fff8ec;
-}
-
-.cashier-game__feedback {
-  min-height: 1.25rem;
-  margin: 0;
-  font-size: 0.82rem;
-  font-weight: 700;
-  text-align: center;
-  color: rgba(255, 255, 255, 0.55);
-}
-
-.cashier-game__feedback--success {
-  color: #9fe8b4;
-}
-
-.cashier-game__feedback--hint {
-  color: #f0c89a;
-}
-
-.cashier-game__options {
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
-}
-
-.cashier-game__option {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.2rem;
-  width: 100%;
-  padding: 0.75rem 0.9rem;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04));
-  color: #fff;
-  font-family: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
-}
-
-.cashier-game__option:hover:not(:disabled) {
-  transform: translateY(-1px);
-  border-color: rgba(220, 170, 100, 0.45);
-}
-
-.cashier-game__option.is-correct {
-  border-color: rgba(91, 203, 136, 0.7);
-  background: linear-gradient(145deg, rgba(57, 151, 96, 0.35), rgba(35, 95, 62, 0.22));
-}
-
-.cashier-game__option.is-wrong {
-  border-color: rgba(239, 68, 68, 0.45);
-  background: rgba(239, 68, 68, 0.15);
-}
-
-.cashier-game__option-de {
-  font-size: clamp(0.85rem, 2vw, 0.95rem);
-  font-weight: 800;
-}
-
-.cashier-game__option-en {
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.55);
-}
-
-.cashier-game__continue {
-  align-self: center;
-  margin-top: 0.3rem;
-  padding: 0.75rem 2rem;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  background: linear-gradient(135deg, #6a9a72, #4a7a52);
-  color: #fff;
-  font-family: inherit;
-  font-size: 0.9rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  cursor: pointer;
-  box-shadow: 0 10px 24px rgba(74, 122, 82, 0.35);
-}
-
-.cashier-game__continue:hover {
-  transform: translateY(-1px);
-}
-
 /* ── Journey celebration screen ───────────────────────────────────────── */
 
 .celebration-screen {
@@ -4784,10 +4406,6 @@ button {
 
   .meldezettel__title {
     font-size: 1.15rem;
-  }
-
-  .aisle-game__map {
-    grid-template-columns: 1fr;
   }
 }
 

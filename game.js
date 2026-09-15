@@ -197,13 +197,14 @@ let cathedralState = {
     "hotel_lobby.jpg": "cafe",
     "hotel_room.jpg": "hotel_room",
     "u_bahn_station.jpg": "u_bahn_station",
+    "u_bahn_escalator.jpg": "u_bahn_escalator",
     "cathedral.jpg": "cathedral",
     "cathedral_interior.jpg": "cathedral_interior",
+    "cathedral_stairs.jpg": "cathedral_stairs",
+    "cathedral_candles.jpg": "cathedral_candles",
     "stained-glass.jpg": "stained_glass",
+    "stephansplatz.jpg": "stephansplatz",
     "vienna_view.jpg": "vienna_view",
-    "supermarket_exterior.jpg": "supermarket_exterior",
-    "supermarket_interior.jpg": "supermarket_interior",
-    "supermarket_cashier.jpg": "supermarket_cashier",
     "kaffeehaus.jpg": "kaffeehaus",
     "cafe": "cafe",
     "black": "black",
@@ -216,12 +217,10 @@ let cathedralState = {
     "old_man_friendly.png": { visible: true, character: "elder", name: "Viennese Man", mood: "happy" },
     "receptionist_neutral.png": { visible: true, character: "mira", name: "Rezeptionistin", mood: "neutral" },
     "receptionist_confused.png": { visible: true, character: "mira", name: "Rezeptionistin", mood: "uncertain" },
-    "commuter_man_neutral.png": { visible: true, character: "elder", name: "Wiener Mann", mood: "neutral" },
     "commuter_man_annoyed.png": { visible: true, character: "elder", name: "Wiener Mann", mood: "neutral" },
     "mozart_seller_neutral.png": { visible: true, character: "mozart_seller", name: "Straßenverkäufer", mood: "neutral" },
     "mozart_seller_pushy.png": { visible: true, character: "mozart_seller", name: "Straßenverkäufer", mood: "pushy" },
     "warden_stern.png": { visible: true, character: "warden", name: "Domaufseher", mood: "stern" },
-    "cashier_friendly.png": { visible: true, character: "mira", name: "Kassiererin", mood: "happy" },
     "waiter_friendly.png": { visible: true, character: "waiter", name: "Herr Ober", mood: "happy" },
     "waiter_confused.png": { visible: true, character: "waiter", name: "Herr Ober", mood: "uncertain" },
   };
@@ -968,60 +967,6 @@ let cathedralState = {
   ];
   const ETIQUETTE_GAME_TRIGGER_NODE = "ch4_erlaubt_game";
   const ETIQUETTE_GAME_SUCCESS_NODE = "ch4_rules_intro";
-
-  const AISLE_GAME_TRIGGER_NODE = "ch5_aisles_game";
-  const AISLE_GAME_SUCCESS_NODE = "ch5_basket_done";
-  const CASHIER_GAME_TRIGGER_NODE = "ch5_cashier_game";
-  const CASHIER_GAME_SUCCESS_NODE = "ch5_paid_thought";
-
-  const SUPERMARKET_AISLES = [
-    { id: "produce", icon: "🍎", german: "Obst & Gemüse", english: "Produce" },
-    { id: "bakery", icon: "🥖", german: "Bäckerei", english: "Bakery" },
-    { id: "dairy", icon: "🧀", german: "Kühlregal", english: "Dairy / Refrigerated" },
-    { id: "sweets", icon: "🍫", german: "Süßigkeiten & Getränke", english: "Sweets & Drinks" },
-  ];
-
-  const AISLE_TASKS = [
-    {
-      prompt: "I need some fresh apples. Where should I go?",
-      correctId: "produce",
-      successText: "Richtig! Das ist im Obst & Gemüse.",
-      hintItem: "apples",
-    },
-    {
-      prompt: "Now I need a loaf of bread!",
-      correctId: "bakery",
-      successText: "Richtig! Das ist in der Bäckerei.",
-      hintItem: "bread",
-    },
-    {
-      prompt: "And some cheese for dinner!",
-      correctId: "dairy",
-      successText: "Richtig! Das ist im Kühlregal.",
-      hintItem: "cheese",
-    },
-  ];
-
-  const CASHIER_OPTIONS = [
-    {
-      id: "tip",
-      correct: true,
-      german: "Hier bitte, 10 Euro. Stimmt so!",
-      english: "Here you go, 10 Euros. Keep the change!",
-    },
-    {
-      id: "exact",
-      correct: true,
-      german: "Hier bitte, 10 Euro.",
-      english: "Here you go, 10 Euros.",
-    },
-    {
-      id: "wrong",
-      correct: false,
-      german: "Entschuldigung, wo ist die U-Bahn?",
-      english: "Excuse me, where is the subway?",
-    },
-  ];
 
   const CHURCH_RULES_PAIRS = [
     { id: "quiet", german: "Bitte Ruhe bewahren.", english: "Keep quiet / Stay calm" },
@@ -2363,8 +2308,6 @@ let cathedralState = {
     closeRulesGame();
     closeEtiquetteGame();
     closeTowerClimb();
-    closeAisleGame();
-    closeCashierGame();
     closeCh1PppPractice();
     closeHotelNavGame();
     closeCh1ReviewThought();
@@ -3838,335 +3781,6 @@ let cathedralState = {
     });
   }
 
-  // ── Supermarket aisle finder mini-game ───────────────────────────────────
-
-  const aisleGame = {
-    active: false,
-    taskIndex: 0,
-    locked: false,
-  };
-
-  function closeAisleGame() {
-    aisleGame.active = false;
-    aisleGame.locked = false;
-    document.getElementById("aisle-game")?.remove();
-  }
-
-  function finishAisleGame() {
-    closeAisleGame();
-    goToNode(AISLE_GAME_SUCCESS_NODE);
-  }
-
-  function updateAisleGamePrompt(overlay) {
-    const task = AISLE_TASKS[aisleGame.taskIndex];
-    const prompt = overlay.querySelector("#aisle-game-prompt");
-    const progress = overlay.querySelector("#aisle-game-progress");
-    const feedback = overlay.querySelector("#aisle-game-feedback");
-
-    if (prompt) prompt.textContent = task.prompt;
-    if (progress) {
-      progress.textContent = `Item ${aisleGame.taskIndex + 1} / ${AISLE_TASKS.length}`;
-    }
-    if (feedback) {
-      feedback.textContent = "";
-      feedback.className = "aisle-game__feedback";
-    }
-
-    overlay.querySelectorAll(".aisle-game__aisle").forEach((btn) => {
-      btn.classList.remove("is-correct", "is-wrong", "is-done");
-      btn.disabled = false;
-    });
-  }
-
-  function handleAisleClick(aisleId, aisleBtn, overlay) {
-    if (!aisleGame.active || aisleGame.locked) return;
-
-    const task = AISLE_TASKS[aisleGame.taskIndex];
-    const feedback = overlay.querySelector("#aisle-game-feedback");
-
-    if (aisleId === task.correctId) {
-      aisleGame.locked = true;
-      aisleBtn.classList.add("is-correct");
-      if (feedback) {
-        feedback.textContent = task.successText;
-        feedback.className = "aisle-game__feedback aisle-game__feedback--success";
-      }
-
-      window.setTimeout(() => {
-        aisleGame.taskIndex += 1;
-        aisleGame.locked = false;
-
-        if (aisleGame.taskIndex >= AISLE_TASKS.length) {
-          finishAisleGame();
-          return;
-        }
-
-        updateAisleGamePrompt(overlay);
-      }, 900);
-      return;
-    }
-
-    aisleBtn.classList.remove("is-wrong");
-    void aisleBtn.offsetWidth;
-    aisleBtn.classList.add("is-wrong");
-    if (feedback) {
-      feedback.textContent = `Hmm, that's not where you find ${task.hintItem}. Try again!`;
-      feedback.className = "aisle-game__feedback aisle-game__feedback--hint";
-    }
-    window.setTimeout(() => aisleBtn.classList.remove("is-wrong"), 450);
-  }
-
-  function openAisleGame() {
-    closeAisleGame();
-    aisleGame.active = true;
-    aisleGame.taskIndex = 0;
-    aisleGame.locked = false;
-
-    els.dialogueBox.hidden = true;
-    els.npcContainer.style.display = "none";
-    els.npcContainer.classList.add("is-hidden");
-    els.lenaContainer.classList.add("is-hidden");
-
-    const overlay = document.createElement("div");
-    overlay.id = "aisle-game";
-    overlay.className = "aisle-game";
-
-    const panel = document.createElement("section");
-    panel.className = "aisle-game__panel";
-    panel.setAttribute("aria-labelledby", "aisle-game-title");
-
-    const eyebrow = document.createElement("p");
-    eyebrow.className = "aisle-game__eyebrow";
-    eyebrow.textContent = "Billa · Wien";
-    panel.appendChild(eyebrow);
-
-    const title = document.createElement("h2");
-    title.id = "aisle-game-title";
-    title.className = "aisle-game__title";
-    title.textContent = "Die Regale — Find the right aisle";
-    panel.appendChild(title);
-
-    const progress = document.createElement("p");
-    progress.id = "aisle-game-progress";
-    progress.className = "aisle-game__progress";
-    panel.appendChild(progress);
-
-    const thought = document.createElement("div");
-    thought.className = "aisle-game__thought";
-    thought.setAttribute("aria-live", "polite");
-
-    const thoughtLabel = document.createElement("p");
-    thoughtLabel.className = "aisle-game__thought-label";
-    thoughtLabel.textContent = "Lena's thought";
-    thought.appendChild(thoughtLabel);
-
-    const prompt = document.createElement("p");
-    prompt.id = "aisle-game-prompt";
-    prompt.className = "aisle-game__prompt";
-    thought.appendChild(prompt);
-    panel.appendChild(thought);
-
-    const map = document.createElement("div");
-    map.className = "aisle-game__map";
-    map.setAttribute("role", "group");
-    map.setAttribute("aria-label", "Supermarket aisle map");
-
-    SUPERMARKET_AISLES.forEach((aisle) => {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "aisle-game__aisle";
-      btn.dataset.aisleId = aisle.id;
-      btn.innerHTML = `
-        <span class="aisle-game__icon" aria-hidden="true">${aisle.icon}</span>
-        <span class="aisle-game__name">${aisle.german}</span>
-        <span class="aisle-game__sub">${aisle.english}</span>
-      `;
-      btn.addEventListener("click", () => handleAisleClick(aisle.id, btn, overlay));
-      map.appendChild(btn);
-    });
-    panel.appendChild(map);
-
-    const feedback = document.createElement("p");
-    feedback.id = "aisle-game-feedback";
-    feedback.className = "aisle-game__feedback";
-    feedback.setAttribute("aria-live", "polite");
-    panel.appendChild(feedback);
-
-    const devControls = document.createElement("div");
-    devControls.className = "aisle-game__dev-controls";
-    const devSkip = document.createElement("button");
-    devSkip.type = "button";
-    devSkip.textContent = "DEV: Skip";
-    devSkip.addEventListener("click", finishAisleGame);
-    devControls.appendChild(devSkip);
-    panel.appendChild(devControls);
-
-    overlay.appendChild(panel);
-    els.game.appendChild(overlay);
-    updateAisleGamePrompt(overlay);
-  }
-
-  // ── Cashier dialogue mini-game ───────────────────────────────────────────
-
-  const cashierGame = {
-    active: false,
-    resolved: false,
-  };
-
-  function closeCashierGame() {
-    cashierGame.active = false;
-    cashierGame.resolved = false;
-    document.getElementById("cashier-game")?.remove();
-  }
-
-  function finishCashierGame() {
-    closeCashierGame();
-    goToNode(CASHIER_GAME_SUCCESS_NODE);
-  }
-
-  function showCashierSuccess(overlay) {
-    cashierGame.resolved = true;
-
-    const dialogue = overlay.querySelector("#cashier-game-dialogue");
-    const options = overlay.querySelector("#cashier-game-options");
-    const feedback = overlay.querySelector("#cashier-game-feedback");
-    const continueBtn = overlay.querySelector("#cashier-game-continue");
-
-    if (dialogue) {
-      dialogue.textContent =
-        "Vielen Dank! Hier sind 1 Euro 50 zurück. Einen schönen Abend noch!";
-    }
-    if (feedback) {
-      feedback.textContent = "The cashier smiles warmly.";
-      feedback.className = "cashier-game__feedback cashier-game__feedback--success";
-    }
-    if (options) options.hidden = true;
-    if (continueBtn) continueBtn.hidden = false;
-  }
-
-  function handleCashierOption(option, optionBtn, overlay) {
-    if (!cashierGame.active || cashierGame.resolved) return;
-
-    if (option.correct) {
-      overlay.querySelectorAll(".cashier-game__option").forEach((btn) => {
-        btn.disabled = true;
-        if (btn === optionBtn) btn.classList.add("is-correct");
-      });
-      showCashierSuccess(overlay);
-      return;
-    }
-
-    gameState.ch5Strikes += 1;
-    optionBtn.classList.remove("is-wrong");
-    void optionBtn.offsetWidth;
-    optionBtn.classList.add("is-wrong");
-
-    const feedback = overlay.querySelector("#cashier-game-feedback");
-    if (feedback) {
-      feedback.textContent =
-        "Hmm, that doesn't fit at the cashier. Try a payment phrase!";
-      feedback.className = "cashier-game__feedback cashier-game__feedback--hint";
-    }
-
-    window.setTimeout(() => optionBtn.classList.remove("is-wrong"), 450);
-  }
-
-  function openCashierGame() {
-    closeCashierGame();
-    cashierGame.active = true;
-    cashierGame.resolved = false;
-
-    els.dialogueBox.hidden = true;
-    els.npcContainer.style.display = "none";
-    els.npcContainer.classList.add("is-hidden");
-    els.lenaContainer.classList.add("is-hidden");
-
-    const overlay = document.createElement("div");
-    overlay.id = "cashier-game";
-    overlay.className = "cashier-game";
-
-    const panel = document.createElement("section");
-    panel.className = "cashier-game__panel";
-    panel.setAttribute("aria-labelledby", "cashier-game-title");
-
-    const eyebrow = document.createElement("p");
-    eyebrow.className = "cashier-game__eyebrow";
-    eyebrow.textContent = "An der Kasse";
-    panel.appendChild(eyebrow);
-
-    const title = document.createElement("h2");
-    title.id = "cashier-game-title";
-    title.className = "cashier-game__title";
-    title.textContent = "Pay at the cashier";
-    panel.appendChild(title);
-
-    const register = document.createElement("div");
-    register.className = "cashier-game__register";
-    register.innerHTML = `
-      <div class="cashier-game__cashier-avatar" aria-hidden="true"></div>
-      <div class="cashier-game__register-screen">
-        <p class="cashier-game__total-label">Summe</p>
-        <p class="cashier-game__total">€ 8,50</p>
-      </div>
-    `;
-    panel.appendChild(register);
-
-    const speaker = document.createElement("p");
-    speaker.className = "cashier-game__speaker";
-    speaker.textContent = "Kassiererin";
-    panel.appendChild(speaker);
-
-    const dialogue = document.createElement("p");
-    dialogue.id = "cashier-game-dialogue";
-    dialogue.className = "cashier-game__dialogue";
-    dialogue.textContent = "Guten Tag! Das macht zusammen 8 Euro 50, bitte.";
-    panel.appendChild(dialogue);
-
-    const feedback = document.createElement("p");
-    feedback.id = "cashier-game-feedback";
-    feedback.className = "cashier-game__feedback";
-    feedback.setAttribute("aria-live", "polite");
-    panel.appendChild(feedback);
-
-    const options = document.createElement("div");
-    options.id = "cashier-game-options";
-    options.className = "cashier-game__options";
-
-    CASHIER_OPTIONS.forEach((option) => {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "cashier-game__option";
-      btn.innerHTML = `
-        <span class="cashier-game__option-de">${option.german}</span>
-        <span class="cashier-game__option-en">${option.english}</span>
-      `;
-      btn.addEventListener("click", () => handleCashierOption(option, btn, overlay));
-      options.appendChild(btn);
-    });
-    panel.appendChild(options);
-
-    const continueBtn = document.createElement("button");
-    continueBtn.type = "button";
-    continueBtn.id = "cashier-game-continue";
-    continueBtn.className = "cashier-game__continue";
-    continueBtn.textContent = "Continue";
-    continueBtn.hidden = true;
-    continueBtn.addEventListener("click", finishCashierGame);
-    panel.appendChild(continueBtn);
-
-    const devControls = document.createElement("div");
-    devControls.className = "cashier-game__dev-controls";
-    const devSkip = document.createElement("button");
-    devSkip.type = "button";
-    devSkip.textContent = "DEV: Skip";
-    devSkip.addEventListener("click", finishCashierGame);
-    devControls.appendChild(devSkip);
-    panel.appendChild(devControls);
-
-    overlay.appendChild(panel);
-    els.game.appendChild(overlay);
-  }
-
   // ── Chapter 1 PPP grammar practice ───────────────────────────────────────
   // Practice mini-game mistakes never increment strikes. Wrong spoken W-Fragen
   // after practice (hotel / U-Bahn) do add a strike, then replay the choices.
@@ -5403,8 +5017,6 @@ let cathedralState = {
     closeRulesGame();
     closeEtiquetteGame();
     closeTowerClimb();
-    closeAisleGame();
-    closeCashierGame();
     closeCh1PppPractice();
     closeHotelNavGame();
     removeTagebuchScreen();
@@ -5571,20 +5183,6 @@ let cathedralState = {
       return;
     }
 
-    if (node.id === AISLE_GAME_TRIGGER_NODE) {
-      removeBlackScreen();
-      setBackground(node.background);
-      openAisleGame();
-      return;
-    }
-
-    if (node.id === CASHIER_GAME_TRIGGER_NODE) {
-      removeBlackScreen();
-      setBackground(node.background);
-      openCashierGame();
-      return;
-    }
-
     if (JUMP_SCARE_NODE_IDS.has(node.id) || node.effect === "jumpScare") {
       renderJumpScareNode(node);
       return;
@@ -5599,8 +5197,6 @@ let cathedralState = {
     closeRulesGame();
     closeEtiquetteGame();
     closeTowerClimb();
-    closeAisleGame();
-    closeCashierGame();
     closeCh1PppPractice();
     closeHotelNavGame();
     closeU3DirectionUi();
@@ -5726,8 +5322,6 @@ let cathedralState = {
       closeMeldezettelGame();
       closeTicketMachine();
       closeRulesGame();
-      closeAisleGame();
-      closeCashierGame();
       closeCh1PppPractice();
     closeHotelNavGame();
       removeCelebrationScreen();
@@ -5934,8 +5528,6 @@ let cathedralState = {
     closeRulesGame();
     closeEtiquetteGame();
     closeTowerClimb();
-    closeAisleGame();
-    closeCashierGame();
     closeCh1PppPractice();
     closeHotelNavGame();
     resetGameState();
@@ -5958,8 +5550,6 @@ let cathedralState = {
     closeRulesGame();
     closeEtiquetteGame();
     closeTowerClimb();
-    closeAisleGame();
-    closeCashierGame();
     closeCh1PppPractice();
     closeHotelNavGame();
     resetGameState();
@@ -6224,8 +5814,6 @@ let cathedralState = {
     closeRulesGame();
     closeEtiquetteGame();
     closeTowerClimb();
-    closeAisleGame();
-    closeCashierGame();
     closeCh1PppPractice();
     closeHotelNavGame();
     clearTrainerAdvanceTimer();
@@ -6263,8 +5851,6 @@ let cathedralState = {
     closeRulesGame();
     closeEtiquetteGame();
     closeTowerClimb();
-    closeAisleGame();
-    closeCashierGame();
     closeCh1PppPractice();
     closeHotelNavGame();
     hideDirectionHint();
@@ -6352,7 +5938,7 @@ let cathedralState = {
         return;
       }
 
-      if (rulesGame.active || aisleGame.active || cashierGame.active || ch1Ppp.active || hotelNav.active) {
+      if (rulesGame.active || ch1Ppp.active || hotelNav.active) {
         if (event.code === "Escape") {
           els.menuPanel.hidden ? openMenu() : closeMenu();
         }
