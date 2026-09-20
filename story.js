@@ -224,7 +224,7 @@ const storyData = {
 
   start_quiz_transport: {
     id: "start_quiz_transport",
-    background: "vienna_street.jpg",
+    background: "vienna_hauptbahnhof.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "How do you reach the metro from here?",
     lenaMood: "normal",
@@ -241,7 +241,7 @@ const storyData = {
 
   quiz_stop_correct_transport: {
     id: "quiz_stop_correct_transport",
-    background: "vienna_street.jpg",
+    background: "vienna_hauptbahnhof.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "Which line and stop do you take?",
     lenaMood: "normal",
@@ -256,7 +256,7 @@ const storyData = {
 
   quiz_stop_wrong_transport: {
     id: "quiz_stop_wrong_transport",
-    background: "vienna_street.jpg",
+    background: "vienna_hauptbahnhof.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "Which line and stop do you take?",
     lenaMood: "unsure",
@@ -273,7 +273,7 @@ const storyData = {
 
   quiz_house_correct_transport_correct_stop: {
     id: "quiz_house_correct_transport_correct_stop",
-    background: "vienna_street.jpg",
+    background: "vienna_hauptbahnhof.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "Where is the hotel when you exit the metro station?",
     lenaMood: "normal",
@@ -288,7 +288,7 @@ const storyData = {
 
   quiz_house_correct_transport_wrong_stop: {
     id: "quiz_house_correct_transport_wrong_stop",
-    background: "vienna_street.jpg",
+    background: "vienna_hauptbahnhof.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "Where is the hotel when you exit the metro station?",
     lenaMood: "unsure",
@@ -303,7 +303,7 @@ const storyData = {
 
   quiz_house_wrong_transport_correct_stop: {
     id: "quiz_house_wrong_transport_correct_stop",
-    background: "vienna_street.jpg",
+    background: "vienna_hauptbahnhof.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "Where is the hotel when you exit the metro station?",
     lenaMood: "unsure",
@@ -318,7 +318,7 @@ const storyData = {
 
   quiz_house_wrong_transport_wrong_stop: {
     id: "quiz_house_wrong_transport_wrong_stop",
-    background: "vienna_street.jpg",
+    background: "vienna_hauptbahnhof.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "Where is the hotel when you exit the metro station?",
     lenaMood: "unsure",
@@ -333,7 +333,7 @@ const storyData = {
 
   ch1_nav_reaction: {
     id: "ch1_nav_reaction",
-    background: "vienna_street.jpg",
+    background: "vienna_hauptbahnhof.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "So, that's done! Hopefully I'll find my way correctly...",
     lenaMood: "thoughtful",
@@ -365,6 +365,18 @@ const storyData = {
     lenaMood: "normal",
     npcImage: "none",
     choices: [
+      { text: "Continue", nextNode: "arrival_success_hotel" },
+    ],
+  },
+
+  arrival_success_hotel: {
+    id: "arrival_success_hotel",
+    background: "vienna_street.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "And the hotel looks great! Warm lights in the windows, that pretty old façade... After finding my way here on my own, just standing in front of it already feels like a little victory.",
+    lenaMood: "happy",
+    npcImage: "none",
+    choices: [
       { text: "Enter the hotel", nextNode: "end_chapter_1" },
     ],
   },
@@ -375,6 +387,18 @@ const storyData = {
     speaker: "Lena (Internal Monologue)",
     text: "Oh my god, I am exhausted... I must have taken a wrong turn somewhere along the way! I got completely lost. It's already completely dark outside, and the street lamps are the only things lighting my way. I finally found the hotel, but it's so late now! My head hurts...",
     lenaMood: "unsure",
+    npcImage: "none",
+    choices: [
+      { text: "Continue", nextNode: "arrival_failure_hotel" },
+    ],
+  },
+
+  arrival_failure_hotel: {
+    id: "arrival_failure_hotel",
+    background: "vienna_street.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "Still... the hotel looks great. Warm windows, a pretty old façade, a quiet glow from the lobby. I'm exhausted and my head hurts, but at least I made it here. That already feels like enough for today.",
+    lenaMood: "thoughtful",
     npcImage: "none",
     choices: [
       { text: "Enter the hotel", nextNode: "end_chapter_1" },
@@ -1559,7 +1583,7 @@ const storyData = {
     speaker: "Lena (Internal Monologue)",
     text: "A Viennese waiter just complimented my German! How did I get here?",
     lenaMood: "happy",
-    npcImage: "waiter_friendly.png",
+    npcImage: "none",
     choices: [
       { text: "Continue", nextNode: "ch6_bill_prompt" },
     ],

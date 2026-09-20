@@ -48,97 +48,140 @@ let cathedralState = {
   // ── Vocabulary lists (edit words here — glossary & practice mode read from this) ──
   const VOCABULARY_DATA = {
     chapter1: [
-      { german: "der Fahrkartenautomat", english: "ticket vending machine" },
-      { german: "die Fahrkarte / das Ticket", english: "ticket" },
-      { german: "die Ankunft", english: "arrival" },
-      { german: "der Hauptbahnhof", english: "main train station" },
-      { german: "der Schaffner", english: "train conductor" },
-      { german: "kaufen", english: "to buy" },
-      { german: "helfen", english: "to help" },
-      { german: "die Entschuldigung", english: "excuse me / apology" },
-      { german: "verstehen", english: "to understand" },
-      { german: "der Bahnsteig", english: "train platform" },
-      { german: "wie", english: "how (question word)" },
-      { german: "wo", english: "where (location)" },
-      { german: "wohin", english: "where to (direction)" },
-      { german: "wann", english: "when" },
-      { german: "wer", english: "who" },
-      { german: "warum", english: "why" },
-      { german: "geradeaus", english: "straight ahead" },
-      { german: "nach links", english: "to the left" },
-      { german: "nach rechts", english: "to the right" },
-      { german: "an der Kreuzung", english: "at the intersection" },
-      { german: "die U-Bahn-Station", english: "underground / metro station" },
+      { category: "Fragewörter (Question Words)", german: "wo", english: "where" },
+      { category: "Fragewörter (Question Words)", german: "wohin", english: "where to" },
+      { category: "Fragewörter (Question Words)", german: "wie", english: "how" },
+      { category: "Fragewörter (Question Words)", german: "wann", english: "when" },
+      { category: "Fragewörter (Question Words)", german: "wer", english: "who" },
+      { category: "Fragewörter (Question Words)", german: "warum", english: "why" },
+      { category: "Richtungen & Orte (Directions & Locations)", german: "geradeaus", english: "straight ahead" },
+      { category: "Richtungen & Orte (Directions & Locations)", german: "links", english: "left" },
+      { category: "Richtungen & Orte (Directions & Locations)", german: "rechts", english: "right" },
+      { category: "Richtungen & Orte (Directions & Locations)", german: "dort", english: "there" },
+      { category: "Richtungen & Orte (Directions & Locations)", german: "neben", english: "next to" },
+      { category: "Richtungen & Orte (Directions & Locations)", german: "gegenüber", english: "opposite" },
+      { category: "Bahnhof & Reisen (Station & Travel)", german: "Wien", english: "Vienna" },
+      { category: "Bahnhof & Reisen (Station & Travel)", german: "der Zug", english: "train" },
+      { category: "Bahnhof & Reisen (Station & Travel)", german: "der Bahnhof", english: "train station" },
+      { category: "Bahnhof & Reisen (Station & Travel)", german: "die U-Bahn", english: "subway" },
+      { category: "Verben (Verbs)", german: "suchen", english: "to look for" },
+      { category: "Verben (Verbs)", german: "finden", english: "to find" },
+      { category: "Verben (Verbs)", german: "gehen", english: "to go" },
+      { category: "Verben (Verbs)", german: "fahren", english: "to travel" },
+      { category: "Verben (Verbs)", german: "helfen", english: "to help" },
+      { category: "Höflichkeit (Politeness & Phrases)", german: "die Entschuldigung", english: "excuse me" },
+      { category: "Höflichkeit (Politeness & Phrases)", german: "auf Wiedersehen", english: "goodbye" },
     ],
     chapter2: [
-      { german: "die Rezeption", english: "reception desk" },
-      { german: "einchecken", english: "to check in" },
-      { german: "der Zimmerschlüssel / die Karte", english: "room key / keycard" },
-      { german: "das Einzelzimmer", english: "single room" },
-      { german: "das Frühstück", english: "breakfast" },
-      { german: "inklusive", english: "included" },
-      { german: "das WLAN-Passwort", english: "Wi-Fi password" },
-      { german: "der Aufzug / der Lift", english: "elevator" },
-      { german: "die Etage / der Stock", english: "floor / level" },
-      { german: "Gute Nacht", english: "good night" },
-      { german: "die Reservierung", english: "reservation" },
-      { german: "der Ausweis", english: "ID card" },
-      { german: "der Meldezettel", english: "registration form" },
-      { german: "Guten Tag", english: "good day / hello (formal)" },
+      { category: "Hotel & Aufenthalt (Hotel & Stay)", german: "der Schlüssel", english: "key" },
+      { category: "Hotel & Aufenthalt (Hotel & Stay)", german: "die Reservierung", english: "reservation" },
+      { category: "Hotel & Aufenthalt (Hotel & Stay)", german: "das Zimmer", english: "room" },
+      { category: "Hotel & Aufenthalt (Hotel & Stay)", german: "der Meldezettel", english: "registration form" },
+      { category: "Hotel & Aufenthalt (Hotel & Stay)", german: "die Ankunft", english: "arrival" },
+      { category: "Hotel & Aufenthalt (Hotel & Stay)", german: "die Abreise", english: "departure" },
+      { category: "Hotel & Aufenthalt (Hotel & Stay)", german: "die Rechnung", english: "bill" },
+      { category: "Persönliche Angaben (Personal Details)", german: "der Vorname", english: "first name" },
+      { category: "Persönliche Angaben (Personal Details)", german: "der Nachname", english: "last name" },
+      { category: "Persönliche Angaben (Personal Details)", german: "die Geburt", english: "birth" },
+      { category: "Persönliche Angaben (Personal Details)", german: "die Staatsangehörigkeit", english: "nationality" },
+      { category: "Persönliche Angaben (Personal Details)", german: "der Ausweis", english: "ID" },
+      { category: "Persönliche Angaben (Personal Details)", german: "die Straße", english: "street" },
+      { category: "Persönliche Angaben (Personal Details)", german: "die Unterschrift", english: "signature" },
+      { category: "Mahlzeiten (Meals)", german: "das Frühstück", english: "breakfast" },
+      { category: "Mahlzeiten (Meals)", german: "das Mittagessen", english: "lunch" },
+      { category: "Mahlzeiten (Meals)", german: "das Abendessen", english: "dinner" },
+      { category: "Modalverben (Modal Verbs)", german: "wollen", english: "to want" },
+      { category: "Modalverben (Modal Verbs)", german: "sollen", english: "should" },
+      { category: "Modalverben (Modal Verbs)", german: "können", english: "can" },
+      { category: "Modalverben (Modal Verbs)", german: "müssen", english: "must" },
+      { category: "Modalverben (Modal Verbs)", german: "dürfen", english: "may" },
+      { category: "Modalverben (Modal Verbs)", german: "möchten", english: "would like" },
     ],
     chapter3: [
-      { german: "die U-Bahn-Linie", english: "underground line (e.g., U3)" },
-      { german: "die Richtung", english: "direction" },
-      { german: "das Gleis", english: "track / platform" },
-      { german: "die Endstation", english: "terminus / last stop" },
-      { german: "die Rolltreppe", english: "escalator" },
-      { german: "rechts stehen, links gehen", english: "stand on the right, walk on the left" },
-      { german: "umsteigen", english: "to change trains / lines" },
-      { german: "der Fahrplan", english: "timetable / schedule" },
-      { german: "drängeln", english: "to push / hustle" },
-      { german: "nächste Station", english: "next station" },
+      { category: "Fahrscheine (Tickets)", german: "der Ticketautomat", english: "ticket machine" },
+      { category: "Fahrscheine (Tickets)", german: "die Fahrkarte", english: "ticket" },
+      { category: "Fahrscheine (Tickets)", german: "die Einzelfahrt", english: "single ride" },
+      { category: "Fahrscheine (Tickets)", german: "die 24-Stunden-Karte", english: "24-hour pass" },
+      { category: "Fahrscheine (Tickets)", german: "die Tageskarte", english: "day pass" },
+      { category: "Fahrscheine (Tickets)", german: "der Entwerter", english: "ticket validator" },
+      { category: "Tarife (Fares)", german: "der Vollpreis", english: "full price" },
+      { category: "Tarife (Fares)", german: "ermäßigt", english: "discounted" },
+      { category: "Tarife (Fares)", german: "der Erwachsene", english: "adult" },
+      { category: "Tarife (Fares)", german: "der Schüler", english: "student" },
+      { category: "Tarife (Fares)", german: "das Kind", english: "child" },
+      { category: "U-Bahn (Subway)", german: "die Linie", english: "line" },
+      { category: "U-Bahn (Subway)", german: "die Richtung", english: "direction" },
+      { category: "U-Bahn (Subway)", german: "die Station", english: "station" },
+      { category: "U-Bahn (Subway)", german: "die Endstation", english: "last stop" },
+      { category: "U-Bahn (Subway)", german: "das Ziel", english: "destination" },
+      { category: "U-Bahn (Subway)", german: "einsteigen", english: "to get on" },
+      { category: "U-Bahn (Subway)", german: "aussteigen", english: "to get off" },
+      { category: "U-Bahn (Subway)", german: "umsteigen", english: "to change trains" },
+      { category: "In der Station (In the Station)", german: "die Rolltreppe", english: "escalator" },
+      { category: "In der Station (In the Station)", german: "rechts stehen, links gehen", english: "stand on the right, walk on the left" },
+      { category: "In der Station (In the Station)", german: "wählen", english: "to choose" },
+      { category: "In der Station (In the Station)", german: "bezahlen", english: "to pay" },
     ],
     chapter4: [
-      { german: "die Hausordnung / die Regeln", english: "building rules / code of conduct" },
-      { german: "Ruhe bewahren", english: "to stay quiet / keep calm" },
-      { german: "das Blitzlicht", english: "camera flash" },
-      { german: "keine Kappen tragen", english: "no hats / caps allowed" },
-      { german: "erlaubt / verboten", english: "allowed / forbidden" },
-      { german: "der Dom", english: "cathedral" },
-      { german: "das Glasfenster", english: "stained-glass window" },
-      { german: "eine Kerze anzünden", english: "to light a candle" },
-      { german: "die Stille", english: "silence / stillness" },
+      { category: "Stephansdom (St. Stephen's Cathedral)", german: "der Stephansdom", english: "St. Stephen's Cathedral" },
+      { category: "Stephansdom (St. Stephen's Cathedral)", german: "der Dom", english: "cathedral" },
+      { category: "Stephansdom (St. Stephen's Cathedral)", german: "das Glasfenster", english: "stained-glass window" },
+      { category: "Stephansdom (St. Stephen's Cathedral)", german: "die Kerze", english: "candle" },
+      { category: "Stephansdom (St. Stephen's Cathedral)", german: "die Stille", english: "silence" },
+      { category: "Stephansdom (St. Stephen's Cathedral)", german: "der Domaufseher", english: "warden" },
+      { category: "Verhaltensregeln (Rules of Conduct)", german: "die Regel", english: "rule" },
+      { category: "Verhaltensregeln (Rules of Conduct)", german: "erlaubt", english: "allowed" },
+      { category: "Verhaltensregeln (Rules of Conduct)", german: "verboten", english: "forbidden" },
+      { category: "Verhaltensregeln (Rules of Conduct)", german: "die Ruhe", english: "quiet" },
+      { category: "Verhaltensregeln (Rules of Conduct)", german: "das Blitzlicht", english: "flash" },
+      { category: "Verhaltensregeln (Rules of Conduct)", german: "die Kappe", english: "cap" },
+      { category: "Verhaltensregeln (Rules of Conduct)", german: "der Hund", english: "dog" },
+      { category: "Verben (Verbs)", german: "fotografieren", english: "to take photos" },
+      { category: "Verben (Verbs)", german: "telefonieren", english: "to make a phone call" },
+      { category: "Verben (Verbs)", german: "essen", english: "to eat" },
+      { category: "Verben (Verbs)", german: "trinken", english: "to drink" },
+      { category: "Verben (Verbs)", german: "flüstern", english: "to whisper" },
+      { category: "Verben (Verbs)", german: "rauchen", english: "to smoke" },
+      { category: "Am Stephansplatz (At Stephansplatz)", german: "das Konzert", english: "concert" },
+      { category: "Am Stephansplatz (At Stephansplatz)", german: "der Straßenverkäufer", english: "street seller" },
+      { category: "Am Stephansplatz (At Stephansplatz)", german: "Nein, danke", english: "no thank you" },
     ],
     chapter5: [
-      { german: "der Südturm", english: "South Tower" },
-      { german: "die Stufe", english: "step (staircase)" },
-      { german: "steigen / klettern", english: "to climb" },
-      { german: "der Ausblick / die Aussicht", english: "view / panorama" },
-      { german: "anstrengend", english: "exhausting / tiring" },
-      { german: "hoch → höher → am höchsten", english: "high → higher → highest" },
-      { german: "gut → besser → am besten", english: "good → better → best" },
-      { german: "der Höhepunkt", english: "highlight / climax" },
-      { german: "ganz oben", english: "all the way at the top" },
+      { category: "Der Südturm (South Tower)", german: "der Südturm", english: "South Tower" },
+      { category: "Der Südturm (South Tower)", german: "die Stufe", english: "step" },
+      { category: "Der Südturm (South Tower)", german: "der Aufstieg", english: "climb" },
+      { category: "Der Südturm (South Tower)", german: "die Aussicht", english: "view" },
+      { category: "Der Südturm (South Tower)", german: "ganz oben", english: "at the top" },
+      { category: "Der Südturm (South Tower)", german: "der Höhepunkt", english: "highlight" },
+      { category: "Der Südturm (South Tower)", german: "steigen", english: "to climb" },
+      { category: "Vergleiche (Comparatives)", german: "hoch", english: "high" },
+      { category: "Vergleiche (Comparatives)", german: "höher", english: "higher" },
+      { category: "Vergleiche (Comparatives)", german: "am höchsten", english: "highest" },
+      { category: "Vergleiche (Comparatives)", german: "gut", english: "good" },
+      { category: "Vergleiche (Comparatives)", german: "besser", english: "better" },
+      { category: "Vergleiche (Comparatives)", german: "am besten", english: "best" },
+      { category: "Vergleiche (Comparatives)", german: "anstrengend", english: "exhausting" },
+      { category: "Vergleiche (Comparatives)", german: "der anstrengendste", english: "the most exhausting" },
     ],
     chapter6: [
-      { german: "das Kaffeehaus", english: "coffee house / café" },
-      { german: "die Melange", english: "Viennese coffee with milk foam" },
-      { german: "Grüß Gott", english: "hello (formal, Austrian)" },
-      { german: "Was darf es sein?", english: "what would you like? (waiter's phrase)" },
-      { german: "bestellen", english: "to order" },
-      { german: "die Speisekarte", english: "menu" },
-      { german: "die Rechnung", english: "the bill" },
-      { german: "Ich möchte bitte zahlen", english: "I would like to pay, please (polite)" },
-      { german: "Stimmt so", english: "keep the change" },
-      { german: "Gute Reise", english: "have a good trip" },
-      { german: "das Frühstück", english: "breakfast" },
-      { german: "die Abreise", english: "departure" },
-      { german: "auf Wiedersehen", english: "goodbye (until we see each other again)" },
-      { german: "Tschüss", english: "bye (informal)" },
-      { german: "stolz", english: "proud" },
-      { german: "lernen", english: "to learn" },
-      { german: "die Reise", english: "journey / trip" },
-      { german: "wunderbar", english: "wonderful" },
+      { category: "Das Kaffeehaus (Coffee House)", german: "das Kaffeehaus", english: "coffee house" },
+      { category: "Das Kaffeehaus (Coffee House)", german: "die Melange", english: "Viennese coffee" },
+      { category: "Das Kaffeehaus (Coffee House)", german: "der Kaffee", english: "coffee" },
+      { category: "Das Kaffeehaus (Coffee House)", german: "das Wasser", english: "water" },
+      { category: "Das Kaffeehaus (Coffee House)", german: "Herr Ober", english: "waiter" },
+      { category: "Das Kaffeehaus (Coffee House)", german: "die Speisekarte", english: "menu" },
+      { category: "Bestellen & Zahlen (Ordering & Paying)", german: "Grüß Gott", english: "hello" },
+      { category: "Bestellen & Zahlen (Ordering & Paying)", german: "Was darf ich Ihnen bringen?", english: "what can I get you?" },
+      { category: "Bestellen & Zahlen (Ordering & Paying)", german: "Ich möchte bitte", english: "I would like" },
+      { category: "Bestellen & Zahlen (Ordering & Paying)", german: "zahlen", english: "to pay" },
+      { category: "Bestellen & Zahlen (Ordering & Paying)", german: "stimmt so", english: "keep the change" },
+      { category: "Bestellen & Zahlen (Ordering & Paying)", german: "Gute Reise", english: "have a good trip" },
+      { category: "Die Reise (The Journey)", german: "Prag", english: "Prague" },
+      { category: "Die Reise (The Journey)", german: "kommen", english: "to come" },
+      { category: "Die Reise (The Journey)", german: "seit", english: "since" },
+      { category: "Die Reise (The Journey)", german: "der Akzent", english: "accent" },
+      { category: "Die Reise (The Journey)", german: "wunderbar", english: "wonderful" },
+      { category: "Die Reise (The Journey)", german: "der Bahnsteig", english: "platform" },
     ],
   };
 
@@ -208,6 +251,25 @@ let cathedralState = {
     "kaffeehaus.jpg": "kaffeehaus",
     "cafe": "cafe",
     "black": "black",
+  };
+
+  const BACKGROUND_FILES = {
+    cafe: "backgrounds/hotel_lobby.jpg",
+    vienna_hauptbahnhof: "backgrounds/vienna_hauptbahnhof.jpg",
+    vienna_street: "backgrounds/vienna_street.jpg",
+    train_interior: "backgrounds/train_interior.jpg",
+    hotel_room: "backgrounds/hotel_room.jpg",
+    u_bahn_station: "backgrounds/u_bahn_station.jpg",
+    u_bahn_escalator: "backgrounds/u_bahn_escalator.jpg",
+    cathedral: "backgrounds/cathedral.jpg",
+    stephansplatz: "backgrounds/stephansplatz.jpg",
+    cathedral_interior: "backgrounds/cathedral_interior.jpg",
+    cathedral_stairs: "backgrounds/cathedral_stairs.jpg",
+    cathedral_candles: "backgrounds/cathedral_candles.jpg",
+    stained_glass: "stained-glass.jpg",
+    vienna_view: "backgrounds/vienna_view.jpg",
+    kaffeehaus: "backgrounds/kaffeehaus.jpg",
+    black: null,
   };
 
   const NPC_MAP = {
@@ -285,19 +347,18 @@ let cathedralState = {
   const VOCAB_UNLOCK_STORAGE_KEY = "lenasWienerAbenteuer.unlockedVocab";
 
   const CHAPTER1_PPP_VOCAB = [
-    { german: "wie", english: "how (question word)" },
-    { german: "wo", english: "where (location)" },
-    { german: "wohin", english: "where to (direction)" },
+    { german: "wie", english: "how" },
+    { german: "wo", english: "where" },
+    { german: "wohin", english: "where to" },
     { german: "wann", english: "when" },
     { german: "wer", english: "who" },
     { german: "warum", english: "why" },
     { german: "geradeaus", english: "straight ahead" },
-    { german: "nach links", english: "to the left" },
-    { german: "nach rechts", english: "to the right" },
+    { german: "links", english: "left" },
+    { german: "rechts", english: "right" },
     { german: "dort", english: "there" },
     { german: "neben", english: "next to" },
-    { german: "gegenüber", english: "opposite / across from" },
-    { german: "die U-Bahn-Station", english: "underground / metro station" },
+    { german: "gegenüber", english: "opposite" },
   ];
 
   const CH1_PPP_WFRAGEN = [
@@ -444,10 +505,10 @@ let cathedralState = {
     [
       { id: "abreise", german: "die Abreise", english: "Departure" },
       { id: "vorname", german: "der Vorname", english: "First name" },
-      { id: "ausweis", german: "der Ausweis", english: "ID / Passport" },
+      { id: "ausweis", german: "der Ausweis", english: "ID" },
       { id: "strasse", german: "die Straße", english: "Street" },
       { id: "unterschrift", german: "die Unterschrift", english: "Signature" },
-      { id: "rechnung", german: "die Rechnung", english: "Bill / Receipt" },
+      { id: "rechnung", german: "die Rechnung", english: "Bill" },
     ],
     [
       { id: "nachname", german: "der Nachname", english: "Last name" },
@@ -459,10 +520,22 @@ let cathedralState = {
     ],
   ];
 
-  const CHAPTER2_PPP_VOCAB = CH2_PPP_VOCAB_SETS.flat().map((pair) => ({
-    german: pair.german,
-    english: pair.english,
-  }));
+  const CHAPTER2_PPP_VOCAB = [
+    { german: "der Schlüssel", english: "key" },
+    { german: "die Reservierung", english: "reservation" },
+    { german: "das Zimmer", english: "room" },
+    { german: "die Staatsangehörigkeit", english: "nationality" },
+    { german: "das Frühstück", english: "breakfast" },
+    { german: "die Abreise", english: "departure" },
+    { german: "der Vorname", english: "first name" },
+    { german: "der Ausweis", english: "ID" },
+    { german: "die Straße", english: "street" },
+    { german: "die Unterschrift", english: "signature" },
+    { german: "die Rechnung", english: "bill" },
+    { german: "der Nachname", english: "last name" },
+    { german: "die Ankunft", english: "arrival" },
+    { german: "der Meldezettel", english: "registration form" },
+  ];
 
   const CH2_PPP_MODAL_BLANKS = [
     {
@@ -605,7 +678,7 @@ let cathedralState = {
       { id: "tageskarte", german: "die Tageskarte", english: "Day pass" },
       { id: "ermaessigt", german: "ermäßigt", english: "Discounted" },
       { id: "ubahn", german: "Die U-Bahn", english: "Subway" },
-      { id: "waehlen", german: "wählen", english: "Select / Choose" },
+      { id: "waehlen", german: "wählen", english: "Choose" },
     ],
     [
       { id: "erwachsene", german: "der Erwachsene", english: "Adult" },
@@ -621,14 +694,27 @@ let cathedralState = {
       { id: "station", german: "die Station", english: "Station" },
       { id: "zug", german: "der Zug", english: "Train" },
       { id: "linie", german: "die Linie", english: "Line" },
-      { id: "aussteigen", german: "aussteigen", english: "Get off / Exit (train)" },
+      { id: "aussteigen", german: "aussteigen", english: "Get off (train)" },
     ],
   ];
 
-  const CHAPTER3_PPP_VOCAB = CH3_PPP_VOCAB_SETS.flat().map((pair) => ({
-    german: pair.german,
-    english: pair.english,
-  }));
+  const CHAPTER3_PPP_VOCAB = [
+    { german: "die Fahrkarte", english: "ticket" },
+    { german: "die Einzelfahrt", english: "single ride" },
+    { german: "die Tageskarte", english: "day pass" },
+    { german: "ermäßigt", english: "discounted" },
+    { german: "wählen", english: "to choose" },
+    { german: "der Erwachsene", english: "adult" },
+    { german: "das Kind", english: "child" },
+    { german: "die 24-Stunden-Karte", english: "24-hour pass" },
+    { german: "der Vollpreis", english: "full price" },
+    { german: "der Schüler", english: "student" },
+    { german: "die Richtung", english: "direction" },
+    { german: "einsteigen", english: "to get on" },
+    { german: "die Station", english: "station" },
+    { german: "die Linie", english: "line" },
+    { german: "aussteigen", english: "to get off" },
+  ];
 
   const CH4_PPP_VOCAB_SETS = [
     [
@@ -657,10 +743,19 @@ let cathedralState = {
     ],
   ];
 
-  const CHAPTER4_PPP_VOCAB = CH4_PPP_VOCAB_SETS.flat().map((pair) => ({
-    german: pair.german,
-    english: pair.english,
-  }));
+  const CHAPTER4_PPP_VOCAB = [
+    { german: "fotografieren", english: "to take photos" },
+    { german: "telefonieren", english: "to make a phone call" },
+    { german: "essen", english: "to eat" },
+    { german: "trinken", english: "to drink" },
+    { german: "flüstern", english: "to whisper" },
+    { german: "rauchen", english: "to smoke" },
+    { german: "das Blitzlicht", english: "flash" },
+    { german: "der Hund", english: "dog" },
+    { german: "die Ruhe", english: "quiet" },
+    { german: "die Kappe", english: "cap" },
+    { german: "die Regel", english: "rule" },
+  ];
 
   const CH2_PPP_MODALS = [
     { id: "koennen", german: "können", english: "can" },
@@ -1114,6 +1209,7 @@ let cathedralState = {
     lenaContainer: document.getElementById("lena-container"),
     lenaSprite: document.getElementById("lena-sprite"),
     dialogueBox: document.getElementById("dialogue-box"),
+    dialogueInner: document.querySelector(".dialogue__inner"),
     speakerName: document.getElementById("speaker-name"),
     dialogueText: document.getElementById("dialogue-text"),
     advanceHint: document.getElementById("advance-hint"),
@@ -1137,6 +1233,8 @@ let cathedralState = {
     restartBtn: document.getElementById("restart-btn"),
     startMenuFromGameBtn: document.getElementById("start-menu-from-game-btn"),
     closeMenuBtn: document.getElementById("close-menu-btn"),
+    bgA: document.getElementById("game-bg-a"),
+    bgB: document.getElementById("game-bg-b"),
     meldezettelOverlay: document.getElementById("meldezettel-overlay"),
     meldezettelMessage: document.getElementById("meldezettel-message"),
     meldezettelGrid: document.getElementById("meldezettel-grid"),
@@ -1179,6 +1277,14 @@ let cathedralState = {
     pendingReplayChoicesFrom: null,
   };
 
+  const backgroundFx = {
+    front: els.bgA,
+    back: els.bgB,
+    token: 0,
+    pendingKey: null,
+    pending: null,
+  };
+
   function getNode() {
     return storyData[state.nodeId];
   }
@@ -1190,9 +1296,125 @@ let cathedralState = {
     }
   }
 
+  function preloadBackgrounds() {
+    Object.values(BACKGROUND_FILES).forEach((src) => {
+      if (!src) return;
+      const img = new Image();
+      img.src = src;
+      if (typeof img.decode === "function") {
+        img.decode().catch(() => {});
+      }
+    });
+  }
+
+  function waitForBackgroundFile(src) {
+    if (!src) return Promise.resolve();
+    return new Promise((resolve) => {
+      const img = new Image();
+      let settled = false;
+      const done = () => {
+        if (settled) return;
+        settled = true;
+        resolve();
+      };
+      const finish = () => {
+        if (typeof img.decode === "function") {
+          img.decode().then(done, done);
+        } else {
+          done();
+        }
+      };
+      img.onload = finish;
+      img.onerror = done;
+      img.src = src;
+      if (img.complete && img.naturalWidth > 0) {
+        finish();
+      }
+      window.setTimeout(done, 4000);
+    });
+  }
+
+  function afterPaint() {
+    return new Promise((resolve) => {
+      requestAnimationFrame(() => requestAnimationFrame(resolve));
+    });
+  }
+
+  function backgroundKeyFrom(filename) {
+    return BACKGROUND_MAP[filename] || "vienna_hauptbahnhof";
+  }
+
+  function applyBackdropPhoto(layer, src) {
+    if (!layer) return;
+    if (src) {
+      layer.style.setProperty("--bg-photo", `url("${src}")`);
+    } else {
+      layer.style.setProperty("--bg-photo", "none");
+    }
+  }
+
+  function swapBackdropLayers(incoming, outgoing, instant) {
+    if (instant) {
+      incoming.style.transition = "none";
+      outgoing.style.transition = "none";
+    }
+    incoming.classList.add("is-visible");
+    outgoing.classList.remove("is-visible");
+    backgroundFx.front = incoming;
+    backgroundFx.back = outgoing;
+    if (instant) {
+      void incoming.offsetWidth;
+      incoming.style.removeProperty("transition");
+      outgoing.style.removeProperty("transition");
+    }
+  }
+
+  function warmupBackground(filename) {
+    if (!filename || !backgroundFx.back) return Promise.resolve();
+    const key = backgroundKeyFrom(filename);
+    const src = BACKGROUND_FILES[key];
+    const layer = backgroundFx.back;
+    layer.dataset.background = key;
+    applyBackdropPhoto(layer, src);
+    return waitForBackgroundFile(src);
+  }
+
   function setBackground(filename) {
-    const key = BACKGROUND_MAP[filename] || "vienna_hauptbahnhof";
+    const key = backgroundKeyFrom(filename);
+    const front = backgroundFx.front;
+    if (!front || !backgroundFx.back) {
+      els.game.dataset.background = key;
+      return Promise.resolve();
+    }
+    if (els.game.dataset.background === key && front.dataset.background === key && front.classList.contains("is-visible")) {
+      return backgroundFx.pending || Promise.resolve();
+    }
+    if (backgroundFx.pendingKey === key && backgroundFx.pending) {
+      return backgroundFx.pending;
+    }
+
     els.game.dataset.background = key;
+    const token = ++backgroundFx.token;
+    const incoming = backgroundFx.back;
+    const outgoing = front;
+    const src = BACKGROUND_FILES[key];
+    incoming.dataset.background = key;
+    applyBackdropPhoto(incoming, src);
+
+    const pending = waitForBackgroundFile(src)
+      .then(() => afterPaint())
+      .then(() => {
+        if (token !== backgroundFx.token) return;
+        const covered = Boolean(document.getElementById("black-screen-overlay"));
+        swapBackdropLayers(incoming, outgoing, covered);
+        if (backgroundFx.pendingKey === key) {
+          backgroundFx.pendingKey = null;
+        }
+      });
+
+    backgroundFx.pendingKey = key;
+    backgroundFx.pending = pending;
+    return pending;
   }
 
   function updateCharacters(node) {
@@ -1209,13 +1431,18 @@ let cathedralState = {
     };
 
     if (npc.visible) {
+      const wasHidden =
+        els.npcContainer.classList.contains("is-hidden") || els.npcContainer.style.display === "none";
       els.npcContainer.style.display = "";
-      els.npcContainer.classList.remove("is-hidden");
       els.npcSprite.dataset.character = npc.character;
       els.npcSprite.dataset.mood = npc.mood;
       els.npcLabel.textContent = npc.name;
+      if (wasHidden) {
+        els.npcContainer.classList.add("is-hidden");
+        void els.npcContainer.offsetWidth;
+      }
+      els.npcContainer.classList.remove("is-hidden");
     } else {
-      els.npcContainer.style.display = "none";
       els.npcContainer.classList.add("is-hidden");
     }
 
@@ -1309,13 +1536,6 @@ let cathedralState = {
     return choices;
   }
 
-  function applyTextFadeIn() {
-    els.dialogueText.classList.remove("text-fade-in");
-    // Force reflow so the animation restarts every time a new node renders.
-    void els.dialogueText.offsetWidth;
-    els.dialogueText.classList.add("text-fade-in");
-  }
-
   function isInternalThoughtSpeaker(speaker) {
     return (
       (speaker || "").includes("Internal Monologue") ||
@@ -1373,6 +1593,45 @@ let cathedralState = {
     els.dialogueText.textContent = spoken;
   }
 
+  function clearDialogueLayoutLock() {
+    if (els.dialogueInner) els.dialogueInner.style.minHeight = "";
+  }
+
+  function willShowChoicesAfterTyping(node) {
+    if (FOLLOW_UP_BEFORE_REPLAY[node.id] && state.followUpShownForNode !== node.id && !state.activeFollowUp) {
+      return false;
+    }
+    if (state.activeFollowUp?.nextFollowUp || state.activeFollowUp?.replayChoicesFrom) {
+      return false;
+    }
+    return (getChoicesForCurrentNode(node) || []).length > 0;
+  }
+
+  function lockDialogueLayout(node, text) {
+    if (!els.dialogueInner) return;
+
+    els.dialogueText.style.visibility = "hidden";
+    els.choicesContainer.style.visibility = "hidden";
+    els.dialogueInner.style.minHeight = "";
+    paintNodeDialogue(node, text);
+
+    const choices = willShowChoicesAfterTyping(node) ? getChoicesForCurrentNode(node) : [];
+    if (choices.length) {
+      showChoices(choices);
+      els.choiceButtons.forEach((btn) => {
+        btn.onclick = null;
+      });
+      state.waitingForChoice = false;
+    }
+
+    const height = Math.ceil(els.dialogueInner.getBoundingClientRect().height);
+    if (choices.length) hideChoices();
+    paintNodeDialogue(node, "");
+    els.dialogueInner.style.minHeight = `${Math.max(height, 1)}px`;
+    els.dialogueText.style.visibility = "";
+    els.choicesContainer.style.visibility = "";
+  }
+
   function finishTyping() {
     clearTypeTimer();
     state.typing = false;
@@ -1422,7 +1681,6 @@ let cathedralState = {
     state.followUpShownForNode = sourceNodeId;
     state.activeFollowUp = followUp;
     hideChoices();
-    applyTextFadeIn();
 
     const sourceNode = storyData[sourceNodeId] || getNode();
     updateCharacters({
@@ -1450,16 +1708,16 @@ let cathedralState = {
     clearTypeTimer();
     state.fullText = text;
     state.typing = true;
-    els.dialogueText.textContent = "";
     els.advanceHint.classList.remove("is-hidden");
 
     const node = getNode();
+    lockDialogueLayout(node, text);
+
     const splitThought = Boolean(node.thought) && !state.activeFollowUp;
     const wrapInternal =
       !splitThought && isInternalThoughtSpeaker(node.speaker) && !state.activeFollowUp;
-    let index = 0;
-    state.typeTimer = setInterval(() => {
-      index += 1;
+
+    const paintSlice = (index) => {
       const spoken = text.slice(0, index);
       if (splitThought) {
         paintSpokenDialogue({ spoken, thought: "" });
@@ -1468,7 +1726,24 @@ let cathedralState = {
       } else {
         els.dialogueText.textContent = spoken;
       }
+    };
 
+    if (!text) {
+      finishTyping();
+      return;
+    }
+
+    // Paint the first character immediately so the line never starts blank.
+    let index = 1;
+    paintSlice(index);
+    if (index >= text.length) {
+      finishTyping();
+      return;
+    }
+
+    state.typeTimer = setInterval(() => {
+      index += 1;
+      paintSlice(index);
       if (index >= text.length) {
         finishTyping();
       }
@@ -1791,8 +2066,8 @@ let cathedralState = {
   }
 
   function renderDialogue(node) {
+    els.dialogueBox.hidden = false;
     hideChoices();
-    applyTextFadeIn();
     applyDialogueStyle(node);
 
     const speaker = node.speaker || "";
@@ -1809,6 +2084,7 @@ let cathedralState = {
     if (node.dialogueStyle === "u3-line-map" || node.dialogueStyle === "metro-sign") {
       clearTypeTimer();
       state.typing = false;
+      clearDialogueLayoutLock();
       renderU3LineMap();
       const choices = node.choices || [];
       if (choices.length) {
@@ -1822,6 +2098,7 @@ let cathedralState = {
     if (node.dialogueStyle === "u3-platform-boards") {
       clearTypeTimer();
       state.typing = false;
+      clearDialogueLayoutLock();
       renderU3PlatformBoards();
       return;
     }
@@ -1832,6 +2109,7 @@ let cathedralState = {
       clearTypeTimer();
       state.typing = false;
       state.fullText = node.text;
+      lockDialogueLayout(node, node.text);
       paintNodeDialogue(node, node.text);
       const choices = node.choices || [];
       if (choices.length) {
@@ -1957,6 +2235,7 @@ let cathedralState = {
 
   function removeBlackScreen({ restoreScene = true } = {}) {
     const existing = document.getElementById("black-screen-overlay");
+    if (existing?.classList.contains("is-leaving")) return;
     if (existing) existing.remove();
 
     if (!restoreScene) return;
@@ -1969,7 +2248,13 @@ let cathedralState = {
     hideGameplayScene();
     closeHotelNavGame();
     document.getElementById("black-screen-overlay")?.remove();
-    setBackground(node.background || "black");
+    setBackground(node.background || "black").then(() => {
+      const nextId = node.choices?.[0]?.nextNode;
+      const nextBg = storyData[nextId]?.background;
+      if (nextBg && nextBg !== (node.background || "black")) {
+        warmupBackground(nextBg);
+      }
+    });
 
     const overlay = document.createElement("div");
     overlay.id = "black-screen-overlay";
@@ -2039,13 +2324,31 @@ let cathedralState = {
 
   function advanceBlackScreenChoice(choice) {
     if (!choice) return;
+    const overlay = document.getElementById("black-screen-overlay");
+    if (overlay?.classList.contains("is-leaving")) return;
 
     recordAnswer(choice.text, choice.nextNode);
     hideGameplayScene();
     const nextNode = storyData[choice.nextNode];
-    if (nextNode?.background) setBackground(nextNode.background);
-    removeBlackScreen({ restoreScene: false });
-    routeToNode(choice.nextNode);
+    const goingToBlack = BLACK_SCREEN_NODE_IDS.has(choice.nextNode);
+    if (overlay) overlay.style.pointerEvents = "none";
+
+    const proceed = () => {
+      if (overlay && !goingToBlack) {
+        overlay.classList.add("is-leaving");
+        routeToNode(choice.nextNode);
+        const finish = () => overlay.remove();
+        overlay.addEventListener("transitionend", (event) => {
+          if (event.target === overlay) finish();
+        });
+        window.setTimeout(finish, 720);
+        return;
+      }
+      routeToNode(choice.nextNode);
+    };
+
+    const ready = nextNode?.background ? setBackground(nextNode.background) : Promise.resolve();
+    ready.then(proceed);
   }
 
   const TAGEBUCH_CONTENT = {
@@ -5587,9 +5890,23 @@ let cathedralState = {
 
   function populateVocabList(chapterNumber) {
     els.vocabList.innerHTML = "";
+    let lastCategory = null;
+    let stripeIndex = 0;
+
     (getVocabularyForChapter(chapterNumber)).forEach((entry) => {
+      if (entry.category && entry.category !== lastCategory) {
+        lastCategory = entry.category;
+        stripeIndex = 0;
+        const heading = document.createElement("li");
+        heading.className = "vocab-panel__category";
+        heading.textContent = entry.category;
+        els.vocabList.appendChild(heading);
+      }
+
       const item = document.createElement("li");
       item.className = "vocab-panel__item";
+      if (stripeIndex % 2 === 1) item.classList.add("is-alt");
+      stripeIndex += 1;
 
       const german = document.createElement("span");
       german.className = "vocab-panel__german";
@@ -6035,6 +6352,8 @@ let cathedralState = {
     bindEvents();
     initMeldezettelInteractions();
     initTicketMachineInteractions();
+    applyBackdropPhoto(els.bgA, BACKGROUND_FILES.vienna_hauptbahnhof);
+    preloadBackgrounds();
   }
 
   init();
