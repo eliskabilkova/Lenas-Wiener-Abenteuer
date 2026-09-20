@@ -636,12 +636,19 @@ button {
   transition: opacity 0.45s ease, transform 0.45s ease;
 }
 
-.character--npc {
-  align-self: flex-end;
+.character--lena {
+  align-self: stretch;
+  justify-content: flex-end;
   margin-right: auto;
+  height: 100%;
+  max-height: 100%;
 }
 
-.character--lena {
+.character--lena .character__label {
+  display: none;
+}
+
+.character--npc {
   align-self: flex-end;
   margin-left: auto;
 }
@@ -703,36 +710,41 @@ button {
   line-height: 1;
 }
 
-/* Lena */
+/* Lena — full portraits in sprites/lena/ */
 .character__sprite[data-character="lena"] {
-  background: linear-gradient(145deg, #f5d0fe 0%, #c084fc 48%, #7c3aed 100%);
+  --avatar-size: unset;
+  width: auto;
+  height: min(100%, 72vh);
+  aspect-ratio: 510 / 983;
+  max-width: min(34vw, 340px);
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  background-color: transparent;
+  background-image: url("sprites/lena/happy.png");
+  background-position: center bottom;
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 
 .character__sprite[data-character="lena"]::after {
-  content: "L";
+  content: none;
 }
 
-.character__sprite[data-character="lena"][data-mood="happy"],
+.character__sprite[data-character="lena"][data-mood="happy"] {
+  background-image: url("sprites/lena/happy.png");
+}
+
 .character__sprite[data-character="lena"][data-mood="confident"] {
-  filter: brightness(1.05);
+  background-image: url("sprites/lena/confident.png");
 }
 
 .character__sprite[data-character="lena"][data-mood="surprised"] {
-  filter: brightness(1.08);
+  background-image: url("sprites/lena/surprised.png");
 }
 
-.character__sprite[data-character="lena"][data-mood="thoughtful"],
 .character__sprite[data-character="lena"][data-mood="uncertain"] {
-  filter: saturate(0.92) brightness(0.96);
-}
-
-/* Climb moods — placeholder filters until dedicated tired-Lena artwork is added */
-.character__sprite[data-character="lena"][data-mood="tired"] {
-  filter: saturate(0.8) brightness(0.9);
-}
-
-.character__sprite[data-character="lena"][data-mood="exhausted"] {
-  filter: saturate(0.65) brightness(0.82);
+  background-image: url("sprites/lena/uncertain.png");
 }
 
 /* Mira — receptionist */
@@ -2512,6 +2524,12 @@ button {
   .character__sprite {
     height: clamp(100px, 32vh, 160px);
     width: clamp(70px, 14vw, 110px);
+  }
+
+  .character__sprite[data-character="lena"] {
+    height: min(100%, 58vh);
+    width: auto;
+    max-width: min(28vw, 220px);
   }
 
   .dialogue__inner {

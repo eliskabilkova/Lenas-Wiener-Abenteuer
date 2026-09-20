@@ -24,7 +24,7 @@ let gameState = {
   ch4CandleDone: false,
   hasSeenVokabelTutorial: false,
   characters: {
-    lena: { mood: "neutral" },
+    lena: { mood: "happy" },
     npc: { character: "elder", mood: "neutral", name: "", visible: false },
   },
 };
@@ -228,7 +228,7 @@ let cathedralState = {
     gameState.ch4CandleDone = false;
     cathedralState.lookAroundCompleted = false;
     gameState.characters = {
-      lena: { mood: "neutral" },
+      lena: { mood: "happy" },
       npc: { character: "elder", mood: "neutral", name: "", visible: false },
     };
   }
@@ -266,7 +266,7 @@ let cathedralState = {
     cathedral_interior: "backgrounds/cathedral_interior.jpg",
     cathedral_stairs: "backgrounds/cathedral_stairs.jpg",
     cathedral_candles: "backgrounds/cathedral_candles.jpg",
-    stained_glass: "stained-glass.jpg",
+    stained_glass: "backgrounds/stained-glass.jpg",
     vienna_view: "backgrounds/vienna_view.jpg",
     kaffeehaus: "backgrounds/kaffeehaus.jpg",
     black: null,
@@ -288,30 +288,30 @@ let cathedralState = {
   };
 
   // Sprite-ready mood values written to gameState.characters and data-mood:
-  // lena: "neutral" | "happy" | "confident" | "uncertain" | "surprised" | "thoughtful" | "tired" | "exhausted"
+  // lena: "happy" | "confident" | "uncertain" | "surprised"
   // npc:  "neutral" | "happy" | "uncertain" | "pushy" | "stern" (+ optional node.npcMood override)
   const LENA_MOOD_MAP = {
-    normal: "neutral",
-    neutral: "neutral",
-    happy: "happy",
+    normal: "happy",
+    neutral: "happy",
+    happy: "confident",
     confident: "confident",
     unsure: "uncertain",
     uncertain: "uncertain",
     surprised: "surprised",
-    thoughtful: "thoughtful",
-    tired: "tired",
-    exhausted: "exhausted",
-    none: "neutral",
+    thoughtful: "happy",
+    tired: "uncertain",
+    exhausted: "uncertain",
+    none: "happy",
   };
 
   function resolveLenaMood(node) {
-    return LENA_MOOD_MAP[node?.lenaMood] || "neutral";
+    return LENA_MOOD_MAP[node?.lenaMood] || "happy";
   }
 
   function resolveNpc(node) {
     const npc = { ...(NPC_MAP[node?.npcImage] || NPC_MAP.none) };
     if (node?.npcMood) {
-      npc.mood = LENA_MOOD_MAP[node.npcMood] || node.npcMood;
+      npc.mood = node.npcMood;
     }
     return npc;
   }
