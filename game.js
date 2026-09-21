@@ -2,7 +2,6 @@ let gameState = {
   transport: null, // will store 'correct' or 'wrong'
   stop: null,      // will store 'correct' or 'wrong'
   house: null,     // will store 'correct' or 'wrong'
-  ch1StationFailed: false,
   ch1LateArrival: false,
   ch1Strikes: 0,
   ch1DialogueStrike: false,
@@ -21,6 +20,7 @@ let gameState = {
   chapter3Strikes: 0,
   ch4Strikes: 0,
   ch5Strikes: 0,
+  activityStrikeApplied: {},
   ch4CandleDone: false,
   hasSeenVokabelTutorial: false,
   characters: {
@@ -206,7 +206,6 @@ let cathedralState = {
     gameState.transport = null;
     gameState.stop = null;
     gameState.house = null;
-    gameState.ch1StationFailed = false;
     gameState.ch1LateArrival = false;
     gameState.ch1Strikes = 0;
     gameState.ch1DialogueStrike = false;
@@ -225,6 +224,7 @@ let cathedralState = {
     gameState.chapter3Strikes = 0;
     gameState.ch4Strikes = 0;
     gameState.ch5Strikes = 0;
+    gameState.activityStrikeApplied = {};
     gameState.ch4CandleDone = false;
     cathedralState.lookAroundCompleted = false;
     gameState.characters = {
@@ -319,8 +319,6 @@ let cathedralState = {
   const JUMP_SCARE_NODE_IDS = new Set(["ch4_mozart_surprise"]);
 
   const REPLAY_CHOICES_FROM_NODE = {
-    wrong_rude: "start_see_man",
-    wrong_grammar: "start_see_man",
     ch2_greet_wrong_rude: "ch2_reception_greet",
     ch2_greet_wrong_grammar: "ch2_reception_greet",
     ch2_id_wrong_phone: "ch2_reception_id",
@@ -895,7 +893,8 @@ let cathedralState = {
     },
     ch3_ppp_practice: {
       successNode: "ch3_morning_intro_transport",
-      doneButton: "Lena is ready for the adventure!",
+      doneButton: "Head to the station",
+      doneTitle: "Lena feels ready to figure out the local transport!",
       vocab: CHAPTER3_PPP_VOCAB,
       vocabChapter: "chapter3",
       vocabFlag: "chapter3Ppp",
@@ -998,7 +997,7 @@ let cathedralState = {
   };
   const u3RailObservers = new WeakMap();
 
-  const TICKET_MACHINE_MISTAKE_THRESHOLD = 3;
+  const TICKET_MACHINE_MISTAKE_THRESHOLD = 2;
   const CHAPTER3_MAX_STRIKES = 3;
   const MELDEZETTEL_MISTAKE_THRESHOLD = 3;
 
@@ -1153,16 +1152,6 @@ let cathedralState = {
   };
 
   const FOLLOW_UP_BEFORE_REPLAY = {
-    wrong_rude: {
-      speaker: "Lena (Internal Monologue)",
-      text: "Oh, I should be more polite. Let me try that again...",
-      replayChoicesFrom: "start_see_man",
-    },
-    wrong_grammar: {
-      speaker: "Lena (Internal Monologue)",
-      text: "That did not sound right. I need to make the sentence clearer and try again...",
-      replayChoicesFrom: "start_see_man",
-    },
     ch2_greet_wrong_rude: {
       speaker: "Lena",
       text: "Entschuldigung! Ich versuche es noch einmal.",
@@ -1446,7 +1435,9 @@ let cathedralState = {
       els.npcContainer.classList.add("is-hidden");
     }
 
-    els.lenaContainer.classList.remove("is-hidden");
+    const hideLenaForMetro =
+      node.dialogueStyle === "u3-line-map" || node.dialogueStyle === "u3-platform-boards";
+    els.lenaContainer.classList.toggle("is-hidden", hideLenaForMetro);
     els.lenaSprite.dataset.character = "lena";
     els.lenaSprite.dataset.mood = lenaMood;
 
@@ -1699,6 +1690,7 @@ let cathedralState = {
     els.dialogueText.classList.remove("sensory-text", "announcement-text", "metro-sign-text");
     els.dialogueText.classList.toggle("narrator-text", isNarrator);
     els.speakerName.classList.remove("is-hidden");
+    els.speakerName.classList.toggle("is-narrator", isNarrator);
     els.speakerName.textContent = isInternalMonologue ? "Lena" : speaker;
 
     startTypewriter(followUp.text);
@@ -1968,6 +1960,8 @@ let cathedralState = {
 
   function renderU3LineMap() {
     closeU3DirectionUi();
+    els.lenaContainer.classList.add("is-hidden");
+    els.npcContainer.classList.add("is-hidden");
     els.dialogueText.replaceChildren(createU3LineMap());
     state.fullText = `U3: ${U3_LINE_STATIONS.map((station) => station.name).join(", ")}.`;
   }
@@ -1976,6 +1970,8 @@ let cathedralState = {
     hideChoices();
     state.waitingForChoice = true;
     u3Direction.platformOpen = true;
+    els.lenaContainer.classList.add("is-hidden");
+    els.npcContainer.classList.add("is-hidden");
     syncU3DialogueHidden();
     els.dialogueText.replaceChildren();
     els.advanceHint.classList.add("is-hidden");
@@ -2063,6 +2059,7 @@ let cathedralState = {
     els.dialogueText.classList.toggle("sensory-text", !isNarrator && node.dialogueStyle === "sensory");
     els.dialogueText.classList.toggle("announcement-text", node.dialogueStyle === "announcement");
     els.dialogueText.classList.toggle("metro-sign-text", isMetroVisual);
+    els.speakerName.classList.toggle("is-narrator", isNarrator);
   }
 
   function renderDialogue(node) {
@@ -2429,17 +2426,17 @@ let cathedralState = {
         photo: "photo-c5-a.png",
         alt: "Lena smiling at the top of the Stephansdom tower",
         german:
-          "343 Stufen geschafft! Ich stehe oben auf dem Südturm und ganz Wien liegt mir zu Füßen. Der Wind ist kühl, aber die Aussicht ist einfach unglaublich. Vor ein paar Tagen hatte ich noch Angst, ein Ticket zu bestellen — und jetzt genieße ich diesen Moment in vollen Zügen. Ich habe es wirklich geschafft!",
+          "343 Stufen geschafft! Ich stehe oben auf dem Südturm und ganz Wien liegt mir zu Füßen. Dieser Aufstieg ist wie meine ganze Reise: am Anfang unsicher, mit jedem Schritt mutiger — und jetzt dieser weite Blick. Sprachen lernen ist genau so. Jede Mühe lohnt sich. Ich habe es wirklich geschafft!",
         english:
-          "343 steps — done! I'm standing at the top of the South Tower and all of Vienna lies at my feet. The wind is cool, but the view is simply incredible. A few days ago I was still afraid to order a ticket — and now I'm savouring this moment to the fullest. I really did it!",
+          "343 steps — done! I'm standing at the top of the South Tower and all of Vienna lies at my feet. This climb is like my whole journey: unsure at the start, braver with every step — and now this wide view. Learning a language is exactly the same. Every bit of effort is worth it. I really did it!",
       },
       challenge: {
-        photo: "photo-c5-b.png",
-        alt: "Lena looking exhausted on the cathedral tower stairs",
+        photo: "photo-c5-a.png",
+        alt: "Lena smiling at the top of the Stephansdom tower",
         german:
-          "343 Stufen... meine Beine brennen, aber ich stehe oben! Sprachen lernen ist genau wie dieser Turmaufstieg: Es ist anstrengend, eng und man stolpert ab und zu über schwere Wörter. Aber mit jedem einzelnen Schritt kommt man dem Ziel näher. Die Aussicht von hier oben erinnert mich daran, dass sich jede Mühe lohnt. Ich mache weiter!",
+          "343 Stufen geschafft! Ich stehe oben auf dem Südturm und ganz Wien liegt mir zu Füßen. Dieser Aufstieg ist wie meine ganze Reise: am Anfang unsicher, mit jedem Schritt mutiger — und jetzt dieser weite Blick. Sprachen lernen ist genau so. Jede Mühe lohnt sich. Ich habe es wirklich geschafft!",
         english:
-          "343 steps... my legs are burning, but I made it to the top! Learning a language is exactly like climbing this tower: it's exhausting, it's narrow, and every now and then you stumble over a difficult word. But with every single step you get closer to the goal. The view from up here reminds me that every bit of effort is worth it. I'm keeping going!",
+          "343 steps — done! I'm standing at the top of the South Tower and all of Vienna lies at my feet. This climb is like my whole journey: unsure at the start, braver with every step — and now this wide view. Learning a language is exactly the same. Every bit of effort is worth it. I really did it!",
       },
     },
   };
@@ -2500,11 +2497,7 @@ let cathedralState = {
       return Math.min(gameState.ch4Strikes || 0, 2);
     }
 
-    if (chapterNumber === 5) {
-      return Math.min(gameState.ch5Strikes || 0, 2);
-    }
-
-    if (chapterNumber === 6) {
+    if (chapterNumber === 5 || chapterNumber === 6) {
       return 0;
     }
 
@@ -2521,25 +2514,9 @@ let cathedralState = {
     return Math.min(dialogueStrike + navigationStrike, 2);
   }
 
-  function getChapter1TagebuchIsChallenge() {
-    const dialogueStrikes = Math.max(
-      Number(gameState.dialogueStrikes) || 0,
-      gameState.ch1DialogueStrike ? 1 : 0
-    );
-    const navigationMistakes = Math.max(
-      Number(gameState.navigationMistakes) || 0,
-      Number(gameState.ch1NavMistakes) || 0
-    );
-    gameState.dialogueStrikes = dialogueStrikes;
-    gameState.navigationMistakes = navigationMistakes;
-    return dialogueStrikes > 0 || navigationMistakes >= 2;
-  }
-
   function getTagebuchIsChallenging(chapterNumber, strikes) {
-    if (chapterNumber === 1) return getChapter1TagebuchIsChallenge();
-    if (chapterNumber === 2) return strikes > 0;
     if (chapterNumber === 3) return strikes > 1;
-    return strikes >= 2;
+    return strikes > 0;
   }
 
   function getTagebuchVariant(chapterNumber, strikes) {
@@ -2569,15 +2546,15 @@ let cathedralState = {
   }
 
   const NEXT_CHAPTER_MAP = {
-    1: { label: "Chapter 2 - Check-in", nodeId: "chapter_2_teaser" },
-    2: { label: "Chapter 3 - Unterwegs", nodeId: "chapter_3_title" },
-    3: { label: "Chapter 4: Das Herz von Wien", nodeId: "chapter_4_title" },
+    1: { label: "Chapter 2 - Check-in", nodeId: "chapter_2_teaser", startLabel: "Start Chapter 2: Check-in" },
+    2: { label: "Chapter 3 - Unterwegs", nodeId: "chapter_3_title", startLabel: "Start Chapter 3: Unterwegs" },
+    3: { label: "Chapter 4: Das Herz von Wien", nodeId: "chapter_4_title", startLabel: "Start Chapter 4: Das Herz von Wien" },
     4: {
       label: "Chapter 5: Dem Himmel so nah",
       nodeId: "chapter_5_title",
-      buttonLabel: "Kapitel 5 starten: Dem Himmel so nah",
+      startLabel: "Start Chapter 5: Dem Himmel so nah",
     },
-    5: { label: "Chapter 6: Epilog", nodeId: "chapter_6_title" },
+    5: { label: "Chapter 6: Epilog", nodeId: "chapter_6_title", startLabel: "Start Chapter 6: Epilog" },
   };
 
   function goToNextChapterOrMenu(completedChapter) {
@@ -2687,8 +2664,8 @@ let cathedralState = {
     btn.className = "tagebuch-card__button";
 
     btn.textContent =
-      NEXT_CHAPTER_MAP[chapterNumber]?.buttonLabel ||
-      (chapterNumber < TOTAL_CHAPTERS ? "Next" : "Finish");
+      NEXT_CHAPTER_MAP[chapterNumber]?.startLabel ||
+      (chapterNumber < TOTAL_CHAPTERS ? `Start Chapter ${chapterNumber + 1}` : "Finish");
     btn.addEventListener("click", () => {
       saveChapterProgress(chapterNumber, strikes);
       goToNextChapterOrMenu(chapterNumber);
@@ -3157,6 +3134,14 @@ let cathedralState = {
     els.ticketMachineHintOverlay.hidden = true;
   }
 
+  function applyActivityStrikeOnce(activityId, addFn) {
+    if (!gameState.activityStrikeApplied) gameState.activityStrikeApplied = {};
+    if (gameState.activityStrikeApplied[activityId]) return false;
+    gameState.activityStrikeApplied[activityId] = true;
+    addFn();
+    return true;
+  }
+
   function getChapter3Strikes() {
     const stored = gameState.chapter3Strikes;
     const fallback = gameState.ch3Strikes;
@@ -3175,17 +3160,14 @@ let cathedralState = {
   }
 
   function applyTicketMachineStrikeOnce() {
-    if (ticketMachine.chapterStrikeApplied) return;
+    applyActivityStrikeOnce("ticket", addChapter3Strike);
     ticketMachine.chapterStrikeApplied = true;
-    addChapter3Strike();
   }
 
   function showTicketMachineError(message) {
     ticketMachine.mistakes += 1;
-    if (ticketMachine.mistakes === 1) {
-      ticketMachine.pendingHint = true;
-    }
-    if (ticketMachine.mistakes >= 2) {
+    ticketMachine.pendingHint = false;
+    if (ticketMachine.mistakes >= TICKET_MACHINE_MISTAKE_THRESHOLD) {
       applyTicketMachineStrikeOnce();
     }
     ticketMachine.errorOpen = true;
@@ -3210,11 +3192,7 @@ let cathedralState = {
     if (els.ticketMachineErrorOverlay) {
       els.ticketMachineErrorOverlay.hidden = true;
     }
-    if (ticketMachine.pendingHint) {
-      ticketMachine.pendingHint = false;
-      showTicketMachineHint();
-      return;
-    }
+    ticketMachine.pendingHint = false;
     renderTicketMachine();
   }
 
@@ -3332,7 +3310,7 @@ let cathedralState = {
 
   function completeTicketMachine(mistakeCount) {
     ticketMachine.mistakes = mistakeCount;
-    if (ticketMachine.mistakes >= 1) {
+    if (ticketMachine.mistakes >= TICKET_MACHINE_MISTAKE_THRESHOLD) {
       applyTicketMachineStrikeOnce();
     }
     const completedSuccessfully = ticketMachine.mistakes < TICKET_MACHINE_MISTAKE_THRESHOLD;
@@ -3400,7 +3378,7 @@ let cathedralState = {
     });
     els.ticketMachineErrorContinueBtn?.addEventListener("click", dismissTicketMachineError);
     els.ticketMachineDevSuccessBtn?.addEventListener("click", () => skipTicketMachineForDev(0));
-    els.ticketMachineDevFailBtn?.addEventListener("click", () => skipTicketMachineForDev(3));
+    els.ticketMachineDevFailBtn?.addEventListener("click", () => skipTicketMachineForDev(TICKET_MACHINE_MISTAKE_THRESHOLD));
   }
 
   // ── Church rules matching mini-game ──────────────────────────────────────
@@ -3434,7 +3412,7 @@ let cathedralState = {
   }
 
   function addChapter4Strike() {
-    gameState.ch4Strikes = Math.min((gameState.ch4Strikes || 0) + 1, 3);
+    gameState.ch4Strikes = Math.min((gameState.ch4Strikes || 0) + 1, 2);
     console.log("Chapter 4 Strike added! Total strikes:", gameState.ch4Strikes);
   }
 
@@ -3471,7 +3449,7 @@ let cathedralState = {
       }
     } else {
       rulesGame.mistakes += 1;
-      addChapter4Strike();
+      applyActivityStrikeOnce("rules", addChapter4Strike);
       updateRulesGameStatus();
 
       const tintWrong = (el) => {
@@ -3610,7 +3588,7 @@ let cathedralState = {
     devFailBtn.textContent = "DEV: Skip Fail";
     devFailBtn.addEventListener("click", () => {
       rulesGame.mistakes = RULES_GAME_MISTAKE_THRESHOLD;
-      while ((gameState.ch4Strikes || 0) < 3) addChapter4Strike();
+      applyActivityStrikeOnce("rules", addChapter4Strike);
       finishRulesGame();
     });
     devControls.appendChild(devFailBtn);
@@ -3635,13 +3613,6 @@ let cathedralState = {
     etiquetteGame.active = false;
     etiquetteGame.locked = false;
     document.getElementById("etiquette-game")?.remove();
-  }
-
-  // Chapter 5 covers the tower climb only, so its strikes are tracked apart
-  // from the cathedral mistakes that decide the Chapter 4 Tagebuch.
-  function addChapter5Strike() {
-    gameState.ch5Strikes = Math.min((gameState.ch5Strikes || 0) + 1, 3);
-    console.log("Chapter 5 Strike added! Total strikes:", gameState.ch5Strikes);
   }
 
   function finishEtiquetteGame() {
@@ -3711,7 +3682,7 @@ let cathedralState = {
 
     etiquetteGame.solved = {};
     etiquetteGame.locked = false;
-    etiquetteGame.rules = currentEtiquetteRoundFromIndex();
+    etiquetteGame.rules = shuffleArray(currentEtiquetteRoundFromIndex());
     etiquetteGame.onComplete = () => {
       if (etiquetteGame.roundIndex < ETIQUETTE_ROUNDS.length - 1) {
         etiquetteGame.roundIndex += 1;
@@ -3756,12 +3727,13 @@ let cathedralState = {
       return;
     }
 
-    addChapter4Strike();
+    etiquetteGame.locked = true;
     btn.classList.add("is-wrong");
     setEtiquetteFeedback(overlay, "Noch einmal versuchen. / Try again.", "wrong");
     window.setTimeout(() => {
       btn.classList.remove("is-wrong");
-    }, 650);
+      if (etiquetteGame.active) etiquetteGame.locked = false;
+    }, 450);
   }
 
   function openEtiquetteGame() {
@@ -3989,8 +3961,7 @@ let cathedralState = {
       return;
     }
 
-    addChapter5Strike();
-    // The tinted option stays marked until this checkpoint is solved.
+    // Tower quiz mistakes never count as chapter strikes.
     btn.classList.add("is-wrong");
     setTowerFeedback(overlay, checkpoint.hint, "wrong");
   }
@@ -4200,7 +4171,7 @@ let cathedralState = {
     etiquetteGame.active = true;
     etiquetteGame.solved = {};
     etiquetteGame.locked = false;
-    etiquetteGame.rules = item.rules || [];
+    etiquetteGame.rules = shuffleArray(item.rules || []);
     etiquetteGame.onComplete = onComplete;
     ch1Ppp.locked = false;
 
@@ -5560,14 +5531,15 @@ let cathedralState = {
   }
 
   function getQuizResultNodeId() {
-    const allCorrect =
-      gameState.transport === "correct" &&
-      gameState.stop === "correct" &&
-      gameState.house === "correct";
+    const wrongCount = Math.max(
+      gameState.ch1NavMistakes || 0,
+      gameState.navigationMistakes || 0
+    );
+    const isLate = wrongCount >= 2;
 
-    gameState.ch1LateArrival = !allCorrect;
+    gameState.ch1LateArrival = isLate;
     applyChapter1NavigationStrike();
-    return allCorrect ? "arrival_success" : "arrival_failure";
+    return isLate ? "arrival_failure" : "arrival_success";
   }
 
   function routeToNode(nodeId) {
@@ -5668,9 +5640,7 @@ let cathedralState = {
   function recordAnswer(choiceText, nextNodeId) {
     const currentNode = state.nodeId;
 
-    if (currentNode === "start_see_man" && (nextNodeId === "wrong_rude" || nextNodeId === "wrong_grammar")) {
-      gameState.ch1StationFailed = true;
-    } else if (
+    if (
       nextNodeId === "ask_hotel_wrong_wword" ||
       nextNodeId === "ask_hotel_wrong_order"
     ) {
@@ -5713,14 +5683,14 @@ let cathedralState = {
         gameState.navigationMistakes = gameState.ch1NavMistakes;
       }
     } else if (currentNode === "ch3_platform_choice" && nextNodeId === "ch3_platform_wrong") {
-      addChapter3Strike();
+      applyActivityStrikeOnce("platform", addChapter3Strike);
     } else if (
       currentNode === "ch3_ubahn_thought" &&
       (nextNodeId === "ch3_ubahn_confused" || nextNodeId === "ch3_ubahn_imperfect")
     ) {
-      addChapter3Strike();
+      applyActivityStrikeOnce("ubahn", addChapter3Strike);
     } else if (currentNode === "ch4_mozart_choice" && nextNodeId !== "ch4_mozart_correct") {
-      gameState.ch4Strikes += 1;
+      applyActivityStrikeOnce("mozart", addChapter4Strike);
     }
 
     console.log("gameState:", JSON.stringify(gameState));

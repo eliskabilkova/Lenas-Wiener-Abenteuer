@@ -640,8 +640,12 @@ button {
   align-self: stretch;
   justify-content: flex-end;
   margin-right: auto;
-  height: 100%;
-  max-height: 100%;
+  margin-bottom: -32px;
+  height: calc(100% + 32px);
+  max-height: none;
+  overflow: hidden;
+  padding: 0 22px;
+  margin-left: -22px;
 }
 
 .character--lena .character__label {
@@ -725,6 +729,7 @@ button {
   background-position: center bottom;
   background-size: contain;
   background-repeat: no-repeat;
+  transform: translateY(80px);
 }
 
 .character__sprite[data-character="lena"]::after {
@@ -891,6 +896,12 @@ button {
 
 .dialogue__speaker.is-hidden {
   display: none;
+}
+
+.dialogue__speaker.is-narrator {
+  color: #f4e0a5;
+  background: rgba(244, 224, 165, 0.18);
+  border-color: rgba(244, 224, 165, 0.45);
 }
 
 .dialogue__hint {
@@ -1311,19 +1322,20 @@ button {
 
 .u3-line-map__endcap {
   display: inline-block;
-  padding: 0.04rem 0.28rem;
+  padding: 0.06rem 0.32rem;
   border-radius: 3px;
-  font-size: 0.46rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  font-size: 0.54rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: #6a625a;
-  background: rgba(28, 24, 20, 0.08);
+  color: #1c1814;
+  background: rgba(28, 24, 20, 0.16);
 }
 
 .u3-line-map__station.is-end .u3-line-map__name {
-  font-weight: 700;
-  color: #1c1814;
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: #14110e;
 }
 
 .u3-line-map__station.is-here .u3-line-map__name,
@@ -1338,6 +1350,10 @@ button {
 
 .u3-line-map--overlay .u3-line-map__name {
   font-size: 0.85rem;
+}
+
+.u3-line-map--overlay .u3-line-map__station.is-end .u3-line-map__name {
+  font-size: 0.95rem;
 }
 
 .u3-platform-overlay {
@@ -2076,8 +2092,17 @@ button {
 }
 
 .etiquette-game__toggle.is-wrong {
-  border-color: rgba(239, 68, 68, 0.5);
-  background: rgba(239, 68, 68, 0.15);
+  transition: none !important;
+  animation: none !important;
+  border-color: #f07171;
+  background: #c23b3b;
+  color: #fff4f4;
+  box-shadow: 0 0 0 2px rgba(240, 113, 113, 0.45);
+}
+
+.etiquette-game__toggle.is-wrong .etiquette-game__badge {
+  color: #4a1010;
+  background: #ffd0d0;
 }
 
 .etiquette-game__feedback {
