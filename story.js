@@ -192,7 +192,7 @@ const storyData = {
     speaker: "Viennese Man",
     text: "Guten Tag, kein Problem! Gehen Sie zuerst geradeaus zur U-Bahn. Fahren Sie mit der U3 bis Neubaugasse. Das Hotel ist dort direkt gegenüber von der Station, gleich neben dem Café.",
     lenaMood: "normal",
-    npcImage: "old_man_friendly.png",
+    npcImage: "old_man_neutral.png",
     choices: [
       { text: "Vielen Dank für die Hilfe! Tschüss!", nextNode: "ch1_phew" },
     ],
@@ -463,7 +463,7 @@ const storyData = {
     speaker: "Rezeptionistin",
     text: "Guten Tag! Herzlich willkommen im Hotel Wiener Traum. Haben Sie eine Reservierung?",
     lenaMood: "normal",
-    npcImage: "receptionist_neutral.png",
+    npcImage: "receptionist_neutral1.png",
     highlightVocab: true,
     choices: [
       { text: "Guten Tag! Darf ich eine Reservierung haben?", nextNode: "ch2_greet_wrong_rude" },
@@ -502,7 +502,7 @@ const storyData = {
     speaker: "Rezeptionistin",
     text: "Guten Tag, Frau Majerová! Ja, genau. Ich sehe Ihre Reservierung im System. Kann ich bitte Ihren Ausweis sehen?",
     lenaMood: "normal",
-    npcImage: "receptionist_neutral.png",
+    npcImage: "receptionist_neutral2.png",
     choices: [
       { text: "[Tell her my phone number]", nextNode: "ch2_id_wrong_phone" },
       { text: "[Hand her my ID card]", nextNode: "ch2_id_correct" },
@@ -516,7 +516,7 @@ const storyData = {
     speaker: "Rezeptionistin",
     text: "Perfekt, danke! Ah, Frau Majerová. Herzlich willkommen in Wien! Würden Sie mir dann kurz diesen Meldezettel ausfüllen?",
     lenaMood: "normal",
-    npcImage: "receptionist_neutral.png",
+    npcImage: "receptionist_neutral1.png",
     choices: [
       { text: "Continue", nextNode: "ch2_meldezettel" },
     ],
@@ -564,8 +564,7 @@ const storyData = {
     speaker: "Rezeptionistin",
     text: "Perfekt, danke schön!",
     lenaMood: "confident",
-    npcImage: "receptionist_neutral.png",
-    npcMood: "happy",
+    npcImage: "receptionist_neutral2.png",
     choices: [
       { text: "Continue", nextNode: "end_chapter_2" },
     ],
@@ -578,7 +577,6 @@ const storyData = {
     text: "Na ja, hoffentlich ist das alles richtig ausgefüllt... Mal sehen.",
     lenaMood: "uncertain",
     npcImage: "receptionist_confused.png",
-    npcMood: "uncertain",
     choices: [
       { text: "Continue", nextNode: "end_chapter_2" },
     ],
@@ -992,7 +990,7 @@ const storyData = {
     speaker: "Narrator",
     text: "ZAP! Suddenly, a man in a white wig and a red coat jumps right in front of Lena. He waves a handful of golden tickets!",
     lenaMood: "surprised",
-    npcImage: "mozart_seller_pushy.png",
+    npcImage: "mozart_seller_neutral1.png",
     dialogueStyle: "narrator",
     effect: "jumpScare",
     choices: [
@@ -1006,7 +1004,7 @@ const storyData = {
     speaker: "Straßenverkäufer",
     text: "Hallo! Guten Tag! Suchen Sie klassische Musik? Mozart! Vivaldi! Konzert heute Abend im wunderschönen Saal! Nur heute super Angebot, nur für Sie, meine Dame!",
     lenaMood: "surprised",
-    npcImage: "mozart_seller_pushy.png",
+    npcImage: "mozart_seller_neutral2.png",
     choices: [
       { text: "Continue", nextNode: "ch4_mozart_shock" },
     ],
@@ -1018,7 +1016,7 @@ const storyData = {
     speaker: "Lena (Internal Monologue)",
     text: "Oh! He scared me! Wait... I read about this online. In the city center, there are ticket sellers dressed as Mozart. They sell very expensive concert tickets to tourists. I have to be careful and say no!",
     lenaMood: "unsure",
-    npcImage: "mozart_seller_pushy.png",
+    npcImage: "mozart_seller_neutral1.png",
     choices: [
       { text: "Reply to him", nextNode: "ch4_mozart_choice" },
     ],
@@ -1030,7 +1028,7 @@ const storyData = {
     speaker: "Lena (Internal Monologue)",
     text: "What should I say to him?",
     lenaMood: "unsure",
-    npcImage: "mozart_seller_pushy.png",
+    npcImage: "mozart_seller_neutral2.png",
     instantText: true,
     choices: [
       { text: "Ich weiß nicht... Ist das Konzert gut?", nextNode: "ch4_mozart_wrong_a" },
@@ -1045,7 +1043,7 @@ const storyData = {
     speaker: "Narrator",
     text: "The seller sees that Lena is not sure. He puts shiny brochures into her hands and stands in her way. He talks and talks about the 'best concert in Vienna'. Many minutes pass before she can finally walk away.",
     lenaMood: "unsure",
-    npcImage: "mozart_seller_pushy.png",
+    npcImage: "mozart_seller_neutral1.png",
     dialogueStyle: "narrator",
     choices: [
       { text: "Continue", nextNode: "ch4_mozart_after" },
@@ -1058,7 +1056,7 @@ const storyData = {
     speaker: "Narrator",
     text: "He does not accept Lena's excuse. \"Keine Zeit? Das Konzert dauert nur zwei Stunden! Kommen Sie!\" He steps closer, and she feels trapped. It is hard to escape politely.",
     lenaMood: "unsure",
-    npcImage: "mozart_seller_pushy.png",
+    npcImage: "mozart_seller_neutral1.png",
     dialogueStyle: "narrator",
     choices: [
       { text: "Continue", nextNode: "ch4_mozart_after" },
@@ -1071,7 +1069,7 @@ const storyData = {
     speaker: "Straßenverkäufer",
     text: "Schade! Schönen Tag noch!",
     lenaMood: "normal",
-    npcImage: "mozart_seller_neutral.png",
+    npcImage: "mozart_seller_neutral1.png",
     choices: [
       { text: "Continue", nextNode: "ch4_mozart_after" },
     ],
@@ -1489,7 +1487,7 @@ const storyData = {
     speaker: "Herr Ober",
     text: "Grüß Gott, junge Dame! Was darf ich Ihnen bringen?",
     lenaMood: "confident",
-    npcImage: "waiter_friendly.png",
+    npcImage: "waiter_neutral.png",
     highlightVocab: true,
     choices: [
       { text: "Ich will Kaffee.", nextNode: "ch6_waiter_wrong_blunt" },
@@ -1528,7 +1526,7 @@ const storyData = {
     speaker: "Herr Ober",
     text: "Sehr gerne! Eine Melange und ein Glas Wasser — kommt sofort.",
     lenaMood: "happy",
-    npcImage: "waiter_friendly.png",
+    npcImage: "waiter_neutral.png",
     highlightVocab: true,
     choices: [
       { text: "Continue", nextNode: "ch6_waiter_smalltalk" },
@@ -1542,7 +1540,7 @@ const storyData = {
     speaker: "Herr Ober",
     text: "Ihr Akzent — Sie sind nicht von hier, oder? Woher kommen Sie denn, und wie lange sind Sie schon in Wien?",
     lenaMood: "confident",
-    npcImage: "waiter_friendly.png",
+    npcImage: "waiter_neutral.png",
     highlightVocab: true,
     choices: [
       { text: "Prag. Zug. Heute.", nextNode: "ch6_smalltalk_wrong_short" },
@@ -1570,7 +1568,7 @@ const storyData = {
     speaker: "Herr Ober",
     text: "Ah, aus Prag! Seit drei Tagen in Wien? Wie wunderbar — und Ihr Deutsch ist wirklich gut, junge Dame. Respekt, die meisten Touristen sagen hier nur 'one coffee, please'.",
     lenaMood: "surprised",
-    npcImage: "waiter_friendly.png",
+    npcImage: "waiter_neutral.png",
     highlightVocab: true,
     choices: [
       { text: "Continue", nextNode: "ch6_praise_thought" },
@@ -1595,7 +1593,7 @@ const storyData = {
     speaker: "Lena (Internal Monologue)",
     text: "My Melange is empty and the clock says it's time. One last sentence in German, then the station.",
     lenaMood: "thoughtful",
-    npcImage: "waiter_friendly.png",
+    npcImage: "waiter_neutral.png",
     choices: [
       { text: "Die Karte, bitte.", nextNode: "ch6_bill_wrong_card" },
       { text: "Entschuldigung, ich möchte bitte zahlen.", nextNode: "ch6_bill_paid" },
@@ -1633,7 +1631,7 @@ const storyData = {
     speaker: "Herr Ober",
     text: "Sehr gerne. Das macht sechs Euro achtzig.",
     lenaMood: "confident",
-    npcImage: "waiter_friendly.png",
+    npcImage: "waiter_neutral.png",
     highlightVocab: true,
     choices: [
       { text: "Sieben Euro fünfzig — stimmt so, danke!", nextNode: "ch6_bill_farewell" },
@@ -1646,7 +1644,7 @@ const storyData = {
     speaker: "Herr Ober",
     text: "Vielen Dank, junge Dame! Gute Reise nach Prag — und auf Wiedersehen in Wien!",
     lenaMood: "happy",
-    npcImage: "waiter_friendly.png",
+    npcImage: "waiter_neutral.png",
     highlightVocab: true,
     choices: [
       { text: "Continue", nextNode: "ch6_reflect_1" },

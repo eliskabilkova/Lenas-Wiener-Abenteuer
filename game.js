@@ -275,21 +275,21 @@ let cathedralState = {
   const NPC_MAP = {
     none: { visible: false, character: "elder", name: "Viennese Man", mood: "neutral" },
     "old_man_neutral.png": { visible: true, character: "elder", name: "Viennese Man", mood: "neutral" },
-    "old_man_confused.png": { visible: true, character: "elder", name: "Viennese Man", mood: "uncertain" },
-    "old_man_friendly.png": { visible: true, character: "elder", name: "Viennese Man", mood: "happy" },
-    "receptionist_neutral.png": { visible: true, character: "mira", name: "Rezeptionistin", mood: "neutral" },
-    "receptionist_confused.png": { visible: true, character: "mira", name: "Rezeptionistin", mood: "uncertain" },
-    "commuter_man_annoyed.png": { visible: true, character: "elder", name: "Wiener Mann", mood: "neutral" },
-    "mozart_seller_neutral.png": { visible: true, character: "mozart_seller", name: "Straßenverkäufer", mood: "neutral" },
-    "mozart_seller_pushy.png": { visible: true, character: "mozart_seller", name: "Straßenverkäufer", mood: "pushy" },
+    "old_man_confused.png": { visible: true, character: "elder", name: "Viennese Man", mood: "confused" },
+    "receptionist_neutral1.png": { visible: true, character: "mira", name: "Rezeptionistin", mood: "neutral1" },
+    "receptionist_neutral2.png": { visible: true, character: "mira", name: "Rezeptionistin", mood: "neutral2" },
+    "receptionist_confused.png": { visible: true, character: "mira", name: "Rezeptionistin", mood: "confused" },
+    "commuter_man_annoyed.png": { visible: true, character: "commuter", name: "Wiener Mann", mood: "annoyed" },
+    "mozart_seller_neutral1.png": { visible: true, character: "mozart_seller", name: "Straßenverkäufer", mood: "neutral1" },
+    "mozart_seller_neutral2.png": { visible: true, character: "mozart_seller", name: "Straßenverkäufer", mood: "neutral2" },
     "warden_stern.png": { visible: true, character: "warden", name: "Domaufseher", mood: "stern" },
-    "waiter_friendly.png": { visible: true, character: "waiter", name: "Herr Ober", mood: "happy" },
-    "waiter_confused.png": { visible: true, character: "waiter", name: "Herr Ober", mood: "uncertain" },
+    "waiter_neutral.png": { visible: true, character: "waiter", name: "Herr Ober", mood: "neutral" },
+    "waiter_confused.png": { visible: true, character: "waiter", name: "Herr Ober", mood: "confused" },
   };
 
   // Sprite-ready mood values written to gameState.characters and data-mood:
   // lena: "happy" | "confident" | "uncertain" | "surprised"
-  // npc:  "neutral" | "happy" | "uncertain" | "pushy" | "stern" (+ optional node.npcMood override)
+  // npc mood values select the generated portrait for each character.
   const LENA_MOOD_MAP = {
     normal: "happy",
     neutral: "happy",
@@ -1372,7 +1372,7 @@ let cathedralState = {
     const key = backgroundKeyFrom(filename);
     const front = backgroundFx.front;
     if (!front || !backgroundFx.back) {
-      els.game.dataset.background = key;
+    els.game.dataset.background = key;
       return Promise.resolve();
     }
     if (els.game.dataset.background === key && front.dataset.background === key && front.classList.contains("is-visible")) {
@@ -2333,7 +2333,7 @@ let cathedralState = {
     const proceed = () => {
       if (overlay && !goingToBlack) {
         overlay.classList.add("is-leaving");
-        routeToNode(choice.nextNode);
+    routeToNode(choice.nextNode);
         const finish = () => overlay.remove();
         overlay.addEventListener("transitionend", (event) => {
           if (event.target === overlay) finish();
@@ -2666,10 +2666,10 @@ let cathedralState = {
     btn.textContent =
       NEXT_CHAPTER_MAP[chapterNumber]?.startLabel ||
       (chapterNumber < TOTAL_CHAPTERS ? `Start Chapter ${chapterNumber + 1}` : "Finish");
-    btn.addEventListener("click", () => {
-      saveChapterProgress(chapterNumber, strikes);
-      goToNextChapterOrMenu(chapterNumber);
-    });
+      btn.addEventListener("click", () => {
+        saveChapterProgress(chapterNumber, strikes);
+        goToNextChapterOrMenu(chapterNumber);
+      });
 
     card.appendChild(btn);
 
@@ -3687,7 +3687,7 @@ let cathedralState = {
       if (etiquetteGame.roundIndex < ETIQUETTE_ROUNDS.length - 1) {
         etiquetteGame.roundIndex += 1;
         renderEtiquetteRound(overlay);
-        return;
+          return;
       }
       finishEtiquetteGame();
     };
@@ -5731,8 +5731,8 @@ let cathedralState = {
   function refreshChapterSelectUI() {
     els.chapterCards.forEach((card) => {
       card.classList.remove("chapter-card--locked", "chapter-card--active", "chapter-card--completed", "chapter-card--unlocked");
-      card.disabled = false;
-      card.removeAttribute("aria-disabled");
+        card.disabled = false;
+        card.removeAttribute("aria-disabled");
     });
   }
 
