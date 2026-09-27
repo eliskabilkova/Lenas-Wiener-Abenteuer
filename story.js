@@ -770,7 +770,7 @@ const storyData = {
     background: "u_bahn_station.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "Wait, Ottakring goes in the opposite direction!",
-    lenaMood: "surprised",
+    lenaMood: "scared",
     npcImage: "none",
     choices: [
       { text: "Try again", nextNode: "ch3_platform_choice" },
@@ -905,7 +905,7 @@ const storyData = {
     background: "u_bahn_escalator.jpg",
     speaker: "Wiener Mann",
     text: "Sagen Sie einmal, verstehen Sie kein Deutsch?! Gehen Sie auf die rechte Seite!",
-    lenaMood: "surprised",
+    lenaMood: "scared",
     npcImage: "commuter_man_annoyed.png",
     choices: [
       { text: "Continue", nextNode: "ch3_station_exit" },
@@ -965,7 +965,7 @@ const storyData = {
     background: "stephansplatz.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "And so many people! Tourists with cameras, street artists, music from every corner... The square is loud and full of life. I feel very small next to this giant church and this big crowd.",
-    lenaMood: "surprised",
+    lenaMood: "amazed",
     npcImage: "none",
     choices: [
       { text: "Continue", nextNode: "ch4_stephans_intro" },
@@ -989,7 +989,7 @@ const storyData = {
     background: "stephansplatz.jpg",
     speaker: "Narrator",
     text: "ZAP! Suddenly, a man in a white wig and a red coat jumps right in front of Lena. He waves a handful of golden tickets!",
-    lenaMood: "surprised",
+    lenaMood: "scared",
     npcImage: "mozart_seller_neutral1.png",
     dialogueStyle: "narrator",
     effect: "jumpScare",
@@ -1003,7 +1003,7 @@ const storyData = {
     background: "stephansplatz.jpg",
     speaker: "Straßenverkäufer",
     text: "Hallo! Guten Tag! Suchen Sie klassische Musik? Mozart! Vivaldi! Konzert heute Abend im wunderschönen Saal! Nur heute super Angebot, nur für Sie, meine Dame!",
-    lenaMood: "surprised",
+    lenaMood: "scared",
     npcImage: "mozart_seller_neutral2.png",
     choices: [
       { text: "Continue", nextNode: "ch4_mozart_shock" },
@@ -1190,7 +1190,7 @@ const storyData = {
     background: "cathedral_interior.jpg",
     speaker: "Narrator",
     text: "Lena walks in. But she did not really understand the rules: she still wears her cap, and she talks to herself very loudly. Heads turn. A warden in a dark uniform comes to her quickly.",
-    lenaMood: "surprised",
+    lenaMood: "scared",
     npcImage: "none",
     dialogueStyle: "narrator",
     choices: [
@@ -1203,7 +1203,7 @@ const storyData = {
     background: "cathedral_interior.jpg",
     speaker: "Domaufseher",
     text: "Psst! Ruhe, bitte! Und keine Kappe im Dom!",
-    lenaMood: "surprised",
+    lenaMood: "scared",
     npcImage: "warden_stern.png",
     choices: [
       { text: "Continue", nextNode: "ch4_warden_sorry" },
@@ -1229,7 +1229,7 @@ const storyData = {
     background: "cathedral_interior.jpg",
     speaker: "Narrator",
     text: "Inside, everything is quiet. The church is huge. Tall stone columns go up like old trees. Colorful light falls through the glass windows onto the floor. The air smells like candles and old stone.",
-    lenaMood: "surprised",
+    lenaMood: "amazed",
     npcImage: "none",
     dialogueStyle: "narrator",
     choices: [
@@ -1373,7 +1373,7 @@ const storyData = {
     background: "cathedral_stairs.jpg",
     speaker: "System",
     text: "",
-    lenaMood: "tired",
+    lenaMood: "exhausted",
     npcImage: "none",
     choices: [],
   },
@@ -1385,7 +1385,7 @@ const storyData = {
     background: "vienna_view.jpg",
     speaker: "Narrator",
     text: "As Lena steps out onto the viewing platform 136 meters above the city, a cool breeze hits her face. Spread out below her, Vienna stretches as far as the eye can see.",
-    lenaMood: "surprised",
+    lenaMood: "amazed",
     npcImage: "none",
     dialogueStyle: "narrator",
     choices: [
@@ -1567,7 +1567,7 @@ const storyData = {
     background: "kaffeehaus.jpg",
     speaker: "Herr Ober",
     text: "Ah, aus Prag! Seit drei Tagen in Wien? Wie wunderbar — und Ihr Deutsch ist wirklich gut, junge Dame. Respekt, die meisten Touristen sagen hier nur 'one coffee, please'.",
-    lenaMood: "surprised",
+    lenaMood: "amazed",
     npcImage: "waiter_neutral.png",
     highlightVocab: true,
     choices: [

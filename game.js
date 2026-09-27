@@ -203,6 +203,7 @@ let cathedralState = {
   }
 
   function resetGameState() {
+    resetLenaMoodRotation();
     gameState.transport = null;
     gameState.stop = null;
     gameState.house = null;
@@ -287,25 +288,86 @@ let cathedralState = {
     "waiter_confused.png": { visible: true, character: "waiter", name: "Herr Ober", mood: "confused" },
   };
 
-  // Sprite-ready mood values written to gameState.characters and data-mood:
-  // lena: "happy" | "confident" | "uncertain" | "surprised"
-  // npc mood values select the generated portrait for each character.
+  // Story mood values are normalized into sprite groups. Mood variants rotate
+  // automatically, but each story node keeps the same portrait while displayed.
   const LENA_MOOD_MAP = {
     normal: "happy",
     neutral: "happy",
-    happy: "confident",
+    happy: "happy",
     confident: "confident",
     unsure: "uncertain",
     uncertain: "uncertain",
-    surprised: "surprised",
-    thoughtful: "happy",
-    tired: "uncertain",
-    exhausted: "uncertain",
-    none: "happy",
+    surprised: "amazed",
+    thoughtful: "thoughtful",
+    amazed: "amazed",
+    scared: "scared",
+    tired: "exhausted",
+    exhausted: "exhausted",
+    none: "happy1",
   };
 
+  const LENA_MOOD_VARIANTS = {
+    happy: ["happy1", "happy2"],
+    thoughtful: ["thoughtful1", "thoughtful2"],
+    uncertain: ["uncertain_sad", "uncertain_confused"],
+  };
+
+  const LENA_SPRITE_BY_MOOD = {
+    happy1: "sprites/lena/happy1.png",
+    happy2: "sprites/lena/happy2.png",
+    confident: "sprites/lena/confident.png",
+    thoughtful1: "sprites/lena/thoughtful1.png",
+    thoughtful2: "sprites/lena/thoughtful2.png",
+    amazed: "sprites/lena/amazed.png",
+    scared: "sprites/lena/scared.png",
+    exhausted: "sprites/lena/exhausted.png",
+    uncertain_sad: "sprites/lena/uncertain_sad.png",
+    uncertain_confused: "sprites/lena/uncertain_confused.png",
+  };
+  const LENA_SPRITE_SOURCES = Object.values(LENA_SPRITE_BY_MOOD);
+
+  let lenaMoodVariantCounters = {};
+  let lenaMoodByNode = new WeakMap();
+  const lenaSpritePreloads = [];
+
+  function resetLenaMoodRotation() {
+    lenaMoodVariantCounters = { happy: 0, thoughtful: 0, uncertain: 0 };
+    lenaMoodByNode = new WeakMap();
+  }
+
   function resolveLenaMood(node) {
-    return LENA_MOOD_MAP[node?.lenaMood] || "happy";
+    if (node && lenaMoodByNode.has(node)) {
+      return lenaMoodByNode.get(node);
+    }
+
+    const moodGroup = LENA_MOOD_MAP[node?.lenaMood] || "happy";
+    const variants = LENA_MOOD_VARIANTS[moodGroup];
+    let spriteMood = moodGroup;
+
+    if (variants) {
+      const variantIndex = lenaMoodVariantCounters[moodGroup] % variants.length;
+      spriteMood = variants[variantIndex];
+      lenaMoodVariantCounters[moodGroup] += 1;
+    }
+
+    if (node) {
+      lenaMoodByNode.set(node, spriteMood);
+    }
+    return spriteMood;
+  }
+
+  function preloadLenaSprites() {
+    LENA_SPRITE_SOURCES.forEach((src) => {
+      const image = new Image();
+      image.src = src;
+      image.decode?.().catch(() => {});
+      lenaSpritePreloads.push(image);
+    });
+  }
+
+  function setLenaSpriteMood(mood) {
+    if (!mood || els.lenaSprite.dataset.mood === mood) return;
+    els.lenaSprite.dataset.mood = mood;
   }
 
   function resolveNpc(node) {
@@ -1439,7 +1501,7 @@ let cathedralState = {
       node.dialogueStyle === "u3-line-map" || node.dialogueStyle === "u3-platform-boards";
     els.lenaContainer.classList.toggle("is-hidden", hideLenaForMetro);
     els.lenaSprite.dataset.character = "lena";
-    els.lenaSprite.dataset.mood = lenaMood;
+    setLenaSpriteMood(lenaMood);
 
     const speaker = node.speaker || "";
     const isLena = speaker.includes("Lena");
@@ -2165,9 +2227,10 @@ let cathedralState = {
     setBackground(node.background);
     els.lenaContainer.classList.remove("is-hidden", "is-dimmed", "is-speaking");
     els.lenaSprite.dataset.character = "lena";
-    els.lenaSprite.dataset.mood = resolveLenaMood({ lenaMood: node.lenaMood || "surprised" });
+    const lenaMood = resolveLenaMood(node);
+    setLenaSpriteMood(lenaMood);
     gameState.characters = {
-      lena: { mood: els.lenaSprite.dataset.mood },
+      lena: { mood: lenaMood },
       npc: { character: "elder", mood: "neutral", name: "", visible: false },
     };
 
@@ -2354,17 +2417,17 @@ let cathedralState = {
         photo: "photo-c1-a.png",
         alt: "Lena smiling at Vienna Hauptbahnhof",
         german:
-          "Mein erster Tag in Wien! Die Zugfahrt war super und am Bahnhof habe ich mich gut zurechtgefunden. Ich habe sogar schon mit einem Mann Deutsch gesprochen und nach dem Weg gefragt. Ich bin so gespannt auf mein Abenteuer!",
+          "Liebes Tagebuch,\n\nmein erster Tag in Wien! Die Zugfahrt war super und am Bahnhof habe ich mich gut zurechtgefunden. Ich habe sogar schon mit einem Mann Deutsch gesprochen und nach dem Weg gefragt. Ich bin so gespannt auf mein Abenteuer!",
         english:
-          "My first day in Vienna! The train ride was smooth and I navigated the station well. I even spoke German with a local to ask for directions. I'm so excited for this adventure!",
+          "Dear diary,\n\nmy first day in Vienna! The train ride was smooth and I navigated the station well. I even spoke German with a local to ask for directions. I'm so excited for this adventure!",
       },
       challenge: {
         photo: "photo-c1-b.png",
         alt: "Lena looking lost near the station",
         german:
-          "Nicht alles ist heute genau nach Plan gelaufen, aber das gehört zum Lernen dazu! Ich bin sicher im Hotel angekommen und bin bereit, morgen weiterzumachen.",
+          "Liebes Tagebuch,\n\nnicht alles ist heute genau nach Plan gelaufen, aber das gehört zum Lernen dazu! Ich bin sicher im Hotel angekommen und bin bereit, morgen weiterzumachen.",
         english:
-          "Not everything went strictly according to plan today, but that's all part of the learning process! I made it to the hotel safely, and I'm ready to keep going tomorrow.",
+          "Dear diary,\n\nnot everything went strictly according to plan today, but that's all part of the learning process! I made it to the hotel safely, and I'm ready to keep going tomorrow.",
       },
     },
     2: {
@@ -2372,17 +2435,17 @@ let cathedralState = {
         photo: "photo-c2-a.png",
         alt: "Lena smiling at the hotel reception",
         german:
-          "Das Hotel ist sehr schön! Das Einchecken hat super geklappt. Ich habe an der Rezeption Deutsch gesprochen, den Meldezettel ausgefüllt, und jetzt habe ich meinen Zimmerschlüssel. Ich fühle mich wirklich sicher.",
+          "Liebes Tagebuch,\n\ndas Hotel ist sehr schön! Das Einchecken hat super geklappt. Ich habe an der Rezeption Deutsch gesprochen, den Meldezettel ausgefüllt, und jetzt habe ich meinen Zimmerschlüssel. Ich fühle mich wirklich sicher.",
         english:
-          "The hotel is very nice! Check-in went so smoothly. I spoke German at reception, filled out the Meldezettel, and now I have my room key. I feel really confident.",
+          "Dear diary,\n\nthe hotel is very nice! Check-in went so smoothly. I spoke German at reception, filled out the Meldezettel, and now I have my room key. I feel really confident.",
       },
       challenge: {
         photo: "photo-c2-b.png",
         alt: "Lena looking overwhelmed at the hotel reception",
         german:
-          "An der Rezeption habe ich ein paar Fehler gemacht und war ein bisschen unsicher. Aber ich habe endlich meinen Zimmerschlüssel, und ich bin erleichtert, dass das Einchecken hinter mir liegt.",
+          "Liebes Tagebuch,\n\nheute war das Einchecken eine echte Übung. An der Rezeption und beim Meldezettel war ich manchmal unsicher, aber ich habe nachgedacht, weiterprobiert und alles geschafft. Jetzt halte ich meinen Zimmerschlüssel in der Hand. Jeder Fehler hat mir gezeigt, was ich schon kann und was ich noch lernen darf — morgen spreche ich bestimmt schon mutiger Deutsch!",
         english:
-          "I made a few mistakes at reception and felt a bit self-conscious. But I finally have my room key, and I'm relieved that check-in is over.",
+          "Dear diary,\n\ncheck-in was a real learning experience today. I sometimes felt unsure at reception and while completing the Meldezettel, but I kept thinking, trying, and made it through. Now I have my room key in my hand. Every mistake showed me what I can already do and what I can still learn — tomorrow I'll speak German even more bravely!",
       },
     },
     3: {
@@ -2390,17 +2453,17 @@ let cathedralState = {
         photo: "photo-c3-a.png",
         alt: "Lena smiling on the U-Bahn in Vienna",
         german:
-          "Heute bin ich zum ersten Mal mit der U-Bahn gefahren. Die Wiener Linien sind wirklich schnell und praktisch! Ich habe alle Regeln gut verstanden und mich im System orientiert. Wenn man aufpasst, ist das Reisen hier gar nicht so schwer. Ich fühle mich schon fast wie eine echte Wienerin!",
+          "Liebes Tagebuch,\n\nheute bin ich zum ersten Mal mit der U-Bahn gefahren. Die Wiener Linien sind wirklich schnell und praktisch! Ich habe alle Regeln gut verstanden und mich im System orientiert. Wenn man aufpasst, ist das Reisen hier gar nicht so schwer. Ich fühle mich schon fast wie eine echte Wienerin!",
         english:
-          "Today I rode the underground for the first time. The Vienna transit system is really fast and practical! I understood all the rules and navigated the system well. When you pay attention, traveling here isn't that hard. I almost feel like a real Viennese!",
+          "Dear diary,\n\ntoday I rode the underground for the first time. The Vienna transit system is really fast and practical! I understood all the rules and navigated the system well. When you pay attention, traveling here isn't that hard. I almost feel like a real Viennese!",
       },
       challenge: {
         photo: "photo-c3-b.png",
         alt: "Lena looking stressed on the U-Bahn in Vienna",
         german:
-          "Heute bin ich mit der U-Bahn gefahren. In einer fremden Großstadt ist alles neu und etwas hektisch – die Fahrkarten, die Richtungen und die vielen Regeln. Nicht alles hat auf Anhieb geklappt, aber ich habe viel gelernt. Am Ende bin ich gut am Stephansplatz angekommen!",
+          "Liebes Tagebuch,\n\nheute bin ich mit der U-Bahn gefahren. In einer fremden Großstadt ist alles neu und etwas hektisch – die Fahrkarten, die Richtungen und die vielen Regeln. Nicht alles hat auf Anhieb geklappt, aber ich habe viel gelernt. Am Ende bin ich gut am Stephansplatz angekommen!",
         english:
-          "Today I rode the underground. In a unfamiliar big city, everything is new and a bit hectic – the tickets, the directions, and all the rules. Not everything worked on the first try, but I learned a lot. In the end, I arrived safely at Stephansplatz!",
+          "Dear diary,\n\ntoday I rode the underground. In an unfamiliar big city, everything is new and a bit hectic – the tickets, the directions, and all the rules. Not everything worked on the first try, but I learned a lot. In the end, I arrived safely at Stephansplatz!",
       },
     },
     4: {
@@ -2408,17 +2471,17 @@ let cathedralState = {
         photo: "photo-c4-a.png",
         alt: "Lena smiling inside Stephansdom",
         german:
-          "Liebes Tagebuch,\n\nheute war ich im Stephansdom — dem Herzen von Wien! Ich war zuerst ein bisschen nervös wegen der strengen Regeln am Eingang, aber alles hat super geklappt. Die Atmosphäre drinnen ist magisch: das bunte Licht der Glasfenster, der Duft von Kerzen und diese tiefstimmige Stille.\n\nIch merke, wie ich jeden Tag mutiger werde. Und jetzt stehe ich hier vor dem Südturm. 343 Stufen warten auf mich... Das wird der absolute Höhepunkt meiner Reise! Ich bin bereit.",
+          "Liebes Tagebuch,\n\nheute war ich im Stephansdom, dem Herzen Wiens. Am Eingang war ich etwas nervös, aber alles hat gut geklappt. Drinnen waren das bunte Licht, der Kerzenduft und die tiefe Stille einfach magisch. Ich werde jeden Tag mutiger. Jetzt warten 343 Stufen im Südturm auf mich — ich bin bereit!",
         english:
-          "Dear diary,\n\ntoday I was inside Stephansdom — the heart of Vienna! At first I was a little nervous about the strict rules at the entrance, but everything went really well. The atmosphere inside is magical: the coloured light of the stained-glass windows, the scent of candles, and that deep, low silence.\n\nI can feel myself getting braver every day. And now I'm standing here in front of the South Tower. 343 steps are waiting for me... This is going to be the absolute highlight of my journey! I'm ready.",
+          "Dear diary,\n\ntoday I visited Stephansdom, the heart of Vienna. I was a little nervous at the entrance, but everything went well. Inside, the colourful light, the scent of candles, and the deep silence felt magical. I'm becoming braver every day. Now 343 steps in the South Tower are waiting for me — I'm ready!",
       },
       challenge: {
         photo: "photo-c4-b.png",
         alt: "Lena looking flustered at the Stephansdom entrance",
         german:
-          "Liebes Tagebuch,\n\nder Stephansdom ist unglaublich beeindruckend, auch wenn der Start holprig war. Ich war am Eingang total verwirrt und habe Fehler gemacht. Der Aufseher war streng und mein Deutsch hat kurz komplett versagt...\n\nAber weißt du was? Es ist völlig okay. Ich habe mich nicht verunsichern lassen, habe eine Kerze angezündet und die Stille genossen. Fehler gehören dazu — wichtig ist nur, dass man weitermacht!\n\nJetzt stehe ich vor dem Südturm: 343 Stufen nach oben. Meine Beine zittern jetzt schon, aber ich gebe nicht auf. Das wird mein persönlicher Höhepunkt!",
+          "Liebes Tagebuch,\n\nder Start im Stephansdom war etwas holprig: Am Eingang war ich verwirrt und machte Fehler. Trotzdem ließ ich mich nicht entmutigen. Ich zündete eine Kerze an, genoss die Stille und lernte: Fehler gehören dazu, solange man weitermacht. Jetzt warten 343 Stufen im Südturm auf mich — und ich gebe nicht auf!",
         english:
-          "Dear diary,\n\nStephansdom is incredibly impressive, even if the start was bumpy. I was completely confused at the entrance and made mistakes. The warden was strict and my German failed me entirely for a moment...\n\nBut you know what? It's perfectly fine. I didn't let it rattle me, I lit a candle and enjoyed the silence. Mistakes are part of the deal — all that matters is that you keep going!\n\nNow I'm standing in front of the South Tower: 343 steps to the top. My legs are trembling already, but I'm not giving up. This is going to be my personal highlight!",
+          "Dear diary,\n\nmy start at Stephansdom was a little bumpy: I felt confused at the entrance and made mistakes. Still, I didn't let that discourage me. I lit a candle, enjoyed the silence, and learned that mistakes are okay as long as you keep going. Now 343 steps in the South Tower are waiting for me — and I'm not giving up!",
       },
     },
     5: {
@@ -2426,17 +2489,17 @@ let cathedralState = {
         photo: "photo-c5-a.png",
         alt: "Lena smiling at the top of the Stephansdom tower",
         german:
-          "343 Stufen geschafft! Ich stehe oben auf dem Südturm und ganz Wien liegt mir zu Füßen. Dieser Aufstieg ist wie meine ganze Reise: am Anfang unsicher, mit jedem Schritt mutiger — und jetzt dieser weite Blick. Sprachen lernen ist genau so. Jede Mühe lohnt sich. Ich habe es wirklich geschafft!",
+          "Liebes Tagebuch,\n\n343 Stufen geschafft! Ich stehe oben auf dem Südturm und ganz Wien liegt mir zu Füßen. Dieser Aufstieg ist wie meine ganze Reise: am Anfang unsicher, mit jedem Schritt mutiger — und jetzt dieser weite Blick. Sprachen lernen ist genau so. Jede Mühe lohnt sich. Ich habe es wirklich geschafft!",
         english:
-          "343 steps — done! I'm standing at the top of the South Tower and all of Vienna lies at my feet. This climb is like my whole journey: unsure at the start, braver with every step — and now this wide view. Learning a language is exactly the same. Every bit of effort is worth it. I really did it!",
+          "Dear diary,\n\n343 steps — done! I'm standing at the top of the South Tower and all of Vienna lies at my feet. This climb is like my whole journey: unsure at the start, braver with every step — and now this wide view. Learning a language is exactly the same. Every bit of effort is worth it. I really did it!",
       },
       challenge: {
         photo: "photo-c5-a.png",
         alt: "Lena smiling at the top of the Stephansdom tower",
         german:
-          "343 Stufen geschafft! Ich stehe oben auf dem Südturm und ganz Wien liegt mir zu Füßen. Dieser Aufstieg ist wie meine ganze Reise: am Anfang unsicher, mit jedem Schritt mutiger — und jetzt dieser weite Blick. Sprachen lernen ist genau so. Jede Mühe lohnt sich. Ich habe es wirklich geschafft!",
+          "Liebes Tagebuch,\n\n343 Stufen geschafft! Ich stehe oben auf dem Südturm und ganz Wien liegt mir zu Füßen. Dieser Aufstieg ist wie meine ganze Reise: am Anfang unsicher, mit jedem Schritt mutiger — und jetzt dieser weite Blick. Sprachen lernen ist genau so. Jede Mühe lohnt sich. Ich habe es wirklich geschafft!",
         english:
-          "343 steps — done! I'm standing at the top of the South Tower and all of Vienna lies at my feet. This climb is like my whole journey: unsure at the start, braver with every step — and now this wide view. Learning a language is exactly the same. Every bit of effort is worth it. I really did it!",
+          "Dear diary,\n\n343 steps — done! I'm standing at the top of the South Tower and all of Vienna lies at my feet. This climb is like my whole journey: unsure at the start, braver with every step — and now this wide view. Learning a language is exactly the same. Every bit of effort is worth it. I really did it!",
       },
     },
   };
@@ -6324,6 +6387,7 @@ let cathedralState = {
     initTicketMachineInteractions();
     applyBackdropPhoto(els.bgA, BACKGROUND_FILES.vienna_hauptbahnhof);
     preloadBackgrounds();
+    preloadLenaSprites();
   }
 
   init();

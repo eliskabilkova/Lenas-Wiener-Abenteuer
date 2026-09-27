@@ -705,7 +705,10 @@ button {
   color: rgba(255, 255, 255, 0.96);
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
   background-image: none;
-  transition: filter 0.35s ease, transform 0.35s ease, box-shadow 0.35s ease;
+  transition:
+    filter 0.35s ease,
+    transform 0.35s ease,
+    box-shadow 0.35s ease;
 }
 
 .character__sprite::before {
@@ -729,7 +732,7 @@ button {
   border: none;
   box-shadow: none;
   background-color: transparent;
-  background-image: url("sprites/lena/happy.png");
+  background-image: url("sprites/lena/happy1.png");
   background-position: center bottom;
   background-size: contain;
   background-repeat: no-repeat;
@@ -740,20 +743,44 @@ button {
   content: none;
 }
 
-.character__sprite[data-character="lena"][data-mood="happy"] {
-  background-image: url("sprites/lena/happy.png");
+.character__sprite[data-character="lena"][data-mood="happy1"] {
+  background-image: url("sprites/lena/happy1.png");
+}
+
+.character__sprite[data-character="lena"][data-mood="happy2"] {
+  background-image: url("sprites/lena/happy2.png");
 }
 
 .character__sprite[data-character="lena"][data-mood="confident"] {
   background-image: url("sprites/lena/confident.png");
 }
 
-.character__sprite[data-character="lena"][data-mood="surprised"] {
-  background-image: url("sprites/lena/surprised.png");
+.character__sprite[data-character="lena"][data-mood="thoughtful1"] {
+  background-image: url("sprites/lena/thoughtful1.png");
 }
 
-.character__sprite[data-character="lena"][data-mood="uncertain"] {
-  background-image: url("sprites/lena/uncertain.png");
+.character__sprite[data-character="lena"][data-mood="thoughtful2"] {
+  background-image: url("sprites/lena/thoughtful2.png");
+}
+
+.character__sprite[data-character="lena"][data-mood="amazed"] {
+  background-image: url("sprites/lena/amazed.png");
+}
+
+.character__sprite[data-character="lena"][data-mood="scared"] {
+  background-image: url("sprites/lena/scared.png");
+}
+
+.character__sprite[data-character="lena"][data-mood="exhausted"] {
+  background-image: url("sprites/lena/exhausted.png");
+}
+
+.character__sprite[data-character="lena"][data-mood="uncertain_sad"] {
+  background-image: url("sprites/lena/uncertain_sad.png");
+}
+
+.character__sprite[data-character="lena"][data-mood="uncertain_confused"] {
+  background-image: url("sprites/lena/uncertain_confused.png");
 }
 
 /* Generated NPC portraits */
