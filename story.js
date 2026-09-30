@@ -77,7 +77,7 @@ const storyData = {
     background: "vienna_hauptbahnhof.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "Here I am, Vienna Hauptbahnhof! It's huge... Okay, let me check the map to my hotel on my phone...",
-    lenaMood: "unsure",
+    lenaMood: "thoughtful",
     npcImage: "none",
     choices: [
       { text: "Open Map on Phone", nextNode: "start_phone_dead" },
@@ -89,7 +89,7 @@ const storyData = {
     background: "vienna_hauptbahnhof.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "Oh no! My phone is completely dead! It won't turn on... How am I going to find my hotel now? I need to ask someone for directions.",
-    lenaMood: "unsure",
+    lenaMood: "amazed",
     npcImage: "none",
     choices: [
       { text: "Look around the station", nextNode: "start_see_man" },
@@ -386,7 +386,7 @@ const storyData = {
     background: "vienna_street.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "Oh my god, I am exhausted... I must have taken a wrong turn somewhere along the way! I got completely lost. It's already completely dark outside, and the street lamps are the only things lighting my way. I finally found the hotel, but it's so late now! My head hurts...",
-    lenaMood: "unsure",
+    lenaMood: "exhausted",
     npcImage: "none",
     choices: [
       { text: "Continue", nextNode: "arrival_failure_hotel" },
@@ -398,7 +398,7 @@ const storyData = {
     background: "vienna_street.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "Still... the hotel looks great. Warm windows, a pretty old façade, a quiet glow from the lobby. I'm exhausted and my head hurts, but at least I made it here. That already feels like enough for today.",
-    lenaMood: "thoughtful",
+    lenaMood: "exhausted",
     npcImage: "none",
     choices: [
       { text: "Enter the hotel", nextNode: "end_chapter_1" },
@@ -675,7 +675,7 @@ const storyData = {
     background: "u_bahn_station.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "I need to go to Stephansdom now, then to a park, and later back to the hotel. That's at least 3 metro trips today. A single ticket (Einzelfahrt) costs €2.40.",
-    lenaMood: "unsure",
+    lenaMood: "thoughtful",
     npcImage: "none",
     choices: [
       { text: "Next", nextNode: "ch3_ticket_machine_intro_fare" },
@@ -687,7 +687,7 @@ const storyData = {
     background: "u_bahn_station.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "I should buy whatever is cheaper for today: either individual tickets or a 24-hour pass. Also, since I'm a tourist and don't have an Austrian school ID, I must buy a standard adult fare.",
-    lenaMood: "unsure",
+    lenaMood: "thoughtful",
     npcImage: "none",
     choices: [
       { text: "Buy a ticket", nextNode: "ch3_ticket_machine" },
@@ -734,7 +734,7 @@ const storyData = {
     background: "u_bahn_station.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "Okay, I'm down at the Neubaugasse station on the U3 line. I need to get to Stephansplatz. But there are two platforms! I need to check the overhead signs and choose the correct direction.",
-    lenaMood: "unsure",
+    lenaMood: "thoughtful",
     npcImage: "none",
     choices: [
       { text: "Look at line map", nextNode: "ch3_platform_map" },
@@ -759,7 +759,7 @@ const storyData = {
     background: "u_bahn_station.jpg",
     speaker: "",
     text: "",
-    lenaMood: "unsure",
+    lenaMood: "thoughtful",
     npcImage: "none",
     dialogueStyle: "u3-platform-boards",
     choices: [],
@@ -831,7 +831,7 @@ const storyData = {
     background: "u_bahn_escalator.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "The escalator is long and crowded. I step on and look at the map on my phone, without noticing that I am blocking the left side.",
-    lenaMood: "unsure",
+    lenaMood: "normal",
     npcImage: "none",
     choices: [
       { text: "Continue", nextNode: "ch3_ubahn_bump" },
@@ -843,7 +843,7 @@ const storyData = {
     background: "u_bahn_escalator.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "Oops! Someone just bumped into me from behind quite hard...",
-    lenaMood: "unsure",
+    lenaMood: "scared",
     npcImage: "none",
     choices: [
       { text: "Turn around", nextNode: "ch3_ubahn_dialogue" },
@@ -1015,7 +1015,7 @@ const storyData = {
     background: "stephansplatz.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "Oh! He scared me! Wait... I read about this online. In the city center, there are ticket sellers dressed as Mozart. They sell very expensive concert tickets to tourists. I have to be careful and say no!",
-    lenaMood: "unsure",
+    lenaMood: "scared",
     npcImage: "mozart_seller_neutral1.png",
     choices: [
       { text: "Reply to him", nextNode: "ch4_mozart_choice" },
@@ -1027,7 +1027,7 @@ const storyData = {
     background: "stephansplatz.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "What should I say to him?",
-    lenaMood: "unsure",
+    lenaMood: "thoughtful",
     npcImage: "mozart_seller_neutral2.png",
     instantText: true,
     choices: [
@@ -1055,7 +1055,7 @@ const storyData = {
     background: "stephansplatz.jpg",
     speaker: "Narrator",
     text: "He does not accept Lena's excuse. \"Keine Zeit? Das Konzert dauert nur zwei Stunden! Kommen Sie!\" He steps closer, and she feels trapped. It is hard to escape politely.",
-    lenaMood: "unsure",
+    lenaMood: "scared",
     npcImage: "mozart_seller_neutral1.png",
     dialogueStyle: "narrator",
     choices: [
@@ -1132,7 +1132,7 @@ const storyData = {
     background: "cathedral.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "Okay, there it is—the official board: 'Verhaltensregeln im Stephansdom'. Let's see if I understand all the rules!",
-    lenaMood: "unsure",
+    lenaMood: "thoughtful",
     npcImage: "none",
     choices: [
       { text: "Continue", nextNode: "ch4_rules_game" },
@@ -1144,7 +1144,7 @@ const storyData = {
     background: "cathedral.jpg",
     speaker: "System",
     text: "",
-    lenaMood: "unsure",
+    lenaMood: "thoughtful",
     npcImage: "none",
     choices: [],
   },
@@ -1352,7 +1352,19 @@ const storyData = {
     lenaMood: "none",
     npcImage: "none",
     choices: [
-      { text: "Start Chapter", nextNode: "ch5_tower_entrance" },
+      { text: "Start Chapter", nextNode: "ch5_tower_plan" },
+    ],
+  },
+
+  ch5_tower_plan: {
+    id: "ch5_tower_plan",
+    background: "cathedral.jpg",
+    speaker: "Lena (Internal Monologue)",
+    text: "So this is the entrance to the South Tower. That's my next challenge: climb all 343 steps and see Vienna from above!",
+    lenaMood: "confident",
+    npcImage: "none",
+    choices: [
+      { text: "Continue", nextNode: "ch5_tower_entrance" },
     ],
   },
 
@@ -1361,7 +1373,7 @@ const storyData = {
     background: "cathedral.jpg",
     speaker: "Lena (Internal Monologue)",
     text: "343 steps all the way to the top? My legs are going to hate me tomorrow, but there's no way I'm leaving Vienna without seeing this view!",
-    lenaMood: "unsure",
+    lenaMood: "confident",
     npcImage: "none",
     choices: [
       { text: "Start climbing", nextNode: "ch5_climb_game" },
@@ -1376,6 +1388,18 @@ const storyData = {
     lenaMood: "exhausted",
     npcImage: "none",
     choices: [],
+  },
+
+  ch5_tower_arrival: {
+    id: "ch5_tower_arrival",
+    background: "cathedral_stairs.jpg",
+    speaker: "Lena",
+    text: "I can't believe I'm already up here. That climb was so exhausting!",
+    lenaMood: "exhausted",
+    npcImage: "none",
+    choices: [
+      { text: "Step onto the viewing platform", nextNode: "ch5_tower_view" },
+    ],
   },
 
   // ── Climax: the view from the Türmerstube ───────────────────────────────

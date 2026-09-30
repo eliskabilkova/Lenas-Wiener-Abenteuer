@@ -1066,7 +1066,7 @@ let cathedralState = {
   const RULES_GAME_TRIGGER_NODE = "ch4_rules_game";
   const RULES_GAME_MISTAKE_THRESHOLD = 3;
   const TOWER_CLIMB_TRIGGER_NODE = "ch5_climb_game";
-  const TOWER_CLIMB_SUCCESS_NODE = "ch5_tower_view";
+  const TOWER_CLIMB_SUCCESS_NODE = "ch5_tower_arrival";
   const TOWER_TOTAL_STEPS = 343;
   const TOWER_CHECKPOINTS = [
     {
@@ -2414,16 +2414,16 @@ let cathedralState = {
   const TAGEBUCH_CONTENT = {
     1: {
       success: {
-        photo: "photo-c1-a.png",
-        alt: "Lena smiling at Vienna Hauptbahnhof",
+        photo: "tagebuch/photo-c1.png",
+        alt: "A nighttime photograph of Lena's hotel in Vienna",
         german:
           "Liebes Tagebuch,\n\nmein erster Tag in Wien! Die Zugfahrt war super und am Bahnhof habe ich mich gut zurechtgefunden. Ich habe sogar schon mit einem Mann Deutsch gesprochen und nach dem Weg gefragt. Ich bin so gespannt auf mein Abenteuer!",
         english:
           "Dear diary,\n\nmy first day in Vienna! The train ride was smooth and I navigated the station well. I even spoke German with a local to ask for directions. I'm so excited for this adventure!",
       },
       challenge: {
-        photo: "photo-c1-b.png",
-        alt: "Lena looking lost near the station",
+        photo: "tagebuch/photo-c1.png",
+        alt: "A nighttime photograph of Lena's hotel in Vienna",
         german:
           "Liebes Tagebuch,\n\nnicht alles ist heute genau nach Plan gelaufen, aber das gehört zum Lernen dazu! Ich bin sicher im Hotel angekommen und bin bereit, morgen weiterzumachen.",
         english:
@@ -2432,16 +2432,16 @@ let cathedralState = {
     },
     2: {
       success: {
-        photo: "photo-c2-a.png",
-        alt: "Lena smiling at the hotel reception",
+        photo: "tagebuch/photo-c2.png",
+        alt: "A photograph of the warmly lit hotel reception desk",
         german:
           "Liebes Tagebuch,\n\ndas Hotel ist sehr schön! Das Einchecken hat super geklappt. Ich habe an der Rezeption Deutsch gesprochen, den Meldezettel ausgefüllt, und jetzt habe ich meinen Zimmerschlüssel. Ich fühle mich wirklich sicher.",
         english:
           "Dear diary,\n\nthe hotel is very nice! Check-in went so smoothly. I spoke German at reception, filled out the Meldezettel, and now I have my room key. I feel really confident.",
       },
       challenge: {
-        photo: "photo-c2-b.png",
-        alt: "Lena looking overwhelmed at the hotel reception",
+        photo: "tagebuch/photo-c2.png",
+        alt: "A photograph of the warmly lit hotel reception desk",
         german:
           "Liebes Tagebuch,\n\nheute war das Einchecken eine echte Übung. An der Rezeption und beim Meldezettel war ich manchmal unsicher, aber ich habe nachgedacht, weiterprobiert und alles geschafft. Jetzt halte ich meinen Zimmerschlüssel in der Hand. Jeder Fehler hat mir gezeigt, was ich schon kann und was ich noch lernen darf — morgen spreche ich bestimmt schon mutiger Deutsch!",
         english:
@@ -2450,16 +2450,16 @@ let cathedralState = {
     },
     3: {
       success: {
-        photo: "photo-c3-a.png",
-        alt: "Lena smiling on the U-Bahn in Vienna",
+        photo: "tagebuch/photo-c3.png",
+        alt: "A photograph of the escalators at Stephansplatz station",
         german:
           "Liebes Tagebuch,\n\nheute bin ich zum ersten Mal mit der U-Bahn gefahren. Die Wiener Linien sind wirklich schnell und praktisch! Ich habe alle Regeln gut verstanden und mich im System orientiert. Wenn man aufpasst, ist das Reisen hier gar nicht so schwer. Ich fühle mich schon fast wie eine echte Wienerin!",
         english:
           "Dear diary,\n\ntoday I rode the underground for the first time. The Vienna transit system is really fast and practical! I understood all the rules and navigated the system well. When you pay attention, traveling here isn't that hard. I almost feel like a real Viennese!",
       },
       challenge: {
-        photo: "photo-c3-b.png",
-        alt: "Lena looking stressed on the U-Bahn in Vienna",
+        photo: "tagebuch/photo-c3.png",
+        alt: "A photograph of the escalators at Stephansplatz station",
         german:
           "Liebes Tagebuch,\n\nheute bin ich mit der U-Bahn gefahren. In einer fremden Großstadt ist alles neu und etwas hektisch – die Fahrkarten, die Richtungen und die vielen Regeln. Nicht alles hat auf Anhieb geklappt, aber ich habe viel gelernt. Am Ende bin ich gut am Stephansplatz angekommen!",
         english:
@@ -2468,16 +2468,16 @@ let cathedralState = {
     },
     4: {
       success: {
-        photo: "photo-c4-a.png",
-        alt: "Lena smiling inside Stephansdom",
+        photo: "tagebuch/photo-c4.png",
+        alt: "A photograph of the illuminated interior of Stephansdom",
         german:
           "Liebes Tagebuch,\n\nheute war ich im Stephansdom, dem Herzen Wiens. Am Eingang war ich etwas nervös, aber alles hat gut geklappt. Drinnen waren das bunte Licht, der Kerzenduft und die tiefe Stille einfach magisch. Ich werde jeden Tag mutiger. Jetzt warten 343 Stufen im Südturm auf mich — ich bin bereit!",
         english:
           "Dear diary,\n\ntoday I visited Stephansdom, the heart of Vienna. I was a little nervous at the entrance, but everything went well. Inside, the colourful light, the scent of candles, and the deep silence felt magical. I'm becoming braver every day. Now 343 steps in the South Tower are waiting for me — I'm ready!",
       },
       challenge: {
-        photo: "photo-c4-b.png",
-        alt: "Lena looking flustered at the Stephansdom entrance",
+        photo: "tagebuch/photo-c4.png",
+        alt: "A photograph of the illuminated interior of Stephansdom",
         german:
           "Liebes Tagebuch,\n\nder Start im Stephansdom war etwas holprig: Am Eingang war ich verwirrt und machte Fehler. Trotzdem ließ ich mich nicht entmutigen. Ich zündete eine Kerze an, genoss die Stille und lernte: Fehler gehören dazu, solange man weitermacht. Jetzt warten 343 Stufen im Südturm auf mich — und ich gebe nicht auf!",
         english:
@@ -2486,16 +2486,16 @@ let cathedralState = {
     },
     5: {
       success: {
-        photo: "photo-c5-a.png",
-        alt: "Lena smiling at the top of the Stephansdom tower",
+        photo: "tagebuch/photo-c5.png",
+        alt: "A photograph of Vienna from the tower of Stephansdom",
         german:
           "Liebes Tagebuch,\n\n343 Stufen geschafft! Ich stehe oben auf dem Südturm und ganz Wien liegt mir zu Füßen. Dieser Aufstieg ist wie meine ganze Reise: am Anfang unsicher, mit jedem Schritt mutiger — und jetzt dieser weite Blick. Sprachen lernen ist genau so. Jede Mühe lohnt sich. Ich habe es wirklich geschafft!",
         english:
           "Dear diary,\n\n343 steps — done! I'm standing at the top of the South Tower and all of Vienna lies at my feet. This climb is like my whole journey: unsure at the start, braver with every step — and now this wide view. Learning a language is exactly the same. Every bit of effort is worth it. I really did it!",
       },
       challenge: {
-        photo: "photo-c5-a.png",
-        alt: "Lena smiling at the top of the Stephansdom tower",
+        photo: "tagebuch/photo-c5.png",
+        alt: "A photograph of Vienna from the tower of Stephansdom",
         german:
           "Liebes Tagebuch,\n\n343 Stufen geschafft! Ich stehe oben auf dem Südturm und ganz Wien liegt mir zu Füßen. Dieser Aufstieg ist wie meine ganze Reise: am Anfang unsicher, mit jedem Schritt mutiger — und jetzt dieser weite Blick. Sprachen lernen ist genau so. Jede Mühe lohnt sich. Ich habe es wirklich geschafft!",
         english:
@@ -2706,7 +2706,7 @@ let cathedralState = {
     const germanText = document.createElement("p");
     germanText.className = "tagebuch-card__text tagebuch-card__text--german";
     if (isLetter) germanText.classList.add("tagebuch-card__text--letter");
-    germanText.textContent = variant.german;
+    germanText.textContent = variant.german.replace("\n\n", "\n");
     card.appendChild(germanText);
 
     const englishLabel = document.createElement("p");
@@ -2718,7 +2718,7 @@ let cathedralState = {
     englishText.className = "tagebuch-card__text tagebuch-card__text--english";
     if (isLetter) englishText.classList.add("tagebuch-card__text--letter");
     const englishItalic = document.createElement("i");
-    englishItalic.textContent = variant.english;
+    englishItalic.textContent = variant.english.replace("\n\n", "\n");
     englishText.appendChild(englishItalic);
     card.appendChild(englishText);
 
@@ -5762,6 +5762,16 @@ let cathedralState = {
   function selectChoice(choiceText, nextNodeId) {
     recordAnswer(choiceText, nextNodeId);
     hideChoices();
+
+    if (nextNodeId === "ch3_platform_map" && !els.lenaContainer.classList.contains("is-hidden")) {
+      els.lenaContainer.classList.add("is-leaving-for-map", "is-hidden");
+      window.setTimeout(() => {
+        routeToNode(nextNodeId);
+        els.lenaContainer.classList.remove("is-leaving-for-map");
+      }, 220);
+      return;
+    }
+
     routeToNode(nextNodeId);
   }
 

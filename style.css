@@ -667,6 +667,10 @@ button {
   pointer-events: none;
 }
 
+.character--lena.is-leaving-for-map {
+  transition-duration: 0.18s;
+}
+
 .character.is-speaking .character__sprite {
   filter: brightness(1.08) drop-shadow(0 0 18px rgba(124, 108, 240, 0.45));
 }
@@ -2611,9 +2615,33 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+  background: #151326;
+}
+
+.start-menu::before,
+.start-menu::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.start-menu::before {
+  background: url("backgrounds/title_screen.png?v=1") center / cover no-repeat;
+}
+
+.start-menu::after {
   background:
-    linear-gradient(160deg, rgba(20, 14, 40, 0.72) 0%, rgba(10, 8, 24, 0.88) 100%),
-    linear-gradient(135deg, #3a2d6e 0%, #6b4a9a 40%, #c47840 100%);
+    linear-gradient(180deg, rgba(10, 8, 24, 0.1) 0%, rgba(10, 8, 24, 0.48) 100%),
+    linear-gradient(90deg, rgba(20, 14, 40, 0.2) 0%, rgba(10, 8, 24, 0.04) 72%);
+}
+
+.start-menu--chapter-select::after {
+  background:
+    linear-gradient(180deg, rgba(10, 8, 24, 0.3) 0%, rgba(10, 8, 24, 0.68) 100%),
+    linear-gradient(90deg, rgba(20, 14, 40, 0.34) 0%, rgba(10, 8, 24, 0.18) 72%);
 }
 
 .start-menu[hidden] {
@@ -2621,6 +2649,8 @@ button {
 }
 
 .start-menu__content {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2630,13 +2660,15 @@ button {
 }
 
 .start-menu__title {
-  font-size: clamp(2rem, 7vw, 3.8rem);
+  font-size: clamp(2.3rem, 7.5vw, 4.25rem);
   font-weight: 800;
   line-height: 1.15;
   color: #fff;
   text-shadow:
-    0 0 40px rgba(196, 120, 64, 0.6),
-    0 2px 12px rgba(0, 0, 0, 0.7);
+    0 0 8px rgba(255, 255, 255, 0.48),
+    0 0 24px rgba(154, 132, 255, 0.62),
+    0 0 52px rgba(196, 120, 64, 0.46),
+    0 3px 14px rgba(0, 0, 0, 0.74);
   letter-spacing: 0.02em;
 }
 
@@ -2711,10 +2743,10 @@ button {
 #start-chapters-btn,
 #start-vokabeltrainer-btn {
   flex: 0 0 100%;
-  background: transparent;
-  color: rgba(255, 255, 255, 0.62);
+  background: rgba(22, 15, 48, 0.54);
+  color: rgba(255, 255, 255, 0.9);
   font-weight: 700;
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(215, 207, 255, 0.34);
   border-radius: 10px;
   box-shadow: none;
   text-transform: uppercase;
@@ -2797,13 +2829,13 @@ button {
   min-height: 5rem;
   padding: 1.25rem 1.4rem;
   border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(215, 207, 255, 0.26);
+  background: rgba(22, 15, 48, 0.68);
   color: #fff;
   font-family: var(--font);
   text-align: left;
   cursor: pointer;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.16);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
   transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
 }
 
@@ -4306,15 +4338,10 @@ button {
 }
 
 .tagebuch-card__photo {
-  width: min(78vw, 360px);
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background:
-    radial-gradient(circle at 50% 35%, rgba(255, 255, 255, 0.24), transparent 32%),
-    linear-gradient(135deg, rgba(124, 108, 240, 0.34), rgba(196, 120, 64, 0.28));
-  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.34);
+  width: min(86vw, 540px);
+  aspect-ratio: 155 / 101;
+  object-fit: contain;
+  filter: drop-shadow(0 0 16px rgba(124, 108, 240, 0.32));
 }
 
 .tagebuch-card__text {
