@@ -274,9 +274,9 @@ let cathedralState = {
   };
 
   const NPC_MAP = {
-    none: { visible: false, character: "elder", name: "Viennese Man", mood: "neutral" },
-    "old_man_neutral.png": { visible: true, character: "elder", name: "Viennese Man", mood: "neutral" },
-    "old_man_confused.png": { visible: true, character: "elder", name: "Viennese Man", mood: "confused" },
+    none: { visible: false, character: "elder", name: "Wiener Mann", mood: "neutral" },
+    "old_man_neutral.png": { visible: true, character: "elder", name: "Wiener Mann", mood: "neutral" },
+    "old_man_confused.png": { visible: true, character: "elder", name: "Wiener Mann", mood: "confused" },
     "receptionist_neutral1.png": { visible: true, character: "mira", name: "Rezeptionistin", mood: "neutral1" },
     "receptionist_neutral2.png": { visible: true, character: "mira", name: "Rezeptionistin", mood: "neutral2" },
     "receptionist_confused.png": { visible: true, character: "mira", name: "Rezeptionistin", mood: "confused" },
@@ -891,8 +891,8 @@ let cathedralState = {
   const PPP_PACKS = {
     ch1_ppp_practice: {
       successNode: "start_ask_hotel",
-      doneButton: "Approach the man",
-      doneTitle: "Lena feels confident now!",
+      doneButton: "Zum Mann gehen",
+      doneTitle: "Lena fühlt sich jetzt sicher!",
       vocab: CHAPTER1_PPP_VOCAB,
       vocabChapter: "chapter1",
       vocabFlag: "chapter1Ppp",
@@ -901,20 +901,20 @@ let cathedralState = {
       step1Instruction: "Match the German question words with their English meanings.",
       step1Wrong: "Wo = where · Wohin = where to · Wie = how · Wann = when · Wer = who · Warum = why",
       sentences: CH1_PPP_SENTENCES,
-      step2Title: "Sentence Building",
+      step2Title: "Sätze bauen",
       blanks: CH1_PPP_WFRAGEN_BLANKS,
-      step3Title: "W-Fragen in Context",
+      step3Title: "W-Fragen im Kontext",
       matching2: CH1_PPP_DIRECTIONS,
-      step4Title: "Directions",
+      step4Title: "Wegbeschreibung",
       step4Instruction: "Match the German direction phrases with their English meanings.",
       scenarios: CH1_PPP_DIRECTION_SCENARIOS,
-      step5Title: "Directions in Context",
+      step5Title: "Wegbeschreibung im Kontext",
       step5Instruction: "Choose the German phrase that fits the situation.",
     },
     ch2_ppp_practice: {
       successNode: "ch2_reception_greet",
-      doneButton: "Approach reception",
-      doneTitle: "Lena feels ready to approach the reception desk!",
+      doneButton: "Zur Rezeption gehen",
+      doneTitle: "Lena ist bereit für die Rezeption!",
       vocab: CHAPTER2_PPP_VOCAB,
       vocabChapter: "chapter2",
       vocabFlag: "chapter2Ppp",
@@ -922,32 +922,32 @@ let cathedralState = {
       flow: [
         {
           type: "matching",
-          title: "Check-in words",
+          title: "Check-in-Wörter",
           instruction: "Match the German hotel words with their English meanings.",
           pairs: CH2_PPP_VOCAB_SETS[0],
         },
         {
           type: "matching",
-          title: "Check-in words",
+          title: "Check-in-Wörter",
           instruction: "Match the German hotel words with their English meanings.",
           pairs: CH2_PPP_VOCAB_SETS[1],
         },
         {
           type: "matching",
-          title: "Modal verbs",
+          title: "Modalverben",
           instruction: "Match each German modal verb with its English translation.",
           pairs: CH2_PPP_MODALS,
           shuffleLeft: true,
         },
         {
           type: "blanks",
-          title: "Modal Verbs in Context",
+          title: "Modalverben im Kontext",
           instruction: "Choose the modal verb that fits the sentence.",
           tasks: CH2_PPP_MODAL_BLANKS,
         },
         {
           type: "sentences",
-          title: "Sentence Building",
+          title: "Sätze bauen",
           instruction: "Form the correct German sentence using proper word order.",
           tasks: CH2_PPP_SENTENCES,
         },
@@ -955,8 +955,8 @@ let cathedralState = {
     },
     ch3_ppp_practice: {
       successNode: "ch3_morning_intro_transport",
-      doneButton: "Head to the station",
-      doneTitle: "Lena feels ready to figure out the local transport!",
+      doneButton: "Zur Station gehen",
+      doneTitle: "Lena ist bereit für die U-Bahn!",
       vocab: CHAPTER3_PPP_VOCAB,
       vocabChapter: "chapter3",
       vocabFlag: "chapter3Ppp",
@@ -964,21 +964,21 @@ let cathedralState = {
       flow: [
         {
           type: "matching",
-          title: "Transport Vocabulary",
+          title: "Verkehrsmittel-Vokabeln",
           instruction: "Match the German terms with their English meanings.",
           pairs: CH3_PPP_VOCAB_SETS[0],
           shuffleLeft: true,
         },
         {
           type: "matching",
-          title: "Transport Vocabulary",
+          title: "Verkehrsmittel-Vokabeln",
           instruction: "Match the German terms with their English meanings.",
           pairs: CH3_PPP_VOCAB_SETS[1],
           shuffleLeft: true,
         },
         {
           type: "matching",
-          title: "Transport Vocabulary",
+          title: "Verkehrsmittel-Vokabeln",
           instruction: "Match the German terms with their English meanings.",
           pairs: CH3_PPP_VOCAB_SETS[2],
           shuffleLeft: true,
@@ -987,8 +987,8 @@ let cathedralState = {
     },
     ch4_ppp_practice: {
       successNode: "ch4_rules_intro",
-      doneButton: "Proceed to the entrance",
-      doneTitle: "Lena feels confident and ready to step inside Stephansdom.",
+      doneButton: "Zum Eingang gehen",
+      doneTitle: "Lena fühlt sich sicher und ist bereit für den Stephansdom.",
       vocab: CHAPTER4_PPP_VOCAB,
       vocabChapter: "chapter4",
       vocabFlag: "chapter4Ppp",
@@ -996,35 +996,35 @@ let cathedralState = {
       flow: [
         {
           type: "matching",
-          title: "Stephansdom Vocabulary & Rules Practice",
+          title: "Stephansdom: Vokabeln & Regeln",
           instruction: "Match the German terms with their English meanings.",
           pairs: CH4_PPP_VOCAB_SETS[0],
           shuffleLeft: true,
         },
         {
           type: "matching",
-          title: "Stephansdom Vocabulary & Rules Practice",
+          title: "Stephansdom: Vokabeln & Regeln",
           instruction: "Match the German terms with their English meanings.",
           pairs: CH4_PPP_VOCAB_SETS[1],
           shuffleLeft: true,
         },
         {
           type: "matching",
-          title: "Stephansdom Vocabulary & Rules Practice",
+          title: "Stephansdom: Vokabeln & Regeln",
           instruction: "Match the German terms with their English meanings.",
           pairs: CH4_PPP_VOCAB_SETS[2],
           shuffleLeft: true,
         },
         {
           type: "etiquette",
-          title: "Is this allowed or forbidden in Stephansdom?",
-          instruction: "Choose ALLOWED or FORBIDDEN for each rule.",
+          title: "Erlaubt oder verboten im Stephansdom?",
+          instruction: "Wähle Erlaubt oder Verboten für jede Regel.",
           rules: ETIQUETTE_ROUNDS[0],
         },
         {
           type: "etiquette",
-          title: "Is this allowed or forbidden in Stephansdom?",
-          instruction: "Choose ALLOWED or FORBIDDEN for each rule.",
+          title: "Erlaubt oder verboten im Stephansdom?",
+          instruction: "Wähle Erlaubt oder Verboten für jede Regel.",
           rules: ETIQUETTE_ROUNDS[1],
         },
       ],
@@ -1075,7 +1075,7 @@ let cathedralState = {
       next: 200,
       animateMs: 1400,
       monologue:
-        "Whew, 100 steps done! My legs are definitely feeling it, and these narrow spiral stairs just keep going.",
+        "Puh, 100 Stufen geschafft! Meine Beine spüren es schon, und diese enge Wendeltreppe geht immer weiter.",
       prompt: "Der Stephansdom ist hoch, aber der Südturm ist noch [ _______ ].",
       before: "Der Stephansdom ist hoch, aber der Südturm ist noch ",
       after: ".",
@@ -1092,7 +1092,7 @@ let cathedralState = {
       next: 300,
       animateMs: 1400,
       monologue:
-        "200 steps down! Taking a quick breather by a small stone window... wow, the view over Vienna's rooftops is incredible!",
+        "200 Stufen! Ich mache kurz Pause an einem kleinen Steinfenster... wow, der Blick über die Dächer von Wien ist unglaublich!",
       prompt: "Die Aussicht hier ist gut, aber ganz oben ist sie sicher [ _______ ]!",
       before: "Die Aussicht hier ist gut, aber ganz oben ist sie sicher ",
       after: "!",
@@ -1109,7 +1109,7 @@ let cathedralState = {
       next: 343,
       animateMs: 900,
       monologue:
-        "300 steps! I can feel a cool breeze rushing down through the doorway. Almost at the top—just a final push!",
+        "300 Stufen! Ich spüre einen kühlen Wind von oben durch die Tür. Fast geschafft – nur noch ein letztes Stück!",
       prompt: "Das war der [ _______ ] Aufstieg meines Lebens, aber es lohnt sich!",
       before: "Das war der ",
       after: " Aufstieg meines Lebens, aber es lohnt sich!",
@@ -1968,7 +1968,7 @@ let cathedralState = {
     const title = document.createElement("h2");
     title.id = "u3-map-overlay-title";
     title.className = "u3-map-overlay__title";
-    title.textContent = "U3 Liniennetz / Line Map";
+    title.textContent = "U3 Liniennetz";
     const closeX = document.createElement("button");
     closeX.type = "button";
     closeX.className = "u3-map-overlay__x";
@@ -1986,7 +1986,7 @@ let cathedralState = {
     const closeBtn = document.createElement("button");
     closeBtn.type = "button";
     closeBtn.className = "u3-map-overlay__close";
-    closeBtn.textContent = "Close";
+    closeBtn.textContent = "Schließen";
     closeBtn.addEventListener("click", () => setU3MapOpen(false));
 
     frame.appendChild(header);
@@ -2008,8 +2008,8 @@ let cathedralState = {
     btn.innerHTML = `
       <span class="u3-map-toggle__icon" aria-hidden="true">🗺️</span>
       <span class="u3-map-toggle__copy">
-        <span class="u3-map-toggle__title">Map</span>
-        <span class="u3-map-toggle__sub">View Line Map</span>
+        <span class="u3-map-toggle__title">Karte</span>
+        <span class="u3-map-toggle__sub">Liniennetz ansehen</span>
       </span>
     `;
     btn.addEventListener("click", (event) => {
@@ -2050,7 +2050,7 @@ let cathedralState = {
     head.className = "u3-platform-overlay__head";
     const title = document.createElement("h2");
     title.className = "u3-platform-overlay__title";
-    title.textContent = "Choose platform direction:";
+    title.textContent = "Richtung wählen:";
     head.appendChild(title);
     head.appendChild(createU3MapToggle());
 
@@ -2101,7 +2101,8 @@ let cathedralState = {
   }
 
   function isNarratorSpeaker(speaker) {
-    return (speaker || "").trim() === "Narrator";
+    const name = (speaker || "").trim();
+    return name === "Erzähler" || name === "Narrator";
   }
 
   function applyDialogueStyle(node) {
@@ -2282,7 +2283,7 @@ let cathedralState = {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "chapter-transition__btn";
-    btn.textContent = "Check Route to Hotel";
+    btn.textContent = "Weg zum Hotel prüfen";
     btn.addEventListener("click", () => {
       closeCh1ReviewThought();
       goToNode("start_quiz_transport");
@@ -2376,7 +2377,7 @@ let cathedralState = {
 
   function getBlackScreenTitleText(node) {
     if (node.id === "chapter_2_teaser") {
-      return "Chapter 2: Check-in";
+      return "Kapitel 2: Check-in";
     }
 
     return node.text;
@@ -2609,15 +2610,15 @@ let cathedralState = {
   }
 
   const NEXT_CHAPTER_MAP = {
-    1: { label: "Chapter 2 - Check-in", nodeId: "chapter_2_teaser", startLabel: "Start Chapter 2: Check-in" },
-    2: { label: "Chapter 3 - Unterwegs", nodeId: "chapter_3_title", startLabel: "Start Chapter 3: Unterwegs" },
-    3: { label: "Chapter 4: Das Herz von Wien", nodeId: "chapter_4_title", startLabel: "Start Chapter 4: Das Herz von Wien" },
+    1: { label: "Kapitel 2 - Check-in", nodeId: "chapter_2_teaser", startLabel: "Kapitel 2 starten: Check-in" },
+    2: { label: "Kapitel 3 - Unterwegs", nodeId: "chapter_3_title", startLabel: "Kapitel 3 starten: Unterwegs" },
+    3: { label: "Kapitel 4: Das Herz von Wien", nodeId: "chapter_4_title", startLabel: "Kapitel 4 starten: Das Herz von Wien" },
     4: {
-      label: "Chapter 5: Dem Himmel so nah",
+      label: "Kapitel 5: Dem Himmel so nah",
       nodeId: "chapter_5_title",
-      startLabel: "Start Chapter 5: Dem Himmel so nah",
+      startLabel: "Kapitel 5 starten: Dem Himmel so nah",
     },
-    5: { label: "Chapter 6: Epilog", nodeId: "chapter_6_title", startLabel: "Start Chapter 6: Epilog" },
+    5: { label: "Kapitel 6: Epilog", nodeId: "chapter_6_title", startLabel: "Kapitel 6 starten: Epilog" },
   };
 
   function goToNextChapterOrMenu(completedChapter) {
@@ -2682,7 +2683,7 @@ let cathedralState = {
 
     const title = document.createElement("p");
     title.className = "tagebuch-card__eyebrow";
-    title.textContent = `Tagebuch — Chapter ${chapterNumber}`;
+    title.textContent = `Tagebuch — Kapitel ${chapterNumber}`;
     card.appendChild(title);
 
     const heading = document.createElement("h2");
@@ -2728,7 +2729,7 @@ let cathedralState = {
 
     btn.textContent =
       NEXT_CHAPTER_MAP[chapterNumber]?.startLabel ||
-      (chapterNumber < TOTAL_CHAPTERS ? `Start Chapter ${chapterNumber + 1}` : "Finish");
+      (chapterNumber < TOTAL_CHAPTERS ? `Kapitel ${chapterNumber + 1} starten` : "Abschließen");
       btn.addEventListener("click", () => {
         saveChapterProgress(chapterNumber, strikes);
         goToNextChapterOrMenu(chapterNumber);
@@ -3119,13 +3120,13 @@ let cathedralState = {
 
     const intro = document.createElement("p");
     intro.className = "meldezettel-tutorial__text";
-    intro.textContent = "Fill out the registration form with Lena's personal details.";
+    intro.textContent = "Fülle den Meldezettel mit Lenas Daten aus.";
     panel.appendChild(intro);
 
     const startBtn = document.createElement("button");
     startBtn.type = "button";
     startBtn.className = "meldezettel-tutorial__start";
-    startBtn.textContent = "Start";
+    startBtn.textContent = "Starten";
     startBtn.addEventListener("click", closeMeldezettelTutorial);
     panel.appendChild(startBtn);
 
@@ -3740,7 +3741,7 @@ let cathedralState = {
     if (!list) return;
 
     const roundNumber = etiquetteGame.roundIndex + 1;
-    if (roundLabel) roundLabel.textContent = `ROUND ${roundNumber} / ${ETIQUETTE_ROUNDS.length}`;
+    if (roundLabel) roundLabel.textContent = `RUNDE ${roundNumber} / ${ETIQUETTE_ROUNDS.length}`;
     if (title) title.textContent = "Erlaubt oder Verboten?";
 
     etiquetteGame.solved = {};
@@ -3755,7 +3756,7 @@ let cathedralState = {
       finishEtiquetteGame();
     };
     fillEtiquetteList(list, etiquetteGame.rules, overlay);
-    setEtiquetteFeedback(overlay, "Choose ALLOWED or FORBIDDEN for each rule.", "");
+    setEtiquetteFeedback(overlay, "Wähle Erlaubt oder Verboten für jede Regel.", "");
   }
 
   function currentEtiquetteRoundFromIndex() {
@@ -3792,7 +3793,7 @@ let cathedralState = {
 
     etiquetteGame.locked = true;
     btn.classList.add("is-wrong");
-    setEtiquetteFeedback(overlay, "Noch einmal versuchen. / Try again.", "wrong");
+    setEtiquetteFeedback(overlay, "Noch einmal versuchen.", "wrong");
     window.setTimeout(() => {
       btn.classList.remove("is-wrong");
       if (etiquetteGame.active) etiquetteGame.locked = false;
@@ -3831,7 +3832,7 @@ let cathedralState = {
 
     const instruction = document.createElement("p");
     instruction.className = "etiquette-game__instruction";
-    instruction.textContent = "Is this allowed or forbidden in Stephansdom?";
+    instruction.textContent = "Ist das im Stephansdom erlaubt oder verboten?";
     panel.appendChild(instruction);
 
     const list = document.createElement("div");
@@ -4410,7 +4411,7 @@ let cathedralState = {
     ui.resultLabel.textContent = title;
     ui.resultText.textContent = text || "";
     ui.resultText.hidden = !text;
-    ui.continueBtn.textContent = correct ? "Continue" : "Retry";
+    ui.continueBtn.textContent = correct ? "Weiter" : "Noch einmal";
     ui.continueBtn.onclick = () => {
       hideCh1PppResult(overlay);
       onContinue();
@@ -4452,7 +4453,7 @@ let cathedralState = {
     ui.checkBtn.hidden = false;
     ui.checkBtn.disabled = false;
     ui.checkBtn.className = "ch1-ppp__primary";
-    ui.checkBtn.textContent = pack.doneButton || "Continue";
+    ui.checkBtn.textContent = pack.doneButton || "Weiter";
     ui.checkBtn.onclick = finishCh1PppPractice;
     const dev = overlay.querySelector(".ch1-ppp__dev");
     if (dev) dev.hidden = true;
@@ -4765,7 +4766,7 @@ let cathedralState = {
     sentence.querySelector(".ch1-ppp__gap")?.classList.add("is-wrong");
     showCh1PppResult(overlay, {
       correct: false,
-      title: "Incorrect",
+      title: "Falsch",
       text: "",
       onContinue: () => renderCh1PppStep2Blank(overlay),
     });
@@ -4788,7 +4789,7 @@ let cathedralState = {
     ui.checkBtn.hidden = false;
     ui.checkBtn.disabled = true;
     ui.checkBtn.className = "ch1-ppp__primary";
-    ui.checkBtn.textContent = "Check";
+    ui.checkBtn.textContent = "Prüfen";
     ui.checkBtn.onclick = () => handleCh1PppOrderCheck(overlay);
 
     const card = document.createElement("div");
@@ -4886,7 +4887,7 @@ let cathedralState = {
     window.setTimeout(() => built.classList.remove("is-wrong"), 400);
     showCh1PppResult(overlay, {
       correct: false,
-      title: "Incorrect",
+      title: "Falsch",
       text: task.wrongRule || "",
       onContinue: () => renderCh1PppSentence(overlay),
     });
@@ -5104,7 +5105,7 @@ let cathedralState = {
       ui.checkBtn.hidden = false;
       ui.checkBtn.disabled = false;
       ui.checkBtn.className = "ch1-ppp__primary";
-      ui.checkBtn.textContent = "Continue";
+      ui.checkBtn.textContent = "Weiter";
       ui.checkBtn.onclick = () => {
         ch1Ppp.scenarioIndex += 1;
         renderCh1PppStep5(overlay);
@@ -5184,7 +5185,7 @@ let cathedralState = {
     result.innerHTML = `
       <p class="ch1-ppp__result-label" id="ch1-ppp-result-label"></p>
       <p class="ch1-ppp__result-text" id="ch1-ppp-result-text"></p>
-      <button type="button" class="ch1-ppp__primary" id="ch1-ppp-continue">Continue</button>
+      <button type="button" class="ch1-ppp__primary" id="ch1-ppp-continue">Weiter</button>
     `;
     panel.appendChild(result);
 
@@ -5213,12 +5214,12 @@ let cathedralState = {
 
   function getHotelNavStepMeta(nodeId) {
     if (nodeId === "start_quiz_transport") {
-      return { step: 1, title: "How do you reach the metro from here?" };
+      return { step: 1, title: "Wie komme ich von hier zur U-Bahn?" };
     }
     if (nodeId.startsWith("quiz_stop_")) {
-      return { step: 2, title: "Which line and stop do you take?" };
+      return { step: 2, title: "Welche Linie und welche Station nehme ich?" };
     }
-    return { step: 3, title: "Where is the hotel when you exit the metro station?" };
+    return { step: 3, title: "Wo ist das Hotel, wenn ich aus der U-Bahn-Station komme?" };
   }
 
   function closeHotelNavGame() {
@@ -5297,7 +5298,7 @@ let cathedralState = {
       hintBtn.className = "hotel-nav__hint-btn";
       hintBtn.setAttribute("aria-expanded", "false");
       hintBtn.setAttribute("aria-controls", "hotel-nav-hint-pop");
-      hintBtn.innerHTML = '<span aria-hidden="true">💡</span> Hint';
+      hintBtn.innerHTML = '<span aria-hidden="true">💡</span> Tipp';
       hintBtn.addEventListener("click", (event) => {
         event.stopPropagation();
         setHotelNavHintOpen(overlay, !hotelNav.hintOpen);
@@ -5313,7 +5314,7 @@ let cathedralState = {
         els.directionHintPanel?.querySelector(".direction-hint__quote")?.textContent?.trim() ||
         OLD_MAN_DIRECTIONS;
       hintPop.innerHTML = `
-        <p class="hotel-nav__hint-kicker">Viennese Man</p>
+        <p class="hotel-nav__hint-kicker">Wiener Mann</p>
         <p class="hotel-nav__hint-quote"></p>
       `;
       hintPop.querySelector(".hotel-nav__hint-quote").textContent = quote;
@@ -5400,7 +5401,7 @@ let cathedralState = {
     const summary = document.createElement("p");
     summary.className = "celebration-card__summary";
     summary.textContent =
-      "You conquered your fear, survived Vienna, and proved that language isn't about perfection—it's about the courage to speak.";
+      "Du hattest Angst, aber du hast Wien geschafft. Eine Sprache muss nicht perfekt sein. Man braucht nur den Mut, zu sprechen.";
     card.appendChild(summary);
 
     const actions = document.createElement("div");
@@ -5409,7 +5410,7 @@ let cathedralState = {
     const vocabBtn = document.createElement("button");
     vocabBtn.type = "button";
     vocabBtn.className = "celebration-card__btn";
-    vocabBtn.textContent = "Vocab Practice";
+    vocabBtn.textContent = "Vokabeltraining";
     vocabBtn.addEventListener("click", () => {
       removeCelebrationScreen();
       showStartMainActions();
@@ -5421,7 +5422,7 @@ let cathedralState = {
     const menuBtn = document.createElement("button");
     menuBtn.type = "button";
     menuBtn.className = "celebration-card__btn celebration-card__btn--secondary";
-    menuBtn.textContent = "Main Menu";
+    menuBtn.textContent = "Hauptmenü";
     menuBtn.addEventListener("click", () => {
       removeCelebrationScreen();
       returnToStartMenu();
@@ -5834,12 +5835,12 @@ let cathedralState = {
   };
 
   const CHAPTER_LABELS = {
-    1: "Chapter 1 - Ankunft",
-    2: "Chapter 2 - Check-in",
-    3: "Chapter 3 - Unterwegs",
-    4: "Chapter 4: Das Herz von Wien",
-    5: "Chapter 5: Dem Himmel so nah",
-    6: "Chapter 6: Epilog",
+    1: "Kapitel 1 - Ankunft",
+    2: "Kapitel 2 - Check-in",
+    3: "Kapitel 3 - Unterwegs",
+    4: "Kapitel 4: Das Herz von Wien",
+    5: "Kapitel 5: Dem Himmel so nah",
+    6: "Kapitel 6: Epilog",
   };
 
   function getCurrentChapterNumber() {
@@ -5901,7 +5902,7 @@ let cathedralState = {
     resetGameState();
     gameState.hasSeenVokabelTutorial = false;
     state.nodeId = START_NODE;
-    els.chapterLabel.textContent = "Chapter 1 - Ankunft";
+    els.chapterLabel.textContent = "Kapitel 1 - Ankunft";
     goToNode(START_NODE);
     hideStartMenu();
   }
@@ -6073,7 +6074,7 @@ let cathedralState = {
 
     vokabeltrainer.locked = false;
     const questionNumber = vokabeltrainer.index + 1;
-    els.vtProgressLabel.textContent = `Question ${questionNumber} / ${total}`;
+    els.vtProgressLabel.textContent = `Frage ${questionNumber} / ${total}`;
     els.vtProgressFill.style.width = `${(questionNumber / total) * 100}%`;
     els.vtGermanWord.textContent = current.german;
     els.vtGermanWord.classList.remove("is-pop");
@@ -6113,7 +6114,7 @@ let cathedralState = {
   function showTrainerResults() {
     const total = vokabeltrainer.queue.length;
     const correct = vokabeltrainer.correctCount;
-    els.vtScore.textContent = `${correct} / ${total} Correct!`;
+    els.vtScore.textContent = `${correct} / ${total} richtig!`;
     els.vtMessage.textContent = getTrainerEncouragement(correct, total);
     showTrainerView("results");
   }
@@ -6185,7 +6186,7 @@ let cathedralState = {
     showStartMainActions();
 
     state.nodeId = START_NODE;
-    els.chapterLabel.textContent = "Chapter 1 - Ankunft";
+    els.chapterLabel.textContent = "Kapitel 1 - Ankunft";
     els.dialogueBox.hidden = true;
     els.startMenu.hidden = false;
     els.npcContainer.style.display = "none";

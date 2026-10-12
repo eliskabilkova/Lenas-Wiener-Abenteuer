@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,16 +19,16 @@
       <div class="start-menu__content">
         <h1 class="start-menu__title" id="start-menu-title">Lenas Wiener<br>Abenteuer</h1>
         <div id="start-main-actions" class="start-menu__actions">
-          <button type="button" id="start-game-btn">Start Game</button>
-          <button type="button" id="start-chapters-btn">Select Chapter</button>
-          <button type="button" id="start-vokabeltrainer-btn">Vocabulary Practice</button>
+          <button type="button" id="start-game-btn">Spiel starten</button>
+          <button type="button" id="start-chapters-btn">Kapitel wählen</button>
+          <button type="button" id="start-vokabeltrainer-btn">Vokabeltraining</button>
         </div>
 
         <div id="start-chapters-selection" class="start-chapters-selection" hidden>
           <div class="chapter-select" role="region" aria-labelledby="chapter-select-heading">
-            <button type="button" id="start-chapters-back-btn" class="chapter-select__back">← Back</button>
+            <button type="button" id="start-chapters-back-btn" class="chapter-select__back">← Zurück</button>
 
-            <h2 class="chapter-select__heading" id="chapter-select-heading">Select Chapter</h2>
+            <h2 class="chapter-select__heading" id="chapter-select-heading">Kapitel wählen</h2>
 
             <div class="chapter-select__list" id="chapter-select-grid">
               <button type="button" class="chapter-card" data-chapter-node="chapter_1_title" data-chapter="1">
@@ -72,7 +72,7 @@
         <div id="vt-select" class="vokabeltrainer__view">
           <header class="vokabeltrainer__header">
             <h1 class="vokabeltrainer__title" id="vt-title">Vokabeltrainer</h1>
-            <p class="vokabeltrainer__subtitle subtitle">Choose Practice Set</p>
+            <p class="vokabeltrainer__subtitle subtitle">Übungsset wählen</p>
           </header>
           <div class="vokabeltrainer__set-list">
             <button type="button" class="vokabeltrainer__set-btn" data-vt-set="1">Kapitel 1: Ankunft</button>
@@ -83,29 +83,29 @@
             <button type="button" class="vokabeltrainer__set-btn" data-vt-set="6">Kapitel 6: Epilog</button>
             <button type="button" id="alle-kapitel-btn" class="vokabeltrainer__set-btn vokabeltrainer__set-btn--mixed" data-vt-set="mixed">Alle Kapitel (Mix)</button>
           </div>
-          <button type="button" id="vt-back-menu-btn" class="vokabeltrainer__action vokabeltrainer__action--secondary">Back to Menu</button>
+          <button type="button" id="vt-back-menu-btn" class="vokabeltrainer__action vokabeltrainer__action--secondary">Zurück zum Menü</button>
         </div>
 
         <div id="vt-quiz" class="vokabeltrainer__view" hidden>
           <div class="vokabeltrainer__progress-row">
-            <p class="vokabeltrainer__progress-label" id="vt-progress-label">Question 1 / 10</p>
+            <p class="vokabeltrainer__progress-label" id="vt-progress-label">Frage 1 / 10</p>
             <div class="vokabeltrainer__progress-bar" aria-hidden="true">
               <div class="vokabeltrainer__progress-fill" id="vt-progress-fill"></div>
             </div>
           </div>
-          <p class="vokabeltrainer__prompt">What does this mean?</p>
+          <p class="vokabeltrainer__prompt">Was bedeutet das?</p>
           <p class="vokabeltrainer__german" id="vt-german-word">der Fahrkartenautomat</p>
           <div class="vokabeltrainer__options" id="vt-options"></div>
-          <button type="button" id="vt-quiz-back-btn" class="vokabeltrainer__quit">Back to Menu</button>
+          <button type="button" id="vt-quiz-back-btn" class="vokabeltrainer__quit">Zurück zum Menü</button>
         </div>
 
         <div id="vt-results" class="vokabeltrainer__view" hidden>
-          <h2 class="vokabeltrainer__title">Exercise Complete!</h2>
-          <p class="vokabeltrainer__score" id="vt-score">8 / 10 Correct!</p>
+          <h2 class="vokabeltrainer__title">Übung abgeschlossen!</h2>
+          <p class="vokabeltrainer__score" id="vt-score">8 / 10 richtig!</p>
           <p class="vokabeltrainer__message" id="vt-message">Gute Arbeit! Übung macht den Meister!</p>
           <div class="vokabeltrainer__result-actions">
-            <button type="button" id="vt-retry-btn" class="vokabeltrainer__action">Try Again</button>
-            <button type="button" id="vt-results-menu-btn" class="vokabeltrainer__action vokabeltrainer__action--secondary">Main Menu</button>
+            <button type="button" id="vt-retry-btn" class="vokabeltrainer__action">Noch einmal</button>
+            <button type="button" id="vt-results-menu-btn" class="vokabeltrainer__action vokabeltrainer__action--secondary">Hauptmenü</button>
           </div>
         </div>
       </div>
@@ -114,13 +114,13 @@
     <div class="game__overlay" aria-hidden="true"></div>
 
     <header class="game__hud">
-      <p class="game__chapter" id="chapter-label">Chapter 1</p>
+      <p class="game__chapter" id="chapter-label">Kapitel 1</p>
       <div class="game__hud-actions">
         <button type="button" class="vocab-btn" id="vocab-btn" aria-haspopup="dialog">
           <span class="vocab-btn__icon" aria-hidden="true">📖</span>
           <span class="vocab-btn__label">Vokabeln</span>
         </button>
-        <button type="button" class="game__menu-btn" id="menu-btn" aria-label="Open menu">☰</button>
+        <button type="button" class="game__menu-btn" id="menu-btn" aria-label="Menü öffnen">☰</button>
       </div>
     </header>
 
@@ -132,18 +132,18 @@
 
       <figure class="character character--npc is-hidden" id="npc-container" aria-hidden="true">
         <div class="character__sprite" id="npc-sprite" data-character="mira" data-mood="neutral"></div>
-        <figcaption class="character__label" id="npc-label">Viennese Man</figcaption>
+        <figcaption class="character__label" id="npc-label">Wiener Mann</figcaption>
       </figure>
     </main>
 
     <div id="direction-hint" class="direction-hint" hidden>
       <button type="button" class="direction-hint__btn" id="direction-hint-btn" aria-expanded="false" aria-controls="direction-hint-panel">
-        Review Directions
+        Wegbeschreibung ansehen
       </button>
       <div class="direction-hint__panel" id="direction-hint-panel" hidden role="dialog" aria-labelledby="direction-hint-title">
-        <p class="direction-hint__title" id="direction-hint-title">Viennese Man</p>
+        <p class="direction-hint__title" id="direction-hint-title">Wiener Mann</p>
         <p class="direction-hint__quote">Guten Tag, kein Problem! Gehen Sie zuerst geradeaus zur U-Bahn. Fahren Sie mit der U3 bis Neubaugasse. Das Hotel ist dort direkt gegenüber von der Station, gleich neben dem Café.</p>
-        <button type="button" class="direction-hint__close" id="direction-hint-close">Close</button>
+        <button type="button" class="direction-hint__close" id="direction-hint-close">Schließen</button>
       </div>
     </div>
 
@@ -151,7 +151,7 @@
       <div class="dialogue__inner">
         <div class="dialogue__header">
           <p class="dialogue__speaker" id="speaker-name">Lena</p>
-          <span class="dialogue__hint" id="advance-hint">Click or press Space to continue</span>
+          <span class="dialogue__hint" id="advance-hint">Klicken oder Leertaste: weiter</span>
         </div>
 
         <div class="dialogue__text" id="dialogue-text"></div>
@@ -210,7 +210,7 @@
         <div class="ticket-machine__screen">
           <div class="ticket-machine__screen-toolbar">
             <span class="ticket-machine__screen-label">Touchscreen</span>
-            <button type="button" class="ticket-machine__hint" id="ticket-machine-hint">💡 Hint</button>
+            <button type="button" class="ticket-machine__hint" id="ticket-machine-hint">💡 Tipp</button>
           </div>
 
           <p class="ticket-machine__message" id="ticket-machine-message" role="status" aria-live="polite"></p>
@@ -251,17 +251,17 @@
 
         <div id="ticket-machine-hint-overlay" class="ticket-machine-hint" hidden>
           <div class="ticket-machine-hint__panel" role="dialog" aria-modal="true" aria-labelledby="ticket-machine-hint-title">
-            <h3 class="ticket-machine-hint__title" id="ticket-machine-hint-title">Lena's Travel Plan</h3>
+            <h3 class="ticket-machine-hint__title" id="ticket-machine-hint-title">Lenas Reiseplan</h3>
             <div class="ticket-machine-hint__body" id="ticket-machine-hint-text"></div>
-            <button type="button" class="ticket-machine-hint__close" id="ticket-machine-hint-close">Close</button>
+            <button type="button" class="ticket-machine-hint__close" id="ticket-machine-hint-close">Schließen</button>
           </div>
         </div>
 
         <div id="ticket-machine-error-overlay" class="ticket-machine-error" hidden>
           <div class="ticket-machine-error__panel" role="alertdialog" aria-modal="true" aria-labelledby="ticket-machine-error-title">
-            <h3 class="ticket-machine-error__title" id="ticket-machine-error-title">Incorrect choice</h3>
+            <h3 class="ticket-machine-error__title" id="ticket-machine-error-title">Falsche Auswahl</h3>
             <p class="ticket-machine-error__text" id="ticket-machine-error-text"></p>
-            <button type="button" class="ticket-machine-error__continue" id="ticket-machine-error-continue">Try again</button>
+            <button type="button" class="ticket-machine-error__continue" id="ticket-machine-error-continue">Noch einmal versuchen</button>
           </div>
         </div>
       </div>
@@ -272,7 +272,7 @@
       <div id="vocab-tutorial" class="vocab-tutorial" hidden>
         <h3 class="vocab-tutorial__title">Welcome to your Vokabelheft!</h3>
         <p class="vocab-tutorial__text">Here you will find key German words and phrases tailored specifically to the current chapter and its mini-games. Use this tool whenever you feel unsure or want to learn new vocabulary in context! You can access your vocabulary anytime during your journey.</p>
-        <button type="button" class="vocab-tutorial__btn" id="vocab-tutorial-btn">Got it!</button>
+        <button type="button" class="vocab-tutorial__btn" id="vocab-tutorial-btn">Verstanden!</button>
       </div>
       <div class="vocab-panel" id="vocab-panel" role="dialog" aria-modal="true" aria-labelledby="vocab-title">
         <header class="vocab-panel__head">
@@ -285,11 +285,11 @@
 
     <aside class="menu-panel" id="menu-panel" hidden>
       <div class="menu-panel__content">
-        <h2>Menu</h2>
+        <h2>Menü</h2>
         <div class="menu-panel__main-actions" id="menu-main-actions">
-          <button type="button" class="menu-panel__action" id="restart-btn">Restart Chapter</button>
-          <button type="button" class="menu-panel__action" id="start-menu-from-game-btn">Start Menu</button>
-          <button type="button" class="menu-panel__action" id="close-menu-btn">Close</button>
+          <button type="button" class="menu-panel__action" id="restart-btn">Kapitel neu starten</button>
+          <button type="button" class="menu-panel__action" id="start-menu-from-game-btn">Startmenü</button>
+          <button type="button" class="menu-panel__action" id="close-menu-btn">Schließen</button>
         </div>
       </div>
     </aside>
