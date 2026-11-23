@@ -2,12 +2,25 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Lenas Wiener Abenteuer">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0d0a18">
   <title>Lenas Wiener Abenteuer</title>
+  <script>
+    (function () {
+      var ua = navigator.userAgent || "";
+      var ipad = /iPad/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+      if (ipad) document.documentElement.classList.add("is-ipad");
+      var height = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+      document.documentElement.style.setProperty("--app-height", Math.round(height) + "px");
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Nunito:wght@400;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=ipad3">
 </head>
 <body>
   <div id="game" class="game" data-background="vienna_hauptbahnhof">
@@ -151,7 +164,7 @@
       <div class="dialogue__inner">
         <div class="dialogue__header">
           <p class="dialogue__speaker" id="speaker-name">Lena</p>
-          <span class="dialogue__hint" id="advance-hint">Klicken oder Leertaste: weiter</span>
+          <span class="dialogue__hint" id="advance-hint">Klicken, tippen oder Leertaste: weiter</span>
         </div>
 
         <div class="dialogue__text" id="dialogue-text"></div>
@@ -205,7 +218,7 @@
           </div>
         </header>
 
-        <p class="ticket-machine__goal">Goal: Choose the best-value ticket for Lena's travel plans today.</p>
+        <p class="ticket-machine__goal">Ziel: Wähle das beste Ticket für Lenas Plan heute.</p>
 
         <div class="ticket-machine__screen">
           <div class="ticket-machine__screen-toolbar">
@@ -241,7 +254,7 @@
           </div>
 
           <div class="ticket-machine__step" id="ticket-machine-step-validate" hidden>
-            <p class="ticket-machine__thought">Wait, in Vienna you have to validate the ticket before entering the platform! Let me click the blue validator machine (Entwerter).</p>
+            <p class="ticket-machine__thought">Moment, in Wien muss man das Ticket vor dem Bahnsteig entwerten! Ich klicke auf den blauen Entwerter.</p>
 
             <div class="ticket-machine__entwerter-row">
               <button type="button" class="ticket-machine__entwerter" id="ticket-machine-entwerter" aria-label="Validate ticket with Entwerter">Entwerter</button>
@@ -270,8 +283,8 @@
     <!-- Vocabulary glossary (Vokabelheft) overlay -->
     <div id="vocab-overlay" class="vocab-overlay" hidden>
       <div id="vocab-tutorial" class="vocab-tutorial" hidden>
-        <h3 class="vocab-tutorial__title">Welcome to your Vokabelheft!</h3>
-        <p class="vocab-tutorial__text">Here you will find key German words and phrases tailored specifically to the current chapter and its mini-games. Use this tool whenever you feel unsure or want to learn new vocabulary in context! You can access your vocabulary anytime during your journey.</p>
+        <h3 class="vocab-tutorial__title">Willkommen in deinem Vokabelheft!</h3>
+        <p class="vocab-tutorial__text">Hier findest du wichtige deutsche Wörter und Sätze für dieses Kapitel. Wenn du ein Wort nicht kennst, schau einfach hier nach. Du kannst das Heft immer öffnen.</p>
         <button type="button" class="vocab-tutorial__btn" id="vocab-tutorial-btn">Verstanden!</button>
       </div>
       <div class="vocab-panel" id="vocab-panel" role="dialog" aria-modal="true" aria-labelledby="vocab-title">
@@ -296,6 +309,6 @@
   </div>
 
   <script src="story.js"></script>
-  <script src="game.js"></script>
+  <script src="game.js?v=ipad3"></script>
 </body>
 </html>

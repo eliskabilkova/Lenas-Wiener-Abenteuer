@@ -24,7 +24,8 @@
 
 html,
 body {
-  height: 100%;
+  height: var(--app-height, 100dvh);
+  max-height: var(--app-height, 100dvh);
   overflow: hidden;
 }
 
@@ -45,12 +46,13 @@ button {
 /* ── Game container & backgrounds ───────────────────────────── */
 .game {
   position: relative;
-  width: 100vw;
-  height: 100dvh;
-  min-height: 100vh;
+  width: 100%;
+  height: var(--app-height, 100dvh);
+  max-height: var(--app-height, 100dvh);
+  min-height: 0;
   overflow: hidden;
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
   background-color: #1a1530;
 }
 
@@ -221,8 +223,10 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--stage-padding);
-  padding-bottom: 0;
+  padding: max(var(--stage-padding), env(safe-area-inset-top, 0px))
+    max(var(--stage-padding), env(safe-area-inset-right, 0px))
+    0
+    max(var(--stage-padding), env(safe-area-inset-left, 0px));
   pointer-events: auto;
 }
 
@@ -896,8 +900,10 @@ button {
 .dialogue {
   position: relative;
   z-index: 3;
-  padding: var(--stage-padding);
-  padding-top: 0;
+  padding: 0
+    max(var(--stage-padding), env(safe-area-inset-right, 0px))
+    max(var(--stage-padding), env(safe-area-inset-bottom, 0px))
+    max(var(--stage-padding), env(safe-area-inset-left, 0px));
 }
 
 .dialogue[hidden] {
@@ -3908,13 +3914,16 @@ button {
 
 .ticket-machine-hint,
 .ticket-machine-error {
-  position: absolute;
+  position: fixed;
   inset: 0;
-  z-index: 12;
+  z-index: 80;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  padding: max(1rem, env(safe-area-inset-top, 0px))
+    max(1rem, env(safe-area-inset-right, 0px))
+    max(1rem, env(safe-area-inset-bottom, 0px))
+    max(1rem, env(safe-area-inset-left, 0px));
   background: rgba(8, 10, 14, 0.62);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -3927,7 +3936,10 @@ button {
 
 .ticket-machine-hint__panel {
   width: min(92%, 500px);
-  overflow: hidden;
+  max-height: min(88dvh, 92vh);
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   padding: clamp(1.25rem, 3.5vw, 1.75rem);
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.94);
@@ -3979,8 +3991,8 @@ button {
 }
 
 .ticket-machine-hint__body {
-  overflow: auto;
-  max-height: min(58vh, 22rem);
+  overflow: visible;
+  max-height: none;
 }
 
 .ticket-machine-hint__rows {
@@ -5208,5 +5220,262 @@ button {
   .hotel-nav__hint-pop {
     left: 0;
     right: auto;
+  }
+}
+
+/* ── iPad / tablet (touch + coarse pointer). Desktop mice skip this. ── */
+
+@media (hover: none) and (pointer: coarse) {
+  button,
+  .choice-btn,
+  .chapter-card,
+  .vocab-btn,
+  .game__menu-btn {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .choice-btn,
+  .menu-panel__action,
+  .chapter-card,
+  .vokabeltrainer__set-btn,
+  .vokabeltrainer__option,
+  .vokabeltrainer__action,
+  .celebration-card__btn,
+  .tagebuch-card__button {
+    min-height: 44px;
+  }
+
+  .choice-btn:hover,
+  .choice-btn--practice:hover,
+  .vocab-btn:hover,
+  .game__menu-btn:hover,
+  .chapter-card:hover,
+  .chapter-card:hover:not(:disabled),
+  #start-game-btn:hover,
+  #start-chapters-btn:hover,
+  #start-vokabeltrainer-btn:hover,
+  .chapter-select__back:hover,
+  .menu-panel__action:hover,
+  .vokabeltrainer__set-btn:hover,
+  .vokabeltrainer__option:hover:not(:disabled),
+  .vokabeltrainer__action:hover,
+  .vokabeltrainer__action--secondary:hover,
+  .vokabeltrainer__quit:hover,
+  .celebration-card__btn:hover,
+  .celebration-card__btn--secondary:hover,
+  .tagebuch-card__button:hover,
+  .hotel-nav__choice:hover,
+  .u3-map-toggle:hover,
+  .u3-platform-board:hover {
+    transform: none;
+  }
+}
+
+@media (min-width: 700px) and (max-width: 1500px) and (hover: none) and (pointer: coarse) {
+  .start-menu {
+    padding:
+      env(safe-area-inset-top, 0px)
+      env(safe-area-inset-right, 0px)
+      env(safe-area-inset-bottom, 0px)
+      env(safe-area-inset-left, 0px);
+  }
+
+  .start-menu__content {
+    max-height: 100%;
+    overflow-y: auto;
+    padding: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .character__sprite[data-character="lena"] {
+    height: min(100%, 54vh);
+    max-width: min(28vw, 280px);
+    transform: translateY(44px);
+  }
+
+  .character__sprite[data-character="elder"],
+  .character__sprite[data-character="mira"],
+  .character__sprite[data-character="commuter"],
+  .character__sprite[data-character="mozart_seller"],
+  .character__sprite[data-character="warden"],
+  .character__sprite[data-character="waiter"] {
+    height: min(100%, 58vh);
+    max-width: min(32vw, 320px);
+    transform: translateY(20px);
+  }
+
+  .meldezettel-overlay,
+  .ticket-machine-overlay,
+  .tagebuch-screen,
+  .ch1-ppp,
+  .hotel-nav,
+  .rules-game,
+  .etiquette-game,
+  .tower-climb,
+  .vocab-overlay,
+  .celebration-screen {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    align-items: flex-start;
+    padding-top: max(3.4rem, env(safe-area-inset-top, 0px));
+    padding-bottom: max(var(--stage-padding), env(safe-area-inset-bottom, 0px));
+  }
+
+  .meldezettel,
+  .ticket-machine,
+  .tagebuch-card,
+  .ch1-ppp__panel,
+  .rules-game__panel,
+  .etiquette-game__panel,
+  .climb-container,
+  .celebration-card {
+    max-height: min(88dvh, 92vh);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .meldezettel {
+    width: min(92vw, 760px);
+    gap: 0.75rem;
+    padding: clamp(1rem, 2.4vw, 1.5rem) clamp(1.1rem, 2.8vw, 1.8rem);
+  }
+
+  .meldezettel__body {
+    min-height: 0;
+    flex: 1;
+    overflow: hidden;
+    gap: 0.7rem;
+  }
+
+  .meldezettel__section--form {
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .meldezettel__section--pool {
+    flex-shrink: 0;
+  }
+
+  .meldezettel__grid {
+    gap: 0.4rem;
+  }
+
+  .meldezettel__field {
+    padding: 0.15rem 0.1rem 0.3rem;
+  }
+
+  .meldezettel__slot {
+    min-height: 1.85rem;
+  }
+
+  .meldezettel__pool {
+    padding: 0.55rem;
+    min-height: 3.2rem;
+  }
+
+  .ch1-ppp {
+    padding-top: max(4.25rem, env(safe-area-inset-top, 0px));
+  }
+}
+
+@media (min-width: 700px) and (max-width: 1500px) and (orientation: portrait) and (hover: none) and (pointer: coarse) {
+  .character--lena {
+    margin-bottom: -16px;
+    height: calc(100% + 16px);
+  }
+
+  .character__sprite[data-character="lena"] {
+    height: min(46vh, 400px);
+    max-width: min(46vw, 280px);
+    transform: translateY(28px);
+  }
+
+  .character__sprite[data-character="elder"],
+  .character__sprite[data-character="mira"],
+  .character__sprite[data-character="commuter"],
+  .character__sprite[data-character="mozart_seller"],
+  .character__sprite[data-character="warden"],
+  .character__sprite[data-character="waiter"] {
+    height: min(48vh, 420px);
+    max-width: min(48vw, 300px);
+    transform: translateY(12px);
+  }
+
+  .start-menu__title {
+    font-size: clamp(2rem, 6.5vw, 3.4rem);
+  }
+
+  .dialogue__inner {
+    padding: clamp(0.8rem, 2vw, 1.05rem);
+  }
+
+  .choice-btn {
+    font-size: clamp(0.92rem, 2.4vw, 1.05rem);
+  }
+}
+
+/* Real iPad (class from <head>). iPadOS often reports a mouse, so hover/pointer queries miss it. */
+html.is-ipad {
+  overscroll-behavior: none;
+}
+
+html.is-ipad .character--lena {
+  margin-bottom: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+html.is-ipad .character--npc {
+  height: 100%;
+  max-height: 100%;
+}
+
+html.is-ipad .character__sprite[data-character="lena"] {
+  width: auto;
+  height: min(46svh, 360px);
+  max-width: min(26vw, 240px);
+  transform: translateY(12px);
+}
+
+html.is-ipad .character__sprite[data-character="elder"],
+html.is-ipad .character__sprite[data-character="mira"],
+html.is-ipad .character__sprite[data-character="commuter"],
+html.is-ipad .character__sprite[data-character="mozart_seller"],
+html.is-ipad .character__sprite[data-character="warden"],
+html.is-ipad .character__sprite[data-character="waiter"] {
+  width: auto;
+  height: min(50svh, 380px);
+  max-width: min(30vw, 260px);
+  transform: translateY(8px);
+}
+
+html.is-ipad .dialogue {
+  max-height: min(42svh, 290px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+html.is-ipad .dialogue__text {
+  font-size: clamp(0.92rem, 2.1vw, 1.05rem);
+}
+
+@media (orientation: portrait) {
+  html.is-ipad .character__sprite[data-character="lena"] {
+    max-width: min(44vw, 250px);
+    transform: translateY(8px);
+  }
+
+  html.is-ipad .character__sprite[data-character="elder"],
+  html.is-ipad .character__sprite[data-character="mira"],
+  html.is-ipad .character__sprite[data-character="commuter"],
+  html.is-ipad .character__sprite[data-character="mozart_seller"],
+  html.is-ipad .character__sprite[data-character="warden"],
+  html.is-ipad .character__sprite[data-character="waiter"] {
+    max-width: min(46vw, 270px);
+  }
+
+  html.is-ipad .dialogue {
+    max-height: min(36svh, 340px);
   }
 }

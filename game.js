@@ -437,7 +437,7 @@ let cathedralState = {
       tokens: ["Entschuldigung,", "wie", "komme", "ich", "zum", "Hotel?"],
       distractors: ["geht", "du"],
       correct: ["Entschuldigung,", "wie", "komme", "ich", "zum", "Hotel?"],
-      wrongRule: "In German questions, the conjugated verb must always be in position 2!",
+      wrongRule: "In deutschen Fragen steht das Verb immer an Position 2!",
     },
     {
       type: "order",
@@ -445,7 +445,7 @@ let cathedralState = {
       tokens: ["Wo", "ist", "die", "U-Bahn-Station?"],
       distractors: ["Wohin", "komme"],
       correct: ["Wo", "ist", "die", "U-Bahn-Station?"],
-      wrongRule: "In German questions, the conjugated verb must always be in position 2!",
+      wrongRule: "In deutschen Fragen steht das Verb immer an Position 2!",
     },
     {
       type: "order",
@@ -453,7 +453,7 @@ let cathedralState = {
       tokens: ["Wohin", "fährt", "dieser", "Zug?"],
       distractors: ["Wo", "Wie"],
       correct: ["Wohin", "fährt", "dieser", "Zug?"],
-      wrongRule: "In German questions, the conjugated verb must always be in position 2!",
+      wrongRule: "In deutschen Fragen steht das Verb immer an Position 2!",
     },
     {
       type: "order",
@@ -461,7 +461,7 @@ let cathedralState = {
       tokens: ["Wann", "kommt", "der", "Bus", "an?"],
       distractors: ["Wer", "Wo"],
       correct: ["Wann", "kommt", "der", "Bus", "an?"],
-      wrongRule: "In German questions, the conjugated verb must always be in position 2!",
+      wrongRule: "In deutschen Fragen steht das Verb immer an Position 2!",
     },
     {
       type: "order",
@@ -469,41 +469,41 @@ let cathedralState = {
       tokens: ["Wer", "kann", "mir", "helfen?"],
       distractors: ["Wo", "Wann"],
       correct: ["Wer", "kann", "mir", "helfen?"],
-      wrongRule: "In German questions, the conjugated verb must always be in position 2!",
+      wrongRule: "In deutschen Fragen steht das Verb immer an Position 2!",
     },
   ];
 
   const CH1_PPP_WFRAGEN_BLANKS = [
     {
-      prompt: "Where does Lena live?",
+      prompt: "Lena und ihr Zuhause.",
       prefix: "",
       suffix: "wohnt Lena?",
       options: ["Wer", "Wo", "Wie"],
       correct: "Wo",
     },
     {
-      prompt: "Excuse me, how do I get to the hotel?",
+      prompt: "Der Weg zum Hotel.",
       prefix: "Entschuldigung,",
       suffix: "komme ich zum Hotel?",
       options: ["Wo", "Wie", "Wohin"],
       correct: "Wie",
     },
     {
-      prompt: "Where is this train going?",
+      prompt: "Das Ziel vom Zug.",
       prefix: "",
       suffix: "fährt dieser Zug?",
       options: ["Wo", "Wohin", "Wann"],
       correct: "Wohin",
     },
     {
-      prompt: "Who can help me?",
+      prompt: "Eine Person für Hilfe.",
       prefix: "",
       suffix: "kann mir helfen?",
       options: ["Wer", "Warum", "Wann"],
       correct: "Wer",
     },
     {
-      prompt: "When does the bus arrive?",
+      prompt: "Die Zeit für den Bus.",
       prefix: "",
       suffix: "kommt der Bus an?",
       options: ["Wo", "Wer", "Wann"],
@@ -522,31 +522,31 @@ let cathedralState = {
 
   const CH1_PPP_DIRECTION_SCENARIOS = [
     {
-      prompt: "The hotel is across from the station.",
+      prompt: "Das Hotel und der Bahnhof.",
       sentence: "Das Hotel ist ______ .",
       options: ["gegenüber dem Bahnhof", "neben dem Bahnhof", "geradeaus zum Bahnhof"],
       correct: "gegenüber dem Bahnhof",
     },
     {
-      prompt: "The café is next to the hotel.",
+      prompt: "Das Café und das Hotel.",
       sentence: "Das Café ist ______ .",
       options: ["neben dem Hotel", "gegenüber dem Hotel", "geradeaus zum Hotel"],
       correct: "neben dem Hotel",
     },
     {
-      prompt: "Go straight ahead.",
+      prompt: "Weiter geradeaus.",
       sentence: "Gehen Sie ______ .",
       options: ["geradeaus", "nach rechts", "nach links"],
       correct: "geradeaus",
     },
     {
-      prompt: "Go to the left.",
+      prompt: "Die Richtung nach links.",
       sentence: "Gehen Sie ______ .",
       options: ["nach links", "nach rechts", "gegenüber"],
       correct: "nach links",
     },
     {
-      prompt: "The hotel is there.",
+      prompt: "Das Hotel ist nicht weit.",
       sentence: "Das Hotel ist ______ .",
       options: ["dort", "neben", "geradeaus"],
       correct: "dort",
@@ -599,31 +599,31 @@ let cathedralState = {
 
   const CH2_PPP_MODAL_BLANKS = [
     {
-      prompt: "Am I allowed to park here?",
+      prompt: "Parken auf diesem Platz.",
       sentence: "______ ich hier parken?",
       options: ["Darf", "Muss", "Will"],
       correct: "Darf",
     },
     {
-      prompt: "I would like to pay now, please.",
+      prompt: "Bezahlen an der Rezeption.",
       sentence: "Ich ______ bitte jetzt bezahlen.",
       options: ["möchte", "muss", "kann"],
       correct: "möchte",
     },
     {
-      prompt: "Can you please help me?",
+      prompt: "Um Hilfe bitten.",
       sentence: "______ Sie mir bitte helfen?",
       options: ["Können", "Müssen", "Dürfen"],
       correct: "Können",
     },
     {
-      prompt: "Do I have to fill out the form?",
+      prompt: "Das Formular ausfüllen.",
       sentence: "______ ich das Formular ausfüllen?",
       options: ["Muss", "Kann", "Soll"],
       correct: "Muss",
     },
     {
-      prompt: "Should I leave the key here?",
+      prompt: "Den Schlüssel hier lassen.",
       sentence: "______ ich den Schlüssel hier lassen?",
       options: ["Soll", "Darf", "Kann"],
       correct: "Soll",
@@ -695,35 +695,35 @@ let cathedralState = {
 
   const CH2_PPP_BLANKS = [
     {
-      prompt: "Choose the polite greeting.",
+      prompt: "Wähle die höfliche Begrüßung.",
       prefix: "",
       suffix: "! Ich habe eine Reservierung.",
       options: ["Hallo", "Guten Tag", "Tschüss"],
       correct: "Guten Tag",
     },
     {
-      prompt: "Choose the correct noun.",
+      prompt: "Wähle das richtige Nomen.",
       prefix: "Ich habe eine",
       suffix: ".",
       options: ["Reservierung", "U-Bahn", "Entschuldigung"],
       correct: "Reservierung",
     },
     {
-      prompt: "Choose the correct phrase.",
+      prompt: "Wähle die richtige Phrase.",
       prefix: "Die Reservierung ist",
       suffix: "Lena Majerová.",
       options: ["auf den Namen", "zum Hotel", "nach links"],
       correct: "auf den Namen",
     },
     {
-      prompt: "What do you hand the receptionist?",
+      prompt: "Was gibst du der Rezeptionistin?",
       prefix: "Hier ist mein",
       suffix: ".",
       options: ["Ausweis", "Handy", "Ticket"],
       correct: "Ausweis",
     },
     {
-      prompt: "Choose the hotel registration form.",
+      prompt: "Wähle das Hotel-Formular.",
       prefix: "Bitte füllen Sie den",
       suffix: "aus.",
       options: ["Meldezettel", "Fahrplan", "Kaffee"],
@@ -898,18 +898,20 @@ let cathedralState = {
       vocabFlag: "chapter1Ppp",
       matching1: CH1_PPP_WFRAGEN,
       step1Title: "W-Fragen",
-      step1Instruction: "Match the German question words with their English meanings.",
+      step1Instruction: "Verbinde die deutschen Fragewörter mit der englischen Bedeutung.",
       step1Wrong: "Wo = where · Wohin = where to · Wie = how · Wann = when · Wer = who · Warum = why",
       sentences: CH1_PPP_SENTENCES,
       step2Title: "Sätze bauen",
+      step2Instruction: "Baue den richtigen deutschen Satz. Achte auf die Wortstellung.",
       blanks: CH1_PPP_WFRAGEN_BLANKS,
       step3Title: "W-Fragen im Kontext",
+      step3Instruction: "Wähle das richtige Fragewort.",
       matching2: CH1_PPP_DIRECTIONS,
       step4Title: "Wegbeschreibung",
-      step4Instruction: "Match the German direction phrases with their English meanings.",
+      step4Instruction: "Verbinde die deutschen Weg-Wörter mit der englischen Bedeutung.",
       scenarios: CH1_PPP_DIRECTION_SCENARIOS,
       step5Title: "Wegbeschreibung im Kontext",
-      step5Instruction: "Choose the German phrase that fits the situation.",
+      step5Instruction: "Wähle die deutsche Phrase, die zur Situation passt.",
     },
     ch2_ppp_practice: {
       successNode: "ch2_reception_greet",
@@ -923,32 +925,32 @@ let cathedralState = {
         {
           type: "matching",
           title: "Check-in-Wörter",
-          instruction: "Match the German hotel words with their English meanings.",
+          instruction: "Verbinde die deutschen Hotel-Wörter mit der englischen Bedeutung.",
           pairs: CH2_PPP_VOCAB_SETS[0],
         },
         {
           type: "matching",
           title: "Check-in-Wörter",
-          instruction: "Match the German hotel words with their English meanings.",
+          instruction: "Verbinde die deutschen Hotel-Wörter mit der englischen Bedeutung.",
           pairs: CH2_PPP_VOCAB_SETS[1],
         },
         {
           type: "matching",
           title: "Modalverben",
-          instruction: "Match each German modal verb with its English translation.",
+          instruction: "Verbinde jedes Modalverb mit der englischen Bedeutung.",
           pairs: CH2_PPP_MODALS,
           shuffleLeft: true,
         },
         {
           type: "blanks",
           title: "Modalverben im Kontext",
-          instruction: "Choose the modal verb that fits the sentence.",
+          instruction: "Wähle das Modalverb, das in den Satz passt.",
           tasks: CH2_PPP_MODAL_BLANKS,
         },
         {
           type: "sentences",
           title: "Sätze bauen",
-          instruction: "Form the correct German sentence using proper word order.",
+          instruction: "Baue den richtigen deutschen Satz. Achte auf die Wortstellung.",
           tasks: CH2_PPP_SENTENCES,
         },
       ],
@@ -965,21 +967,21 @@ let cathedralState = {
         {
           type: "matching",
           title: "Verkehrsmittel-Vokabeln",
-          instruction: "Match the German terms with their English meanings.",
+          instruction: "Verbinde die deutschen Wörter mit der englischen Bedeutung.",
           pairs: CH3_PPP_VOCAB_SETS[0],
           shuffleLeft: true,
         },
         {
           type: "matching",
           title: "Verkehrsmittel-Vokabeln",
-          instruction: "Match the German terms with their English meanings.",
+          instruction: "Verbinde die deutschen Wörter mit der englischen Bedeutung.",
           pairs: CH3_PPP_VOCAB_SETS[1],
           shuffleLeft: true,
         },
         {
           type: "matching",
           title: "Verkehrsmittel-Vokabeln",
-          instruction: "Match the German terms with their English meanings.",
+          instruction: "Verbinde die deutschen Wörter mit der englischen Bedeutung.",
           pairs: CH3_PPP_VOCAB_SETS[2],
           shuffleLeft: true,
         },
@@ -997,21 +999,21 @@ let cathedralState = {
         {
           type: "matching",
           title: "Stephansdom: Vokabeln & Regeln",
-          instruction: "Match the German terms with their English meanings.",
+          instruction: "Verbinde die deutschen Wörter mit der englischen Bedeutung.",
           pairs: CH4_PPP_VOCAB_SETS[0],
           shuffleLeft: true,
         },
         {
           type: "matching",
           title: "Stephansdom: Vokabeln & Regeln",
-          instruction: "Match the German terms with their English meanings.",
+          instruction: "Verbinde die deutschen Wörter mit der englischen Bedeutung.",
           pairs: CH4_PPP_VOCAB_SETS[1],
           shuffleLeft: true,
         },
         {
           type: "matching",
           title: "Stephansdom: Vokabeln & Regeln",
-          instruction: "Match the German terms with their English meanings.",
+          instruction: "Verbinde die deutschen Wörter mit der englischen Bedeutung.",
           pairs: CH4_PPP_VOCAB_SETS[2],
           shuffleLeft: true,
         },
@@ -1075,7 +1077,7 @@ let cathedralState = {
       next: 200,
       animateMs: 1400,
       monologue:
-        "Puh, 100 Stufen geschafft! Meine Beine spüren es schon, und diese enge Wendeltreppe geht immer weiter.",
+        "Schon 100 Stufen geschafft! Meine Beine spüren es schon, und diese enge Wendeltreppe geht immer weiter.",
       prompt: "Der Stephansdom ist hoch, aber der Südturm ist noch [ _______ ].",
       before: "Der Stephansdom ist hoch, aber der Südturm ist noch ",
       after: ".",
@@ -1084,7 +1086,7 @@ let cathedralState = {
         { id: "hocher", text: "hocher", correct: false },
         { id: "hoechsten", text: "am höchsten", correct: false },
       ],
-      hint: "Hint: 'hoch' gets an umlaut in comparative: 'höher'!",
+      hint: "Tipp: Bei 'hoch' kommt im Komparativ ein Umlaut: 'höher'!",
     },
     {
       id: "cp200",
@@ -1101,7 +1103,7 @@ let cathedralState = {
         { id: "guter", text: "guter", correct: false },
         { id: "besten", text: "am besten", correct: false },
       ],
-      hint: "Hint: 'gut' is irregular — the comparative is 'besser', not 'guter'!",
+      hint: "Tipp: 'gut' ist unregelmäßig. Der Komparativ ist 'besser', nicht 'guter'!",
     },
     {
       id: "cp300",
@@ -1118,7 +1120,7 @@ let cathedralState = {
         { id: "anstrengender", text: "anstrengender", correct: false },
         { id: "mehr", text: "mehr anstrengend", correct: false },
       ],
-      hint: "Hint: Superlative of 'anstrengend' is 'der anstrengendste' (the most exhausting)!",
+      hint: "Tipp: Der Superlativ von 'anstrengend' ist 'der anstrengendste'.",
     },
   ];
   const ETIQUETTE_GAME_TRIGGER_NODE = "ch4_erlaubt_game";
@@ -1150,25 +1152,25 @@ let cathedralState = {
       icon: "📍",
       label: "Plan",
       segments: [
-        { text: "3 metro trips", strong: true },
-        { text: " today (Stephansdom ➔ Park ➔ Hotel)" },
+        { text: "Heute 3 Fahrten", strong: true },
+        { text: " mit der U-Bahn (Stephansdom ➔ Park ➔ Hotel)" },
       ],
     },
     {
       icon: "💶",
-      label: "Rule",
+      label: "Regel",
       segments: [
-        { text: "Buy " },
-        { text: "whatever is cheaper", strong: true },
-        { text: " (Individual tickets vs. 24-hour pass)" },
+        { text: "Kauf, " },
+        { text: "was billiger ist", strong: true },
+        { text: " (Einzeltickets oder 24-Stunden-Karte)" },
       ],
     },
     {
       icon: "👤",
-      label: "Fare",
+      label: "Preis",
       segments: [
-        { text: "Standard Adult fare", strong: true },
-        { text: " (Tourist, no Austrian school ID)" },
+        { text: "Normalpreis für Erwachsene", strong: true },
+        { text: " (Touristin, kein österreichischer Schülerausweis)" },
       ],
     },
   ];
@@ -3316,8 +3318,8 @@ let cathedralState = {
     if (type !== TICKET_GOAL.type) {
       const message =
         type === "24-Stunden-Karte (€ 8,00)"
-          ? "Wait, €8.00 is more expensive than buying single tickets for just 3 rides! Let me recalculate."
-          : "I only need three trips today. This ticket would cost much more than individual single tickets.";
+          ? "Moment, 8,00 € ist teurer als drei Einzelfahrten. Ich rechne noch einmal."
+          : "Ich brauche heute nur drei Fahrten. Dieses Ticket ist viel teurer als Einzelfahrten.";
       resetTicketMachineToType(message);
       return;
     }
@@ -3333,8 +3335,8 @@ let cathedralState = {
     if (category !== TICKET_GOAL.category) {
       const message =
         category === "Ermäßigt (Schüler/Studenten mit AT-Ausweis)"
-          ? "I don't have an Austrian student ID, the ticket inspector would fine me!"
-          : "That discount is only for children or seniors. I need the standard adult fare.";
+          ? "Ich habe keinen österreichischen Schülerausweis. Der Kontrolleur gibt mir sonst eine Strafe!"
+          : "Diese Ermäßigung ist nur für Kinder oder Senioren. Ich brauche den Normalpreis für Erwachsene.";
       resetTicketMachineToType(message);
       return;
     }
@@ -3348,7 +3350,7 @@ let cathedralState = {
   function handleTicketQuantity(quantity) {
     if (!ticketMachineControlsEnabled()) return;
     if (quantity === "5 Tickets") {
-      resetTicketMachineToType("Five tickets are more than I need today. I should only buy what I will use.");
+      resetTicketMachineToType("Fünf Tickets sind zu viele für heute. Ich kaufe nur, was ich wirklich brauche.");
       return;
     }
 
@@ -3362,7 +3364,7 @@ let cathedralState = {
   function handleTicketPurchase() {
     if (!ticketMachineControlsEnabled()) return;
     ticketMachine.step = "validate";
-    ticketMachine.message = "Ticket purchased!";
+    ticketMachine.message = "Ticket gekauft!";
     ticketMachine.messageType = "success";
     renderTicketMachine();
   }
@@ -3574,7 +3576,7 @@ let cathedralState = {
     const subtitle = document.createElement("p");
     subtitle.id = "rules-game-instruction";
     subtitle.className = "rules-game__subtitle rules-game__instruction";
-    subtitle.textContent = "Match the official German rules with their English meanings.";
+    subtitle.textContent = "Verbinde die deutschen Regeln mit der englischen Bedeutung.";
     header.appendChild(subtitle);
     panel.appendChild(header);
 
@@ -3612,7 +3614,7 @@ let cathedralState = {
     meaningsColumn.className = "rules-game__column";
     const meaningsHeading = document.createElement("h3");
     meaningsHeading.className = "rules-game__column-title";
-    meaningsHeading.textContent = "English";
+    meaningsHeading.textContent = "Englisch";
     meaningsColumn.appendChild(meaningsHeading);
     shuffleArray(CHURCH_RULES_PAIRS).forEach((pair) => {
       const btn = document.createElement("button");
@@ -4384,7 +4386,7 @@ let cathedralState = {
     if (!progress) return;
     const total = getPppStepCount();
     const current = Math.min(Math.max(ch1Ppp.step, 1), total);
-    progress.textContent = `EXERCISE ${current} / ${total}`;
+    progress.textContent = `ÜBUNG ${current} / ${total}`;
   }
 
   function updateCh1PppSubprogress(overlay) {
@@ -4696,7 +4698,7 @@ let cathedralState = {
     updateCh1PppSubprogress(overlay, ch1Ppp.sentenceIndex + 1, getPppStep2Tasks().length);
 
     ui.title.textContent = getPppExerciseTitle();
-    setCh1PppInstruction(overlay, getPppFlowItem()?.instruction || "Choose the modal verb that fits the sentence.");
+    setCh1PppInstruction(overlay, getPppFlowItem()?.instruction || "Wähle das Modalverb, das in den Satz passt.");
     ui.body.hidden = false;
     ui.body.innerHTML = "";
     ui.result.hidden = true;
@@ -4782,7 +4784,7 @@ let cathedralState = {
     updateCh1PppSubprogress(overlay, ch1Ppp.sentenceIndex + 1, tasks.length);
 
     ui.title.textContent = getPppExerciseTitle();
-    setCh1PppInstruction(overlay, getPppFlowItem()?.instruction || "Form the correct German sentence using proper word order.");
+    setCh1PppInstruction(overlay, getPppFlowItem()?.instruction || "Baue den richtigen deutschen Satz. Achte auf die Wortstellung.");
     ui.body.hidden = false;
     ui.body.innerHTML = "";
     ui.result.hidden = true;
@@ -4938,7 +4940,7 @@ let cathedralState = {
     updateCh1PppSubprogress(overlay, ch1Ppp.blankIndex + 1, getPppPack().blanks.length);
 
     ui.title.textContent = getPppExerciseTitle();
-    setCh1PppInstruction(overlay, "");
+    setCh1PppInstruction(overlay, getPppPack().step3Instruction || "Wähle das richtige Fragewort.");
     ui.body.hidden = false;
     ui.body.innerHTML = "";
     ui.result.hidden = true;
@@ -6386,11 +6388,24 @@ let cathedralState = {
     });
   }
 
+  function syncViewportHeight() {
+    const viewport = window.visualViewport;
+    const height = viewport?.height || window.innerHeight;
+    document.documentElement.style.setProperty("--app-height", `${Math.round(height)}px`);
+    if (window.scrollY || window.scrollX) window.scrollTo(0, 0);
+  }
+
   function init() {
     if (typeof storyData === "undefined") {
       els.dialogueText.textContent = "Error: story data not loaded.";
       return;
     }
+
+    syncViewportHeight();
+    window.addEventListener("resize", syncViewportHeight);
+    window.addEventListener("orientationchange", syncViewportHeight);
+    window.visualViewport?.addEventListener("resize", syncViewportHeight);
+    window.visualViewport?.addEventListener("scroll", syncViewportHeight);
 
     // Show the start menu; the game begins only when the player clicks Start Game.
     bindEvents();

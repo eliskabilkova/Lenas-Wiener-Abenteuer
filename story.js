@@ -119,7 +119,7 @@ const storyData = {
     npcImage: "old_man_neutral.png",
     choices: [
       {
-        text: "Üben / Start Practice",
+        text: "Üben",
         nextNode: "ch1_ppp_practice",
         prominent: true,
       },
@@ -204,7 +204,7 @@ const storyData = {
     id: "ch1_phew",
     background: "vienna_hauptbahnhof.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "Puh! Das hat geklappt!",
+    text: "Gut, das hat geklappt!",
     lenaMood: "happy",
     npcImage: "none",
     choices: [
@@ -428,7 +428,7 @@ const storyData = {
     npcImage: "none",
     choices: [
       {
-        text: "Üben / Start Practice",
+        text: "Üben",
         nextNode: "ch2_ppp_practice",
         prominent: true,
       },
@@ -507,7 +507,7 @@ const storyData = {
     npcImage: "receptionist_neutral2.png",
     choices: [
       { text: "[Meine Telefonnummer sagen]", nextNode: "ch2_id_wrong_phone" },
-      { text: "[Meinen Ausweis geben]", nextNode: "ch2_id_correct" },
+      { text: "[Meine ID geben]", nextNode: "ch2_id_correct" },
       { text: "[Meinen vollen Namen deutlich wiederholen]", nextNode: "ch2_id_wrong_name" },
     ],
   },
@@ -631,7 +631,7 @@ const storyData = {
     npcImage: "none",
     choices: [
       {
-        text: "Übung / Practice",
+        text: "Übung",
         nextNode: "ch3_ppp_practice",
         prominent: true,
       },
@@ -1081,7 +1081,7 @@ const storyData = {
     id: "ch4_mozart_after",
     background: "stephansplatz.jpg",
     speaker: "Lena (Internal Monologue)",
-    text: "Puh, das war stressig! Der Platz ist so voll. Ich brauche einen Moment Ruhe. Ich gehe in den Dom – in den berühmten Stephansdom.",
+    text: "Das war aber stressig! Der Platz ist so voll. Ich brauche einen Moment Ruhe. Ich gehe in den Dom – in den berühmten Stephansdom.",
     lenaMood: "thoughtful",
     npcImage: "none",
     choices: [
@@ -1110,7 +1110,7 @@ const storyData = {
     npcImage: "none",
     choices: [
       {
-        text: "Übung / Practice",
+        text: "Übung",
         nextNode: "ch4_ppp_practice",
         prominent: true,
       },
@@ -1396,7 +1396,7 @@ const storyData = {
     id: "ch5_tower_arrival",
     background: "cathedral_stairs.jpg",
     speaker: "Lena",
-    text: "Ich kann es nicht glauben... ich bin schon oben. Puh, das war so anstrengend!",
+    text: "Ich kann es nicht glauben... ich bin schon oben. Das war so anstrengend!",
     lenaMood: "exhausted",
     npcImage: "none",
     choices: [
